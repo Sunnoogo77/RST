@@ -6,7 +6,7 @@
 /* ── HERO ─────────────────────────────────────────────────────────────── */
 .hero {
   position: relative;
-  min-height: 88vh;
+  min-height: 100vh;
   background: #02040f;
   overflow: hidden;
   color: var(--paper);
@@ -18,23 +18,20 @@
   content: '';
   position: absolute;
   top: 0;
-  right: 0;
+  left: 0;
   width: min(46vw, 760px);
   height: var(--header-h);
   background:
-    linear-gradient(to right, rgba(2,4,15,0) 0%, rgba(2,4,15,.72) 32%, #01020a 72%, #000 100%);
+    linear-gradient(to left, rgba(2,4,15,0) 0%, rgba(2,4,15,.72) 32%, #01020a 72%, #000 100%);
   pointer-events: none;
   z-index: 2;
 }
 
-/* Backdrop : halo centré sur le titre + fondu vers la photo */
+/* Backdrop : noir à la frontière photo, puis bleu profond côté titre. */
 .heroBackdrop {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(ellipse 50% 56% at 20% 54%, rgba(18,48,152,.40) 0%, rgba(12,32,112,.16) 48%, transparent 70%),
-    linear-gradient(to right, transparent 42%, rgba(5,10,34,.44) 52%, rgba(2,4,16,.92) 62%, #01020a 68%),
-    #030617;
+  background: #030716;
   pointer-events: none;
   z-index: 0;
 }
@@ -44,16 +41,15 @@
   z-index: 1;
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 0.52fr;
-  min-height: calc(88vh - var(--header-h));
+  grid-template-columns: minmax(540px, 36vw) 1fr;
+  min-height: calc(100vh - var(--header-h));
 }
 
 .heroInner::after {
   content: '';
   position: absolute;
-  inset: 0 34.2% 0 0;
-  background:
-    linear-gradient(to right, transparent 48%, rgba(5,10,34,.18) 68%, rgba(2,4,16,.78) 88%, #01020a 100%);
+  inset: 0;
+  display: none;
   pointer-events: none;
   z-index: 2;
 }
@@ -61,22 +57,45 @@
 /* ─ Texte hero ─ */
 .heroText {
   position: relative;
-  z-index: 1;
+  z-index: 4;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start; /* groupe collé à gauche de la colonne */
-  padding: 56px 0 80px clamp(80px, 9vw, 300px);
+  align-items: center;
+  padding: 56px clamp(32px, 4vw, 72px) 80px clamp(48px, 6vw, 120px);
 }
 
 /* Groupe interne — le contenu est centré en lui-même */
 .heroTextGroup {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 24px;
-  margin-top: 180px;
+  margin-top: clamp(164px, 21vh, 218px);
+  transform: translateX(clamp(28px, 3.7vw, 76px));
+}
+
+.heroTextGroup::before {
+  content: '';
+  position: absolute;
+  width: min(980px, 66vw);
+  height: min(560px, 56vh);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -46%);
+  background:
+    radial-gradient(ellipse at center, rgba(22,68,186,.28) 0%, rgba(13,42,139,.2) 32%, rgba(7,22,78,.09) 58%, rgba(7,22,78,0) 82%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.heroAssemblee,
+.heroTitle,
+.heroCtas {
+  position: relative;
+  z-index: 1;
 }
 
 .heroAssemblee {
@@ -85,19 +104,20 @@
   font-weight: 500;
   letter-spacing: .26em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.44);
+  color: rgba(255,255,255,.72);
   margin: 0;
 }
 
 .heroTitle {
   font-family: var(--f-engrave);
-  font-size: clamp(2.2rem, 3.8vw, 2.75rem);
+  font-size: clamp(1.86rem, 2.9vw, 2.78rem);
   font-weight: 600;
-  line-height: 1.1;
+  line-height: 1.08;
   letter-spacing: .04em;
   text-transform: uppercase;
   color: var(--paper);
   margin: 0;
+  text-shadow: 0 2px 16px rgba(0,0,0,.3);
 }
 
 .heroCtas {
@@ -118,7 +138,7 @@
   font-weight: 500;
   letter-spacing: .2em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.46);
+  color: rgba(255,255,255,.82);
   cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 4px;
@@ -128,32 +148,51 @@
   color: rgba(255,255,255,.9);
 }
 
-/* ─ Image du Christ (droite, pleine hauteur, flush right) ─ */
+/* ─ Image du Christ : intacte à gauche, assombrie seulement à la frontière droite. ─ */
 .heroJesus {
   position: relative;
   z-index: 1;
-  overflow: hidden;
+  overflow: visible;
   align-self: stretch;
+  height: calc(100vh - var(--header-h));
+  background: transparent;
 }
 
 .heroJesusImg {
+  position: absolute;
+  inset: 0 auto 0 0;
+  z-index: 1;
   width: 100%;
+  max-width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center top;
   display: block;
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 58%, rgba(0,0,0,.86) 72%, rgba(0,0,0,.42) 86%, transparent 94%, transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0%, #000 58%, rgba(0,0,0,.86) 72%, rgba(0,0,0,.42) 86%, transparent 94%, transparent 100%);
 }
 
-/* Vignette photo : noir pur sur les bords, pas de bleu */
+.heroJesus::before,
 .heroJesus::after {
   content: '';
   position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(to right,  rgba(0,0,0,.98) 0%, rgba(0,0,0,.82) 5%, rgba(0,0,0,.42) 13%, rgba(0,0,0,.10) 25%, transparent 36%),
-    linear-gradient(to bottom, rgba(0,0,0,.96) 0%, rgba(0,0,0,.70) 10%, rgba(0,0,0,.24) 22%, transparent 34%),
-    linear-gradient(to top,    rgba(0,0,0,.72) 0%, transparent 18%);
   pointer-events: none;
+}
+
+.heroJesus::before {
+  inset: 0 -96% 0 0;
+  z-index: 2;
+  background:
+    radial-gradient(ellipse 28% 86% at 46% 52%, rgba(0,0,0,.68) 0%, rgba(0,0,0,.5) 34%, rgba(0,0,0,.22) 62%, rgba(0,0,0,0) 88%);
+}
+
+.heroJesus::after {
+  inset: 0;
+  z-index: 3;
+  background:
+    radial-gradient(ellipse 30% 34% at 52% 46%, rgba(255,210,146,.18) 0%, rgba(255,190,118,.1) 36%, rgba(255,190,118,0) 72%);
+  mix-blend-mode: screen;
+  opacity: .78;
 }
 
 /* ── EYEBROW (section-level — avec tiret préfixe) ─────────────────────── */
@@ -858,11 +897,37 @@
   }
   .heroTextGroup {
     align-items: center;
+    margin-top: 0;
   }
 
   .heroJesus {
     order: 1;
     height: 52vw;
+    overflow: hidden;
+  }
+
+  .heroJesusImg {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    object-position: center 12%;
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 78%, rgba(0,0,0,.5) 91%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 0%, #000 78%, rgba(0,0,0,.5) 91%, transparent 100%);
+  }
+
+  .heroJesus::before {
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,.16) 0%, rgba(0,0,0,0) 34%, rgba(3,7,24,.64) 100%);
+  }
+
+  .heroJesus::after {
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgba(3,7,24,.42) 0%, rgba(3,7,24,0) 38%, rgba(3,7,24,.28) 100%);
+    mix-blend-mode: normal;
   }
 
   /* Schedule */

@@ -5,7 +5,7 @@
   padding: 60px 32px 40px;
   border-bottom: 1px solid rgba(255, 255, 255, .10);
   background:
-    radial-gradient(ellipse 48% 64% at 50% 45%, rgba(30, 71, 161, .20) 0%, rgba(6, 9, 28, .04) 58%, transparent 76%),
+    radial-gradient(ellipse 48% 64% at 50% 45%, rgba(21, 54, 75, .20) 0%, rgba(6, 9, 28, .04) 58%, transparent 76%),
     linear-gradient(to bottom, #06091c 0%, #030617 100%);
   color: var(--paper);
 }
@@ -235,7 +235,7 @@
 /*
  * RST token mapping (PRD uses inverted semantics vs RST):
  * PRD --accent = RED  → RST var(--note)   = #C8332A
- * PRD --note   = BLUE → RST var(--accent) = #1E47A1
+ * PRD --note   = BLUE → RST var(--accent) = #15364B
  */
 .flagSoon  { background: var(--note); }    /* RED — À VENIR  */
 .flagToday { background: var(--accent); }  /* BLUE — AUJOURD'HUI */
@@ -480,9 +480,9 @@
 .statePastTag { color: var(--ink-3); }
 
 @keyframes ctxLivePulse {
-  0%   { box-shadow: 0 0 0 0   rgba(30, 71, 161, .6); } /* rgba de --accent #1E47A1 */
-  70%  { box-shadow: 0 0 0 8px rgba(30, 71, 161,  0); }
-  100% { box-shadow: 0 0 0 0   rgba(30, 71, 161,  0); }
+  0%   { box-shadow: 0 0 0 0   rgba(21, 54, 75, .6); } /* rgba de --accent #15364B */
+  70%  { box-shadow: 0 0 0 8px rgba(21, 54, 75,  0); }
+  100% { box-shadow: 0 0 0 0   rgba(21, 54, 75,  0); }
 }
 
 /* ── MOBILE ≤ 820px ───────────────────────────────────────────── */

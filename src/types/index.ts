@@ -12,7 +12,7 @@ export type JourCulte = 'mercredi' | 'dimanche' | 'vendredi';
 export interface RendezVous {
   id: string;
   jour: JourCulte;
-  titre: string;        // "Étude biblique" | "Culte du dimanche" | "Veillée de prière"
+  titre: string;        // "Culte du mercredi" | "Culte du dimanche" | "Réunion de prière"
   heureDebut: string;   // "19H00"
   heureFin: string;     // "21H00"
   description: string;

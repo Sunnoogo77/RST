@@ -18,12 +18,19 @@ export default function GeneseLayout() {
   const { t } = useTranslation();
   const { direction, scrollY } = useScrollDirection(80);
   const subnavHidden = direction === 'down' && scrollY > 80;
+  const subnavOnDark = scrollY < 420;
 
   return (
     <>
       <div className={styles.headerSpacer} aria-hidden="true" />
       <nav
-        className={`${styles.subnav} ${subnavHidden ? styles.subnavHidden : ''}`}
+        className={[
+          styles.subnav,
+          subnavOnDark ? styles.subnavDark : styles.subnavLight,
+          subnavHidden ? styles.subnavHidden : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
         aria-label="Navigation de l'espace Genèse"
       >
         <div className={styles.subnavInner}>

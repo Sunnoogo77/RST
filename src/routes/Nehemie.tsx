@@ -6,6 +6,104 @@ import { Lightbox, type LightboxImage } from '../components/ui/Lightbox/Lightbox
 import { asset } from '../utils/asset';
 
 /* ────────────────────────────────────────────────────────────────────
+   ICÔNES — quatre piliers du projet Néhémie
+   Inline SVG pour rester indépendant de toute dépendance externe.
+   ──────────────────────────────────────────────────────────────────── */
+const IconUsers = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"
+       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+  </svg>
+);
+
+const IconBricks = (
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <rect x="1.5"  y="4"  width="6.5" height="4" rx=".4" />
+    <rect x="8.75" y="4"  width="6.5" height="4" rx=".4" />
+    <rect x="16"   y="4"  width="6.5" height="4" rx=".4" />
+    <rect x="5"    y="10" width="6.5" height="4" rx=".4" />
+    <rect x="12.5" y="10" width="6.5" height="4" rx=".4" />
+    <rect x="1.5"  y="16" width="6.5" height="4" rx=".4" />
+    <rect x="8.75" y="16" width="6.5" height="4" rx=".4" />
+    <rect x="16"   y="16" width="6.5" height="4" rx=".4" />
+  </svg>
+);
+
+const IconHandHeart = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"
+       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M11 14h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 16" />
+    <path d="m7 20 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" />
+    <path d="m2 15 6 6" />
+    <path d="M19.5 8.5c.7-.7 1.5-1.6 1.5-2.7A2.7 2.7 0 0 0 18.3 3c-.9 0-1.5.4-2.3 1.2-.8-.8-1.4-1.2-2.3-1.2A2.7 2.7 0 0 0 11 5.8c0 1.1.8 2 1.5 2.7L16 12l3.5-3.5z" />
+  </svg>
+);
+
+const IconTrumpet = (
+  <svg viewBox="0 0 24 24" fill="#d59a22" aria-hidden="true">
+    {/* Embouchure */}
+    <circle cx="2.4" cy="12" r="1.6" />
+    <rect x="3.4" y="11.4" width="1.4" height="1.2" rx=".2" />
+    {/* Tube horizontal */}
+    <rect x="4.6" y="11" width="11.2" height="2.4" rx=".4" />
+    {/* Trois pistons sur le tube */}
+    <rect x="6.6"  y="7.8" width="1.6" height="6.2" rx=".3" />
+    <rect x="9.6"  y="7.8" width="1.6" height="6.2" rx=".3" />
+    <rect x="12.6" y="7.8" width="1.6" height="6.2" rx=".3" />
+    {/* Pavillon évasé à droite */}
+    <path d="M15.4 9.2 22.5 5.6V18.4l-7.1-3.6Z" />
+    {/* Reflet brillant sur le pavillon */}
+    <path d="M16.6 10.4l4-2v7.2l-4-2Z" fill="#edbd55" />
+  </svg>
+);
+
+/* Icônes de la bande "Moyens de participation" */
+const IconCash = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"
+       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="2" y="6" width="20" height="12" rx="2" />
+    <circle cx="12" cy="12" r="2.5" />
+    <path d="M5 9.5h.01M19 14.5h.01" />
+  </svg>
+);
+
+const IconBank = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"
+       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M3 21h18" />
+    <path d="M3 10h18" />
+    <path d="M5 6l7-3 7 3" />
+    <path d="M4 10v11" />
+    <path d="M20 10v11" />
+    <path d="M8 14v3" />
+    <path d="M12 14v3" />
+    <path d="M16 14v3" />
+  </svg>
+);
+
+const IconOnline = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"
+       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="2" y="4" width="20" height="14" rx="2" />
+    <line x1="8" y1="22" x2="16" y2="22" />
+    <line x1="12" y1="18" x2="12" y2="22" />
+    <path d="M12 14l-2.6-2.6a1.6 1.6 0 0 1 2.6-1.85 1.6 1.6 0 0 1 2.6 1.85L12 14z" fill="currentColor" />
+  </svg>
+);
+
+/* ────────────────────────────────────────────────────────────────────
+   IMAGES DE FOND — bande "Ensemble allons plus loin"
+   2 visuels rotatifs choisis aléatoirement à chaque chargement.
+   ──────────────────────────────────────────────────────────────────── */
+const BAND_BG_URLS = [
+  '/images/nehemie/nehemi-1.jpg',
+  '/images/nehemie/nehemi-2.jpg',
+];
+
+/* ────────────────────────────────────────────────────────────────────
    AUTO-DISCOVERY DES IMAGES — galerie « Notre futur lieu de culte »
    Toute image (.png, .jpg, .jpeg, .webp) déposée dans
    src/assets/nehemie/ est automatiquement incluse dans la galerie.
@@ -43,11 +141,20 @@ export default function Nehemie() {
 
   const pct = Math.round((projetNehemie.collecte / projetNehemie.objectif) * 100);
   const restant = projetNehemie.objectif - projetNehemie.collecte;
+  const whyItems = t('nehemie.whyItems', { returnObjects: true }) as string[];
+  const buildItems = t('nehemie.buildItems', { returnObjects: true }) as string[];
+  const participationItems = t('nehemie.participationItems', { returnObjects: true }) as string[];
 
   // Lightbox state
   const [lbIndex, setLbIndex] = useState<number | null>(null);
   const openLightbox = (i: number) => setLbIndex(i);
   const closeLightbox = () => setLbIndex(null);
+
+  // Image de fond de la bande "Ensemble allons plus loin" — choisie
+  // une seule fois au montage (= rotation à chaque rafraîchissement).
+  const [bandBg] = useState(
+    () => BAND_BG_URLS[Math.floor(Math.random() * BAND_BG_URLS.length)],
+  );
 
   return (
     <main id="main-content">
@@ -98,10 +205,13 @@ export default function Nehemie() {
             <h2 className={styles.contentTitle}>{t('nehemie.contentTitle')}</h2>
           </div>
 
-          <div className={styles.actionGrid}>
-            <div className={styles.colAvancement}>
-              <p className={styles.colEyebrow}>{t('nehemie.avancementEyebrow')}</p>
+          <div className={styles.projectBoard}>
+            <div className={styles.objectivePanel}>
+              <p className={styles.boardEyebrow}>{t('nehemie.avancementEyebrow')}</p>
+              <h3 className={styles.objectiveTitle}>{t('nehemie.objectiveTitle')}</h3>
+            </div>
 
+            <div className={styles.progressPanel}>
               <div className={styles.stats}>
                 <div className={styles.stat}>
                   <p className={styles.statLabel}>{t('nehemie.objectif')}</p>
@@ -131,38 +241,107 @@ export default function Nehemie() {
                 </div>
               </div>
 
-              <a href="mailto:tresorier@rst-vitry.fr" className={styles.colCta}>
-                {t('actions.voirTableau')}
-              </a>
-            </div>
-
-            <div className={styles.colParticiper}>
-              <p className={styles.participerEyebrow}>{t('nehemie.participerEyebrow')}</p>
-              <div className={styles.participerItems}>
-                <div className={styles.participerItem}>
-                  <p className={styles.participerLabel}>{t('nehemie.participer.priezLabel')}</p>
-                  <p className={styles.participerDesc}>{t('nehemie.participer.priezDesc')}</p>
-                </div>
-                <div className={styles.participerItem}>
-                  <p className={styles.participerLabel}>{t('nehemie.participer.partagezLabel')}</p>
-                  <p className={styles.participerDesc}>{t('nehemie.participer.partagezDesc')}</p>
-                </div>
-                <div className={styles.participerItem}>
-                  <p className={styles.participerLabel}>{t('nehemie.participer.donnezLabel')}</p>
-                  <p className={styles.participerDesc}>{t('nehemie.participer.donnezDesc')}</p>
-                </div>
-              </div>
-              <a href="mailto:tresorier@rst-vitry.fr" className={styles.donBtn}>
-                {t('nehemie.donCta')}
-              </a>
+              <p className={styles.progressNote}>{t('nehemie.progressNote')}</p>
             </div>
           </div>
+
+          <div className={styles.projectInfoGrid}>
+            <article className={styles.infoCard}>
+              <span className={styles.infoIcon} aria-hidden="true">{IconUsers}</span>
+              <h3>{t('nehemie.whyTitle')}</h3>
+              <ul>
+                {whyItems.map((item) => <li key={item}>{item}</li>)}
+              </ul>
+            </article>
+            <article className={styles.infoCard}>
+              <span className={styles.infoIcon} aria-hidden="true">{IconBricks}</span>
+              <h3>{t('nehemie.buildTitle')}</h3>
+              <ul>
+                {buildItems.map((item) => <li key={item}>{item}</li>)}
+              </ul>
+            </article>
+            <article className={styles.infoCard}>
+              <span className={styles.infoIcon} aria-hidden="true">{IconHandHeart}</span>
+              <h3>{t('nehemie.participationTitle')}</h3>
+              <ul>
+                {participationItems.map((item) => <li key={item}>{item}</li>)}
+              </ul>
+            </article>
+            <article className={`${styles.infoCard} ${styles.infoCardCall}`}>
+              <span className={styles.infoIcon} aria-hidden="true">{IconTrumpet}</span>
+              <h3>{t('nehemie.appealTitle')}</h3>
+              <p>{t('nehemie.appealText')}</p>
+              <strong>{t('nehemie.appealVerse')}</strong>
+              <small>{t('nehemie.appealRef')}</small>
+            </article>
+          </div>
+
+        </div>{/* fin .contentInner — la bande déborde en pleine largeur */}
+
+        {/* ══════════════════════════════════════════════════════════
+            BANDE "Ensemble, allons plus loin" — pleine largeur,
+            image de fond rotative, voile sombre, 3 colonnes
+            ══════════════════════════════════════════════════════════ */}
+        <div
+          className={styles.participationBand}
+          style={{ backgroundImage: `url(${asset(bandBg)})` }}
+        >
+          <div className={styles.participationOverlay} aria-hidden="true" />
+          <div className={styles.participationInner}>
+
+            <div className={styles.bandBlock}>
+              <h3>{t('nehemie.goFurtherTitle')}</h3>
+              <p>{t('nehemie.goFurtherText')}</p>
+              <strong className={styles.bandVerse}>{t('nehemie.goFurtherVerse')}</strong>
+              <span className={styles.bandRef}>{t('nehemie.goFurtherRef')}</span>
+            </div>
+
+            <div className={styles.bandBlock}>
+              <h3>{t('nehemie.followTitle')}</h3>
+              <p>{t('nehemie.followText')}</p>
+            </div>
+
+            <div className={styles.bandBlock}>
+              <h3>{t('nehemie.waysTitle')}</h3>
+              <ul className={styles.payList}>
+                <li className={styles.payItem}>
+                  <span className={styles.payIcon}>{IconCash}</span>
+                  <span className={styles.payLabel}>{t('nehemie.payCashLbl')}</span>
+                </li>
+                <li className={styles.payItem}>
+                  <span className={styles.payIcon}>{IconBank}</span>
+                  <span className={styles.payLabel}>{t('nehemie.payBankLbl')}</span>
+                </li>
+                <li className={styles.payItem}>
+                  <span className={styles.payIcon}>{IconOnline}</span>
+                  <span className={styles.payLabel}>{t('nehemie.payOnlineLbl')}</span>
+                </li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Bouton "Faire un don" centré sous la bande */}
+        <div className={styles.donCtaWrap}>
+          <a href={`mailto:${t('nehemie.contactEmail')}`} className={styles.donBtn}>
+            {t('nehemie.donCta')}
+          </a>
+        </div>
+
+        <div className={styles.contentInner}>{/* reprise du conteneur étroit */}
 
           <div className={styles.futurePanel}>
             <div className={styles.futureCopy}>
               <p className={styles.colEyebrow}>{t('nehemie.futurEyebrow')}</p>
               <h3 className={styles.futureTitle}>{t('nehemie.futurTitre')}</h3>
-              <p className={styles.futureCaption}>{t('nehemie.futurCaption')}</p>
+            <p className={styles.futureCaption}>{t('nehemie.futurCaption')}</p>
+              <div className={styles.futureContact}>
+                <a href={`mailto:${t('nehemie.contactEmail')}`}>{t('nehemie.contactEmail')}</a>
+                <a href={`tel:${String(t('nehemie.contactPhone')).replace(/\s/g, '')}`}>
+                  {t('nehemie.contactPhone')}
+                </a>
+              </div>
             </div>
 
             {/* Galerie : 3 vignettes visibles maximum (1 grande + 2 verticales).

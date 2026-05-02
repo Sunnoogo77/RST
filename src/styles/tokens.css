@@ -15,7 +15,7 @@
   --paper:      #FFFFFF;   /* fond principal */
   --paper-2:    #F4F1EA;   /* fond crème — citations Branham, encadrés */
 
-  --accent:     #1E47A1;   /* BLEU RST — actions, dons, CTA majeurs */
+  --accent:     #15364B;   /* BLEU RST — actions, dons, CTA majeurs */
   --note:       #C8332A;   /* ROUGE RST — vidéo, live, YouTube UNIQUEMENT */
 
   /* ----------------------------------------------------------
@@ -74,7 +74,7 @@
   ---------------------------------------------------------- */
   --shadow-soft:     0 1px 2px rgba(0, 0, 0, .04), 0 4px 12px rgba(0, 0, 0, .06);
   --shadow-red-soft: 0 4px 16px rgba(200, 51, 42, .28);
-  --shadow-blue-soft: 0 4px 16px rgba(30, 71, 161, .22);
+  --shadow-blue-soft: 0 4px 16px rgba(21, 54, 75, .22);
 
   /* ----------------------------------------------------------
      Header

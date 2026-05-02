@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Header from './components/layout/Header/Header';
 import Footer from './components/layout/Footer/Footer';
 import Accueil from './routes/Accueil';
@@ -31,9 +32,21 @@ import DesignSystem from './routes/DesignSystem';
  */
 const ROUTER_BASENAME = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
 
+function ScrollToTop() {
+  const { pathname, search, hash } = useLocation();
+
+  useEffect(() => {
+    if (hash) return;
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [pathname, search, hash]);
+
+  return null;
+}
+
 export default function App() {
   return (
     <BrowserRouter basename={ROUTER_BASENAME}>
+      <ScrollToTop />
       <Header />
       <Routes>
         <Route path="/" element={<Accueil />} />

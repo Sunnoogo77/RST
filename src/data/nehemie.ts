@@ -3,8 +3,8 @@ import type { ProjetNehemie } from '../types';
 // Chiffres issus du wireframe (figés pour la présentation).
 // La jauge de progression est calculée dynamiquement : collecte / objectif.
 export const projetNehemie: ProjetNehemie = {
-  objectif: 50000,
-  collecte: 12500,
+  objectif: 500000,
+  collecte: 54259,
   devise: '€',
   miseAJour: '2026-04-27',
 
