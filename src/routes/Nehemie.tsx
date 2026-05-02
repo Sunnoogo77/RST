@@ -276,24 +276,60 @@ export default function Nehemie() {
             </article>
           </div>
 
-          <div className={styles.participationBand}>
+        </div>{/* fin .contentInner — la bande déborde en pleine largeur */}
+
+        {/* ══════════════════════════════════════════════════════════
+            BANDE "Ensemble, allons plus loin" — pleine largeur,
+            image de fond rotative, voile sombre, 3 colonnes
+            ══════════════════════════════════════════════════════════ */}
+        <div
+          className={styles.participationBand}
+          style={{ backgroundImage: `url(${asset(bandBg)})` }}
+        >
+          <div className={styles.participationOverlay} aria-hidden="true" />
+          <div className={styles.participationInner}>
+
             <div className={styles.bandBlock}>
               <h3>{t('nehemie.goFurtherTitle')}</h3>
               <p>{t('nehemie.goFurtherText')}</p>
-              <strong>{t('nehemie.goFurtherVerse')}</strong>
+              <strong className={styles.bandVerse}>{t('nehemie.goFurtherVerse')}</strong>
+              <span className={styles.bandRef}>{t('nehemie.goFurtherRef')}</span>
             </div>
+
             <div className={styles.bandBlock}>
               <h3>{t('nehemie.followTitle')}</h3>
               <p>{t('nehemie.followText')}</p>
             </div>
+
             <div className={styles.bandBlock}>
               <h3>{t('nehemie.waysTitle')}</h3>
-              <p>{t('nehemie.waysText')}</p>
-              <a href={`mailto:${t('nehemie.contactEmail')}`} className={styles.donBtn}>
-                {t('nehemie.donCta')}
-              </a>
+              <ul className={styles.payList}>
+                <li className={styles.payItem}>
+                  <span className={styles.payIcon}>{IconCash}</span>
+                  <span className={styles.payLabel}>{t('nehemie.payCashLbl')}</span>
+                </li>
+                <li className={styles.payItem}>
+                  <span className={styles.payIcon}>{IconBank}</span>
+                  <span className={styles.payLabel}>{t('nehemie.payBankLbl')}</span>
+                </li>
+                <li className={styles.payItem}>
+                  <span className={styles.payIcon}>{IconOnline}</span>
+                  <span className={styles.payLabel}>{t('nehemie.payOnlineLbl')}</span>
+                </li>
+              </ul>
             </div>
+
           </div>
+        </div>
+
+        {/* Bouton "Faire un don" centré sous la bande */}
+        <div className={styles.donCtaWrap}>
+          <a href={`mailto:${t('nehemie.contactEmail')}`} className={styles.donBtn}>
+            {t('nehemie.donCta')}
+          </a>
+        </div>
+
+        <div className={styles.contentInner}>{/* reprise du conteneur étroit */}
 
           <div className={styles.futurePanel}>
             <div className={styles.futureCopy}>
