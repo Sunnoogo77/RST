@@ -1,5 +1,6 @@
 import { Link, useParams, Navigate } from 'react-router-dom';
 import { annonces } from '../../data/annonces';
+import { asset } from '../../utils/asset';
 import type { AnnonceType } from '../../types';
 import styles from './AnnonceDetail.module.css';
 
@@ -89,7 +90,7 @@ export default function AnnonceDetail() {
       {annonce.affiche && (
         <section className={styles.posterSection} aria-label="Affiche officielle">
           <div className={styles.posterFrame}>
-            <img src={annonce.affiche} alt={`Affiche — ${annonce.titre}`} />
+            <img src={asset(annonce.affiche)} alt={`Affiche — ${annonce.titre}`} />
           </div>
 
           <div className={styles.posterActions}>
@@ -131,7 +132,7 @@ export default function AnnonceDetail() {
                                           styles.imgMedium;
               return (
                 <figure key={i} className={`${styles.reportFig} ${sizeCls}`}>
-                  <img src={block.src} alt={block.alt ?? ''} loading="lazy" />
+                  <img src={asset(block.src)} alt={block.alt ?? ''} loading="lazy" />
                 </figure>
               );
             })}

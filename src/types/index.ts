@@ -19,17 +19,6 @@ export interface RendezVous {
 }
 
 /* ----------------------------------------------------------
-   Hero portrait (rotation aléatoire)
----------------------------------------------------------- */
-export interface MessageHero {
-  id: string;
-  src: string;          // chemin relatif depuis public/ ou import
-  alt: string;
-  credit?: string;
-  objectPosition?: string; // CSS object-position pour cadrer le sujet
-}
-
-/* ----------------------------------------------------------
    Sermons / Prédications
 ---------------------------------------------------------- */
 export interface PassageBiblique {
@@ -238,18 +227,6 @@ export interface GenesePage {
   sousTitre?: string;        // sous-titre éditorial sous le H1
   publieLe: string;          // ISO « 2005-11-10 » — date archive d'origine
   blocs: GeneseBlock[];
-}
-
-/* ----------------------------------------------------------
-   Équipe / Piliers liturgiques
----------------------------------------------------------- */
-export type PilierFonction = 'pasteur' | 'musique' | 'ecole-dimanche' | 'huissiers';
-
-export interface MembreEquipe {
-  id: string;
-  nom: string;
-  fonction: PilierFonction;
-  photo?: string;
 }
 
 /* ----------------------------------------------------------

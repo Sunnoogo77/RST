@@ -1,9 +1,13 @@
+import { useTranslation } from 'react-i18next';
+import { asset } from '../../../utils/asset';
 import styles from './Footer.module.css';
 
 const MAPS_URL =
   'https://maps.google.com/?q=64+avenue+du+Groupe+Manouchian+94400+Vitry-sur-Seine';
 
 export default function Footer() {
+  const { t } = useTranslation();
+
   return (
     <footer className={styles.footer}>
       <div className={styles.inner}>
@@ -11,22 +15,22 @@ export default function Footer() {
         {/* Colonne 1 — Identité */}
         <div className={styles.col}>
           <img
-            src="/logo-rst.png"
-            alt="Roc Séculaire Tabernacle"
+            src={asset('/logo-rst.png')}
+            alt={t('accessibility.logoAlt')}
             className={styles.logoImg}
             width={120}
             height={75}
           />
           <p className={styles.phrase}>
-            Assemblée chrétienne<br/>Roc Séculaire Tabernacle.
+            {t('footer.identitePhrase1')}<br />{t('footer.identitePhrase2')}
           </p>
         </div>
 
         {/* Colonne 2 — Localisation */}
         <div className={styles.col}>
-          <p className={styles.colLabel}>Localisation</p>
+          <p className={styles.colLabel}>{t('footer.localisation')}</p>
           <address className={styles.adresse}>
-            <span>Salle 2&nbsp;: Bacchus</span>
+            <span>{t('footer.salle')}</span>
             <span>64 av. du Groupe Manouchian</span>
             <span>94400 Vitry-sur-Seine</span>
           </address>
@@ -36,32 +40,32 @@ export default function Footer() {
             rel="noopener noreferrer"
             className={styles.mapLink}
           >
-            Voir sur Google Maps →
+            {t('footer.voirMaps')}
           </a>
         </div>
 
         {/* Colonne 3 — Horaires */}
         <div className={styles.col}>
-          <p className={styles.colLabel}>Horaires</p>
+          <p className={styles.colLabel}>{t('footer.horaires')}</p>
           <ul className={styles.schedule}>
             <li>
-              <span className={styles.schedDay}>Mercredi</span>
-              <span className={styles.schedTime}>19H00 — 21H00 · Culte</span>
+              <span className={styles.schedDay}>{t('footer.schedule.wed')}</span>
+              <span className={styles.schedTime}>{t('footer.schedule.wedTime')}</span>
             </li>
             <li>
-              <span className={styles.schedDay}>Dimanche</span>
-              <span className={styles.schedTime}>09H00 — 12H30 · Culte</span>
+              <span className={styles.schedDay}>{t('footer.schedule.sun')}</span>
+              <span className={styles.schedTime}>{t('footer.schedule.sunTime')}</span>
             </li>
             <li>
-              <span className={styles.schedDay}>Vendredi</span>
-              <span className={styles.schedTime}>dès 19H00 · Réunion de prière</span>
+              <span className={styles.schedDay}>{t('footer.schedule.fri')}</span>
+              <span className={styles.schedTime}>{t('footer.schedule.friTime')}</span>
             </li>
           </ul>
         </div>
 
         {/* Colonne 4 — Secrétariat */}
         <div className={styles.col}>
-          <p className={styles.colLabel}>Secrétariat de l'Église</p>
+          <p className={styles.colLabel}>{t('footer.secretariat')}</p>
           <div className={styles.contactLinks}>
             <a href="tel:+33000000000" className={styles.contactLink}>
               +33 0 00 00 00 00
@@ -75,7 +79,7 @@ export default function Footer() {
               rel="noopener noreferrer"
               className={styles.ytLink}
             >
-              Chaîne YouTube →
+              {t('footer.youtube')}
             </a>
           </div>
         </div>
@@ -83,7 +87,7 @@ export default function Footer() {
       </div>
 
       <div className={styles.legal}>
-        <p>© {new Date().getFullYear()} Roc Séculaire Tabernacle · Vitry-sur-Seine</p>
+        <p>{t('footer.legal', { year: new Date().getFullYear() })}</p>
       </div>
     </footer>
   );

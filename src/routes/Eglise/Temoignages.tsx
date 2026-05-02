@@ -1,8 +1,11 @@
+import { useTranslation } from 'react-i18next';
 import { temoignages } from '../../data/temoignages';
+import { asset } from '../../utils/asset';
 import styles from './Temoignages.module.css';
 
 export default function Temoignages() {
-  const detail = temoignages.find(t => t.detail)?.detail;
+  const { t } = useTranslation();
+  const detail = temoignages.find((tem) => tem.detail)?.detail;
 
   return (
     <div>
@@ -10,14 +13,11 @@ export default function Temoignages() {
       {/* ── HERO ───────────────────────────────────────────────── */}
       <section className={styles.hero}>
         <div className={styles.heroInner}>
-          <div className={styles.eyebrow}>Mur des témoignages</div>
+          <div className={styles.eyebrow}>{t('eglise.temoignages.eyebrow')}</div>
           <h1 className={styles.heroTitle}>
-            Ce que Dieu<br /><em>a fait parmi nous.</em>
+            {t('eglise.temoignages.titreLine1')}<br /><em>{t('eglise.temoignages.titreLine2')}</em>
           </h1>
-          <p className={styles.heroLede}>
-            Pas de notes. Pas d'étoiles. Juste des récits — courts ou longs, anonymes
-            ou nommés. Le témoignage est un récit pastoral, pas une recommandation.
-          </p>
+          <p className={styles.heroLede}>{t('eglise.temoignages.lede')}</p>
         </div>
       </section>
 
@@ -50,7 +50,7 @@ export default function Temoignages() {
           return (
             <article className={`${styles.tem} ${styles.temIllu} ${styles.temI1}`}>
               <div className={styles.temImg}>
-                {t.image && <img src={t.image} alt="" />}
+                {t.image && <img src={asset(t.image)} alt="" />}
               </div>
               <div className={styles.temContent}>
                 <div className={styles.temEyebrow}>{t.eyebrow}</div>
@@ -110,7 +110,7 @@ export default function Temoignages() {
           return (
             <article className={`${styles.tem} ${styles.temIllu} ${styles.temI2}`}>
               <div className={styles.temImg}>
-                {t.image && <img src={t.image} alt="" />}
+                {t.image && <img src={asset(t.image)} alt="" />}
               </div>
               <div className={styles.temContent}>
                 <div className={styles.temEyebrow}>{t.eyebrow}</div>

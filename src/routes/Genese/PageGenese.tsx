@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Eyebrow } from '../../components/ui/Eyebrow/Eyebrow';
 import { HairlineDivider } from '../../components/ui/HairlineDivider/HairlineDivider';
+import { asset } from '../../utils/asset';
 import type { GeneseBlock, GenesePage } from '../../types';
 import styles from './PageGenese.module.css';
 
@@ -77,7 +78,7 @@ function renderBlock(block: GeneseBlock, idx: number, prevWasFirst: boolean): JS
       return (
         <figure key={idx} className={styles.figure}>
           <img
-            src={block.src}
+            src={asset(block.src ?? '')}
             alt={block.alt ?? ''}
             className={styles.figureImg}
             loading="lazy"

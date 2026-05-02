@@ -24,9 +24,16 @@ import Temoignages from './routes/Eglise/Temoignages';
 import NotFound from './routes/NotFound';
 import DesignSystem from './routes/DesignSystem';
 
+/**
+ * basename : Vite expose le base path via import.meta.env.BASE_URL
+ * (toujours terminé par '/'). React Router attend un basename SANS
+ * trailing slash, sauf '/'. On gère les deux cas.
+ */
+const ROUTER_BASENAME = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
+
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={ROUTER_BASENAME}>
       <Header />
       <Routes>
         <Route path="/" element={<Accueil />} />

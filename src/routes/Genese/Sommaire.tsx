@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Eyebrow } from '../../components/ui/Eyebrow/Eyebrow';
 import { HairlineDivider } from '../../components/ui/HairlineDivider/HairlineDivider';
 import { PILIERS_GENESE, EVENEMENTS_GENESE } from '../../data/genese';
+import { asset } from '../../utils/asset';
 import type { GenesePage } from '../../types';
 import styles from './Sommaire.module.css';
 
@@ -59,7 +60,7 @@ export default function Sommaire() {
                   <Link to={`/genese/${p.slug}`} className={styles.pilierLink}>
                     <div className={styles.pilierFigure}>
                       {img ? (
-                        <img src={img} alt="" className={styles.pilierImg} loading="lazy" />
+                        <img src={asset(img)} alt="" className={styles.pilierImg} loading="lazy" />
                       ) : (
                         <div className={styles.pilierImgFallback} aria-hidden="true">
                           <span>{num}</span>
@@ -106,7 +107,7 @@ export default function Sommaire() {
                 <Link key={e.id} to={`/genese/${e.slug}`} className={styles.evenementCard}>
                   {img && (
                     <div className={styles.evenementFigure}>
-                      <img src={img} alt="" className={styles.evenementImg} loading="lazy" />
+                      <img src={asset(img)} alt="" className={styles.evenementImg} loading="lazy" />
                     </div>
                   )}
                   <div className={styles.evenementBody}>

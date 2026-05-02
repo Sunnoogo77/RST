@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { sermons } from '../../data/sermons';
 import type { Sermon } from '../../types';
 import { youtubeEmbedUrl } from '../../utils/youtube';
@@ -65,6 +66,7 @@ const TAB_LABELS: Record<TabId, string> = {
 };
 
 export default function Cultes() {
+  const { t } = useTranslation();
   const [selectedId, setSelectedId] = useState(sermons[0].id);
   const [activeTab, setActiveTab] = useState<TabId>('passages');
   const [sortFilter, setSortFilter] = useState('date');
@@ -83,24 +85,18 @@ export default function Cultes() {
       {/* ══════════════════════════════════════════════════════════
           HERO
           ══════════════════════════════════════════════════════════ */}
-      <section className={styles.hero} aria-label="Les prédications de l'assemblée">
+      <section className={styles.hero} aria-label={t('eglise.cultes.eyebrow')}>
         <div className={styles.heroInner}>
-          <div className={styles.eyebrow}>Les prédications de l'assemblée</div>
+          <div className={styles.eyebrow}>{t('eglise.cultes.eyebrow')}</div>
           <h1 className={styles.heroTitle}>
-            « La foi vient de ce qu'on entend,<br/>
-            <em>et ce qu'on entend vient de la Parole. »</em>
+            {t('eglise.cultes.titreLine1')}<br/>
+            <em>{t('eglise.cultes.titreLine2')}</em>
           </h1>
-          <div className={styles.heroRef}>Romains 10 . 17</div>
-          <p className={styles.heroLede}>
-            Chaque culte est conservé ici comme un objet d'étude — vidéo, passages bibliques cités,
-            citations du prophète et plan structurel rassemblés dans une seule fiche, pour la lecture,
-            la méditation et le partage.
-          </p>
+          <div className={styles.heroRef}>{t('eglise.cultes.ref')}</div>
+          <p className={styles.heroLede}>{t('eglise.cultes.lede')}</p>
           <blockquote className={styles.heroBran}>
-            « La Parole prêchée est la semence ; elle ne tombe pas par terre, elle reste, elle germe à son temps. »
-            <cite className={styles.heroBranCite}>
-              — W. M. Branham · THE SPOKEN WORD IS THE ORIGINAL SEED · 62-0318M
-            </cite>
+            {t('eglise.cultes.branText')}
+            <cite className={styles.heroBranCite}>{t('eglise.cultes.branCite')}</cite>
           </blockquote>
         </div>
       </section>

@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { vlogSemaine } from '../../data/vlog-semaine';
 import { imagesSemaine } from '../../data/images-semaine';
 import { annonces } from '../../data/annonces';
 import { youtubeEmbedUrl, youtubeThumbnail } from '../../utils/youtube';
+import { asset } from '../../utils/asset';
 import styles from './CetteSemaine.module.css';
 
 /* ── helpers date ───────────────────────────────────────────── */
@@ -23,20 +25,23 @@ function formatAnnonceDate(iso: string): string {
 }
 
 export default function CetteSemaine() {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language === 'en' ? 'en-US' : 'fr-FR';
+
   const [heroPlaying, setHeroPlaying] = useState(false);
   const heroEmbed = youtubeEmbedUrl(vlogSemaine.replayUrl, { autoplay: true });
   const heroThumb = youtubeThumbnail(vlogSemaine.replayUrl);
 
   const date = new Date(vlogSemaine.date + 'T12:00:00');
 
-  const jourUp   = date.toLocaleDateString('fr-FR', { weekday: 'long' }).toUpperCase();
+  const jourUp   = date.toLocaleDateString(locale, { weekday: 'long' }).toUpperCase();
   const dd       = String(date.getDate()).padStart(2, '0');
   const mm       = String(date.getMonth() + 1).padStart(2, '0');
   const dateCode = `${dd}.${mm}.${date.getFullYear()}`;
 
-  const jourCap  = date.toLocaleDateString('fr-FR', { weekday: 'long' });
+  const jourCap  = date.toLocaleDateString(locale, { weekday: 'long' });
   const jourCapF = jourCap.charAt(0).toUpperCase() + jourCap.slice(1);
-  const dateSans = date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  const dateSans = date.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
 
   const semaineNum = getWeekNumber(date);
 
@@ -72,13 +77,13 @@ export default function CetteSemaine() {
               <button
                 className={styles.heroPlay}
                 onClick={() => heroEmbed && setHeroPlaying(true)}
-                aria-label="Regarder le replay"
+                aria-label={t('eglise.cetteSemaine.playReplay')}
                 disabled={!heroEmbed}
               >
                 <span className={styles.heroPlayIcon} aria-hidden="true">▶</span>
               </button>
-              <div className={styles.heroBadgeReplay} aria-label="Replay du dernier culte">
-                REPLAY
+              <div className={styles.heroBadgeReplay} aria-label={t('eglise.cetteSemaine.playReplay')}>
+                {t('eglise.cetteSemaine.badgeReplay')}
               </div>
             </>
           )}
@@ -87,7 +92,7 @@ export default function CetteSemaine() {
         {/* Droite : informations sermon */}
         <div className={styles.heroContent}>
           <p className={styles.heroMeta}>
-            MIS À JOUR &nbsp;·&nbsp; {jourUp} {dateCode}
+            {t('eglise.cetteSemaine.majLbl').toUpperCase()} &nbsp;·&nbsp; {jourUp} {dateCode}
           </p>
           <h1 className={styles.heroTitre}>
             {vlogSemaine.titreMessage}
@@ -108,9 +113,9 @@ export default function CetteSemaine() {
       {/* ══════════════════════════════════════════════════════════
           FIL DU MESSAGE
           ══════════════════════════════════════════════════════════ */}
-      <section className={styles.fil} aria-label="Fil du message">
+      <section className={styles.fil} aria-label={t('eglise.cetteSemaine.filMessage')}>
         <div className={styles.filInner}>
-          <p className={styles.filLabel}>LE FIL DU MESSAGE</p>
+          <p className={styles.filLabel}>{t('eglise.cetteSemaine.filMessage').toUpperCase()}</p>
           <p className={styles.filTexte}>{vlogSemaine.filDuMessage.paragraphe1}</p>
         </div>
       </section>
@@ -118,15 +123,15 @@ export default function CetteSemaine() {
       {/* ══════════════════════════════════════════════════════════
           GALERIE — grille asymétrique 6 photos
           ══════════════════════════════════════════════════════════ */}
-      <section className={styles.galerie} aria-label="Photos de la semaine">
+      <section className={styles.galerie} aria-label={t('eglise.cetteSemaine.galerieTitre')}>
         <div className={styles.galerieInner}>
           <div className={styles.galerieHeader}>
-            <h2 className={styles.galerieTitre}>Images de la semaine</h2>
+            <h2 className={styles.galerieTitre}>{t('eglise.cetteSemaine.galerieTitre')}</h2>
             <p className={styles.galerieMeta}>
-              SEMAINE {semaineNum} &nbsp;·&nbsp; {imagesSemaine.length} PHOTOS
+              {t('eglise.cetteSemaine.galerieMeta', { n: semaineNum, count: imagesSemaine.length }).toUpperCase()}
             </p>
           </div>
-          <div className={styles.galerieGrid} role="list" aria-label="Galerie photos">
+          <div className={styles.galerieGrid} role="list" aria-label={t('eglise.cetteSemaine.galerieTitre')}>
             {imagesSemaine.map((img) => {
               const isPlaceholder = img.src.includes('placeholder');
               return (
@@ -134,12 +139,12 @@ export default function CetteSemaine() {
                   {isPlaceholder ? (
                     <div className={styles.galeriePlaceholder} aria-label={img.caption}>
                       <span className={styles.galeriePlaceholderLabel} aria-hidden="true">
-                        PHOTO · À FOURNIR
+                        {t('eglise.cetteSemaine.galeriePlaceholder').toUpperCase()}
                       </span>
                     </div>
                   ) : (
                     <img
-                      src={img.src}
+                      src={asset(img.src)}
                       alt={img.caption}
                       className={styles.galerieImg}
                       loading="lazy"
@@ -150,7 +155,7 @@ export default function CetteSemaine() {
             })}
           </div>
           <p className={styles.galerieNote} aria-hidden="true">
-            grille asymétrique · {imagesSemaine.length} placeholders · l'équipe média remplace après chaque culte
+            {t('eglise.cetteSemaine.galerieNote', { count: imagesSemaine.length })}
           </p>
         </div>
       </section>
@@ -158,27 +163,27 @@ export default function CetteSemaine() {
       {/* ══════════════════════════════════════════════════════════
           CANTIQUE SPÉCIAL + TÉMOIGNAGE
           ══════════════════════════════════════════════════════════ */}
-      <section className={styles.duo} aria-label="Cantique et témoignage de la semaine">
+      <section className={styles.duo} aria-label={`${t('eglise.cetteSemaine.cantiqueLabel')} · ${t('eglise.cetteSemaine.temoignageLabel')}`}>
         <div className={styles.duoInner}>
 
           {/* Cantique */}
           <div className={styles.duoCantique}>
-            <p className={styles.duoLabel}>CANTIQUE SPÉCIAL</p>
+            <p className={styles.duoLabel}>{t('eglise.cetteSemaine.cantiqueLabel').toUpperCase()}</p>
             <h2 className={styles.duoCantiqueTitre}>{vlogSemaine.cantiqueSemaine.titre}</h2>
-            <div className={styles.duoPlayer} aria-label="Lecteur vidéo">
+            <div className={styles.duoPlayer} aria-label={t('eglise.cetteSemaine.playCantique')}>
               {(() => {
                 const embed = youtubeEmbedUrl(vlogSemaine.cantiqueSemaine.videoUrl);
                 return embed ? (
                   <iframe
                     className={styles.duoIframe}
                     src={embed}
-                    title={`Cantique — ${vlogSemaine.cantiqueSemaine.titre}`}
+                    title={`${t('eglise.cetteSemaine.cantiqueLabel')} — ${vlogSemaine.cantiqueSemaine.titre}`}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
                     loading="lazy"
                   />
                 ) : (
-                  <button className={styles.duoPlayerBtn} aria-label="Lire le cantique">
+                  <button className={styles.duoPlayerBtn} aria-label={t('eglise.cetteSemaine.playCantique')}>
                     <span className={styles.duoPlayerIcon} aria-hidden="true">▶</span>
                   </button>
                 );
@@ -189,7 +194,7 @@ export default function CetteSemaine() {
 
           {/* Témoignage */}
           <div className={styles.duoTemoignage}>
-            <p className={styles.duoLabel}>TÉMOIGNAGE DE LA SEMAINE</p>
+            <p className={styles.duoLabel}>{t('eglise.cetteSemaine.temoignageLabel').toUpperCase()}</p>
             <span className={styles.duoGuillemet} aria-hidden="true">❝</span>
             <p className={styles.duoTemoignageTexte}>{vlogSemaine.temoignageSemaine.texte}</p>
             <p className={styles.duoTemoignageAuteur}>
@@ -202,15 +207,15 @@ export default function CetteSemaine() {
       {/* ══════════════════════════════════════════════════════════
           ANNONCES
           ══════════════════════════════════════════════════════════ */}
-      <section className={styles.annonces} aria-label="Annonces de l'assemblée">
+      <section className={styles.annonces} aria-label={t('eglise.cetteSemaine.annoncesTitre')}>
         <div className={styles.annoncesInner}>
           <div className={styles.annoncesHeader}>
             <div>
-              <h2 className={styles.annoncesTitre}>Annonces</h2>
-              <p className={styles.annoncesSubtitre}><em>à venir.</em></p>
+              <h2 className={styles.annoncesTitre}>{t('eglise.cetteSemaine.annoncesTitre')}</h2>
+              <p className={styles.annoncesSubtitre}><em>{t('eglise.cetteSemaine.annoncesSub')}</em></p>
             </div>
             <Link to="/eglise/annonces" className={styles.annoncesLienAll}>
-              VOIR TOUTES LES ANNONCES →
+              {t('eglise.cetteSemaine.voirToutes').toUpperCase()}
             </Link>
           </div>
           <div className={styles.annoncesRule} aria-hidden="true" />

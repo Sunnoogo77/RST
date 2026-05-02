@@ -309,6 +309,14 @@
   display: flex;
   flex-direction: column;
   gap: 28px;
+  transition: max-width .85s cubic-bezier(.4, 0, .2, 1);
+}
+
+/* Mode focus : on garde la même largeur de section.
+   La vidéo se centre, plafonnée à ~960px, et le texte
+   apparaît en dessous, centré. */
+.lastMsgInnerExpanded {
+  max-width: 1280px;
 }
 
 .lastMsgGrid {
@@ -316,6 +324,21 @@
   grid-template-columns: 1.1fr 1fr;
   gap: 56px;
   align-items: start;
+  /* Transition longue et posée — sentir la respiration du passage en mode focus */
+  transition:
+    grid-template-columns .85s cubic-bezier(.4, 0, .2, 1),
+    gap .85s cubic-bezier(.4, 0, .2, 1);
+}
+
+.lastMsgGridExpanded {
+  grid-template-columns: 1fr;
+  gap: 36px;
+  justify-items: center;
+}
+
+.lastMsgVideoExpanded {
+  max-width: 1040px;
+  width: 100%;
 }
 
 /* Lecteur vidéo placeholder */
@@ -328,6 +351,64 @@
   flex-direction: column;
   overflow: hidden;
   cursor: pointer;
+  transition: max-width .85s cubic-bezier(.4, 0, .2, 1);
+}
+
+/* Iframe YouTube — recouvre tout le panneau */
+.lastMsgIframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+/* Miniature YouTube affichée avant le clic */
+.lastMsgThumb {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(.78);
+  pointer-events: none;
+}
+
+/* Mode focus : la copie passe sous la vidéo, centrée, plus aérée */
+.lastMsgCopyExpanded {
+  max-width: 720px;
+  width: 100%;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.lastMsgCopyExpanded .lastMsgTitle {
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.lastMsgCopyExpanded .lastMsgRef {
+  text-align: center;
+}
+
+.lastMsgCopyExpanded .lastMsgActions {
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.lastMsgPredicateur {
+  font-family: var(--f-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0;
 }
 .lastMsgVideo:hover .lastMsgPlayBtn {
   opacity: 0.95;

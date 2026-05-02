@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LivePill } from '../../ui/LivePill/LivePill';
 import { useScrollDirection } from '../../../hooks/useScrollDirection';
+import { asset } from '../../../utils/asset';
 import styles from './Header.module.css';
 
 export default function Header() {
@@ -39,7 +40,7 @@ export default function Header() {
           {/* Logo officiel */}
           <NavLink to="/" className={styles.logo} aria-label={t('accessibility.logoAlt')}>
             <img
-              src="/logo-rst.png"
+              src={asset('/logo-rst.png')}
               alt="Roc Séculaire Tabernacle"
               className={styles.logoImg}
               width={72}

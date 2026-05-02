@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import type { AnnonceStatut, AnnonceType } from '../../types';
 import { annonces } from '../../data/annonces';
+import { asset } from '../../utils/asset';
 import styles from './Annonces.module.css';
 
 type FilterStatut = AnnonceStatut | 'toutes';
@@ -41,6 +43,7 @@ function getMonthLabel(dateStr: string): string {
 }
 
 export default function Annonces() {
+  const { t } = useTranslation();
   const [filterStatut, setFilterStatut] = useState<FilterStatut>('toutes');
   const [filterType,   setFilterType]   = useState<FilterType>('toutes');
 
@@ -116,14 +119,11 @@ export default function Annonces() {
       {/* ── HERO ───────────────────────────────────────────────── */}
       <section className={styles.hero}>
         <div className={styles.heroInner}>
-          <div className={styles.eyebrow}>Bulletin de l'Église</div>
+          <div className={styles.eyebrow}>{t('eglise.annonces.eyebrow')}</div>
           <h1 className={styles.heroTitle}>
-            Ce qui vient,<br /><em>ce qui se prépare.</em>
+            {t('eglise.annonces.titreLine1')}<br /><em>{t('eglise.annonces.titreLine2')}</em>
           </h1>
-          <p className={styles.heroLede}>
-            Réunions, voyages, sorties, occasions exceptionnelles. Le bulletin recense
-            toutes les annonces — passées, du jour, à venir.
-          </p>
+          <p className={styles.heroLede}>{t('eglise.annonces.lede')}</p>
         </div>
       </section>
 
@@ -159,7 +159,7 @@ export default function Annonces() {
             <div className={styles.featuredImg}>
               {(featured.affiche || featured.image) && (
                 <img
-                  src={featured.affiche ?? featured.image}
+                  src={asset(featured.affiche ?? featured.image ?? '')}
                   alt={featured.titre}
                 />
               )}

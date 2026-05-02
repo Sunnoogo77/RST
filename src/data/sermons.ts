@@ -10,12 +10,30 @@ import type { Sermon } from '../types';
 
 export const sermons: Sermon[] = [
 
-  /* ── Février 2026 — service dominical le plus récent ─── */
+  /* ── Avril 2026 — étude biblique du mercredi (la plus récente) ─── */
+  {
+    id: 'demi-chretiens-2026-04-29',
+    titre: 'Nous ne sommes pas des demi-chrétiens.',
+    titleEm: 'des demi-chrétiens.',
+    serie: 'Étude biblique',
+    date: '2026-04-29',
+    heure: '19H30',
+    predicateur: 'Fr. Michel Orodapo',
+    description:
+      "Étude biblique du mercredi à l'assemblée Roc Séculaire Tabernacle, Vitry-sur-Seine.",
+    videoUrl: 'https://www.youtube.com/watch?v=WmhljxW5zUU',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  /* ── Février 2026 — service dominical ─── */
   {
     id: 'cle-de-voute-bible',
     titre: 'La clé de voûte de la Bible',
     titleEm: 'de la Bible',
-    serie: "Étude doctrinale",
+    serie: 'Étude doctrinale',
     date: '2026-02-01',
     heure: '09H00',
     predicateur: 'Rév. Robert Ndaye M.',

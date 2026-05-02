@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cantiques, cantiqueCounts } from '../../data/cantiques';
 import type { CantiqueFamille } from '../../types';
 import { youtubeEmbedUrl, youtubeThumbnail } from '../../utils/youtube';
@@ -31,6 +32,7 @@ const LYRIC_SIZE_CLASSES: Record<LyricSize, string> = {
 /* ── Component ───────────────────────────────────────────── */
 
 export default function Cantiques() {
+  const { t } = useTranslation();
   const featuredId = cantiques.find((c) => c.estVedette)?.id ?? cantiques[0].id;
 
   const [activeFamily, setActiveFamily] = useState<FamilyFilter>('tous');
@@ -86,17 +88,14 @@ export default function Cantiques() {
       {/* ══════════════════════════════════════════════════════════
           HERO
           ══════════════════════════════════════════════════════════ */}
-      <section className={styles.hero} aria-label="L'hymnaire de l'assemblée">
+      <section className={styles.hero} aria-label={t('eglise.cantiques.eyebrow')}>
         <div className={styles.heroInner}>
-          <div className={styles.eyebrow}>L'hymnaire</div>
+          <div className={styles.eyebrow}>{t('eglise.cantiques.eyebrow')}</div>
           <h1 className={styles.heroTitle}>
-            « Que tout ce qui respire<br/><em>loue l'Éternel ! »</em>
+            {t('eglise.cantiques.titreLine1')}<br/><em>{t('eglise.cantiques.titreLine2')}</em>
           </h1>
-          <div className={styles.heroRef}>Psaumes 150 . 6</div>
-          <p className={styles.heroLede}>
-            Les cantiques sont la voix de Roc Séculaire. Ceux du recueil, ceux du Message,
-            ceux qui sont nés ici. Trois familles, un seul hymnaire.
-          </p>
+          <div className={styles.heroRef}>{t('eglise.cantiques.ref')}</div>
+          <p className={styles.heroLede}>{t('eglise.cantiques.lede')}</p>
         </div>
       </section>
 

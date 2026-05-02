@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LivePill } from '../components/ui/LivePill/LivePill';
@@ -6,24 +7,10 @@ import { rendezVous } from '../data/rendez-vous';
 import { sermons } from '../data/sermons';
 import { projetNehemie } from '../data/nehemie';
 import { motDuPasteur } from '../data/genese/mot-du-pasteur';
-import type { RendezVous } from '../types';
+import { youtubeEmbedUrl, youtubeThumbnail } from '../utils/youtube';
+import { asset } from '../utils/asset';
+import type { RendezVous, JourCulte } from '../types';
 import styles from './Accueil.module.css';
-
-const SCHED_LABEL: Record<string, { main: string; addr: string }> = {
-  mercredi: { main: 'Étude biblique',                    addr: 'Salle Bacchus, Vitry-sur-Seine' },
-  dimanche: { main: "Culte d'adoration et prédication",  addr: 'Salle Bacchus, Vitry-sur-Seine' },
-  vendredi: { main: 'Réunion de prière',                 addr: '* lieu différent — nous contacter' },
-};
-
-function schedTime(rv: RendezVous): string {
-  if (rv.jour === 'vendredi') return `dès ${rv.heureDebut}`;
-  if (rv.jour === 'dimanche') return `${rv.heureDebut} — 12H30`;
-  return `${rv.heureDebut} — ${rv.heureFin}`;
-}
-
-function formatMontant(n: number): string {
-  return n.toLocaleString('fr-FR');
-}
 
 const BIBLE_REF_PATTERN =
   /(Zacharie 14:7|Malachie 4:5-6|Luc 17:26-30|Actes 3:17-21|Apocalypse 10:7)/g;
@@ -44,11 +31,36 @@ function renderPastorParagraph(text: string) {
 
 export default function Accueil() {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const locale = i18n.language === 'en' ? 'en-US' : 'fr-FR';
+
+  const schedTime = (rv: RendezVous): string => {
+    if (rv.jour === 'vendredi') return t('accueil.scheduleTime.des', { heure: rv.heureDebut });
+    if (rv.jour === 'dimanche') return t('accueil.scheduleTime.dimanche', { debut: rv.heureDebut });
+    return t('accueil.scheduleTime.interval', { debut: rv.heureDebut, fin: rv.heureFin });
+  };
+
+  const schedMain = (jour: JourCulte): string => {
+    if (jour === 'mercredi') return t('accueil.scheduleLabels.mercrediMain');
+    if (jour === 'dimanche') return t('accueil.scheduleLabels.dimancheMain');
+    return t('accueil.scheduleLabels.vendrediMain');
+  };
+
+  const schedAddr = (jour: JourCulte): string =>
+    jour === 'vendredi'
+      ? t('accueil.scheduleLabels.addrVendredi')
+      : t('accueil.scheduleLabels.addrBacchus');
+
+  const formatMontant = (n: number): string => n.toLocaleString(locale);
 
   const dernierSermon = sermons[0];
+  const dernierEmbed = youtubeEmbedUrl(dernierSermon.videoUrl, { autoplay: true });
+  const dernierThumb = youtubeThumbnail(dernierSermon.videoUrl);
+  const [msgPlaying, setMsgPlaying] = useState(false);
+
   const pct = Math.round((projetNehemie.collecte / projetNehemie.objectif) * 100);
-  const dateSermon = new Date(dernierSermon.date).toLocaleDateString('fr-FR', {
+  const dateSermon = new Date(dernierSermon.date).toLocaleDateString(locale, {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
   });
   const dateLabel = dateSermon.charAt(0).toUpperCase() + dateSermon.slice(1);
@@ -65,9 +77,9 @@ export default function Accueil() {
           {/* Colonne texte — bloc positionné à gauche, contenu centré */}
           <div className={styles.heroText}>
             <div className={styles.heroTextGroup}>
-              <p className={styles.heroAssemblee}>Assemblée Chrétienne</p>
+              <p className={styles.heroAssemblee}>{t('accueil.heroAssemblee')}</p>
               <h1 className={styles.heroTitle}>
-                Roc Séculaire<br/>Tabernacle
+                {t('accueil.heroTitleLine1')}<br/>{t('accueil.heroTitleLine2')}
               </h1>
               <div className={styles.heroCtas}>
                 <LivePill onClick={() => navigate('/eglise')} />
@@ -81,8 +93,8 @@ export default function Accueil() {
           {/* Image du Christ — fixe, à droite */}
           <div className={styles.heroJesus} aria-hidden="true">
             <img
-              src="/images/jesus.jpg"
-              alt="Portrait du Christ"
+              src={asset('/images/jesus.jpg')}
+              alt={t('accessibility.portraitAlt')}
               className={styles.heroJesusImg}
               loading="eager"
             />
@@ -91,29 +103,29 @@ export default function Accueil() {
       </section>
 
       {/* ── PROCHAINES RÉUNIONS ─────────────────────────────────── */}
-      <section className={styles.schedule} aria-label="Prochaines réunions">
+      <section className={styles.schedule} aria-label={t('accueil.scheduleEyebrow')}>
         <div className={styles.schedInner}>
-          <div className={styles.eyebrow}>Prochaines réunions</div>
+          <div className={styles.eyebrow}>{t('accueil.scheduleEyebrow')}</div>
           <h2 className={styles.hSerif}>
-            Nous nous rassemblons<br/><em>trois fois par semaine.</em>
+            {t('accueil.scheduleTitleLine1')}<br/><em>{t('accueil.scheduleTitleLine2')}</em>
           </h2>
 
           <div className={styles.schedGrid}>
             {rendezVous.map((rv) => (
               <div key={rv.id} className={styles.schedItem}>
                 <div className={styles.schedDay}>
-                  {rv.jour.toUpperCase()}
+                  {t(`accueil.scheduleDays.${rv.jour}`)}
                   {rv.jour === 'vendredi' && (
                     <span className={styles.schedStar}> *</span>
                   )}
                 </div>
                 <div className={styles.schedTime}>{schedTime(rv)}</div>
                 <div className={styles.schedLabel}>
-                  {SCHED_LABEL[rv.jour].main}
+                  {schedMain(rv.jour)}
                   <br/>
                   {rv.jour === 'vendredi'
-                    ? <em>{SCHED_LABEL[rv.jour].addr}</em>
-                    : SCHED_LABEL[rv.jour].addr
+                    ? <em>{schedAddr(rv.jour)}</em>
+                    : schedAddr(rv.jour)
                   }
                 </div>
               </div>
@@ -123,64 +135,95 @@ export default function Accueil() {
           <div className={styles.schedFoot}>
             <span className={styles.schedPin}>
               <span aria-hidden="true">📍</span>
-              {' '}<strong>Salle 2 : Bacchus</strong>{' '}
-              — 64 av. du Groupe Manouchian, 94400 Vitry sur Seine
+              {' '}<strong>{t('accueil.scheduleFootPin')}</strong>{' '}
+              {t('accueil.scheduleFootAddr')}
             </span>
-            <span className={styles.schedMapLink}>Voir sur la carte →</span>
+            <span className={styles.schedMapLink}>{t('accueil.scheduleFootMap')}</span>
           </div>
         </div>
       </section>
 
       {/* ── DERNIER MESSAGE ─────────────────────────────────────── */}
-      <section className={styles.lastMsg} aria-label="Dernier message">
-        <div className={styles.lastMsgInner}>
-          <div className={styles.eyebrow}>Dernier message</div>
-          <div className={styles.lastMsgGrid}>
+      <section className={styles.lastMsg} aria-label={t('accueil.lastMsgEyebrow')}>
+        <div className={`${styles.lastMsgInner} ${msgPlaying ? styles.lastMsgInnerExpanded : ''}`}>
+          <div className={styles.eyebrow}>{t('accueil.lastMsgEyebrow')}</div>
+          <div className={`${styles.lastMsgGrid} ${msgPlaying ? styles.lastMsgGridExpanded : ''}`}>
 
-            {/* Lecteur vidéo placeholder 16:9 */}
+            {/* Lecteur vidéo : miniature + play, ou iframe quand on clique */}
             <div
-              className={styles.lastMsgVideo}
-              role="img"
+              className={`${styles.lastMsgVideo} ${msgPlaying ? styles.lastMsgVideoExpanded : ''}`}
+              role={msgPlaying ? undefined : 'img'}
               aria-label={`Replay — ${dernierSermon.titre}`}
             >
-              {/* Bouton play centré */}
-              <div className={styles.lastMsgPlay}>
-                <button className={styles.lastMsgPlayBtn} aria-label="Lire la vidéo">
-                  <span className={styles.lastMsgPlayTriangle} aria-hidden="true" />
-                </button>
-              </div>
+              {msgPlaying && dernierEmbed ? (
+                <iframe
+                  className={styles.lastMsgIframe}
+                  src={dernierEmbed}
+                  title={`Replay — ${dernierSermon.titre}`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <>
+                  {dernierThumb && (
+                    <img
+                      src={dernierThumb}
+                      alt={`Aperçu — ${dernierSermon.titre}`}
+                      className={styles.lastMsgThumb}
+                      loading="lazy"
+                    />
+                  )}
+                  <div className={styles.lastMsgPlay}>
+                    <button
+                      className={styles.lastMsgPlayBtn}
+                      onClick={() => dernierEmbed && setMsgPlaying(true)}
+                      aria-label={t('accueil.lastMsgPlay')}
+                      disabled={!dernierEmbed}
+                    >
+                      <span className={styles.lastMsgPlayTriangle} aria-hidden="true" />
+                    </button>
+                  </div>
 
-              {/* Méta bas de frame */}
-              <div className={styles.lastMsgMeta}>
-                <span className={styles.lastMsgMetaLine}>
-                  <span className={styles.lastMsgDot} aria-hidden="true" />
-                  YOUTUBE · LIVE REPLAY
-                </span>
-                {dernierSermon.duree && (
-                  <span className={styles.lastMsgDuration}>{dernierSermon.duree}</span>
-                )}
-              </div>
+                  <div className={styles.lastMsgMeta}>
+                    <span className={styles.lastMsgMetaLine}>
+                      <span className={styles.lastMsgDot} aria-hidden="true" />
+                      {t('accueil.lastMsgYouTube')}
+                    </span>
+                    {dernierSermon.duree && (
+                      <span className={styles.lastMsgDuration}>{dernierSermon.duree}</span>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
 
-            {/* Texte */}
-            <div className={styles.lastMsgCopy}>
+            {/* Texte — visible avant ET pendant la lecture, mais restylé */}
+            <div className={`${styles.lastMsgCopy} ${msgPlaying ? styles.lastMsgCopyExpanded : ''}`}>
               <div className={styles.lastMsgRef}>
-                {dateLabel} · Culte
+                {dateLabel} · {t('accueil.lastMsgCulteSuffix')}
               </div>
 
               <h3 className={styles.lastMsgTitle}>
-                {`« ${dernierSermon.titre.replace(/\.$/, '')} »`}
+                {msgPlaying
+                  ? dernierSermon.titre.replace(/\.$/, '')
+                  : `« ${dernierSermon.titre.replace(/\.$/, '')} »`}
               </h3>
 
-              <p className={styles.lastMsgSerie}>
-                {dernierSermon.serie}
-                {dernierSermon.numeroSerie ? ` #${dernierSermon.numeroSerie}` : ''}
-                {' · '}
-                {dernierSermon.titre.replace(/\.$/, '').toUpperCase()}
-              </p>
+              {msgPlaying ? (
+                <p className={styles.lastMsgPredicateur}>{dernierSermon.predicateur}</p>
+              ) : (
+                <>
+                  <p className={styles.lastMsgSerie}>
+                    {dernierSermon.serie}
+                    {dernierSermon.numeroSerie ? ` #${dernierSermon.numeroSerie}` : ''}
+                    {' · '}
+                    {dernierSermon.titre.replace(/\.$/, '').toUpperCase()}
+                  </p>
 
-              {dernierSermon.description && (
-                <p className={styles.lastMsgDesc}>{dernierSermon.description}</p>
+                  {dernierSermon.description && (
+                    <p className={styles.lastMsgDesc}>{dernierSermon.description}</p>
+                  )}
+                </>
               )}
 
               <div className={styles.lastMsgActions}>
@@ -188,7 +231,7 @@ export default function Accueil() {
                   {t('actions.ecouterMessage')}
                 </Button>
                 <Button variant="secondary" as="a" href="/eglise/cultes">
-                  Tous les messages
+                  {t('actions.tousMessages')}
                 </Button>
               </div>
             </div>
@@ -238,13 +281,13 @@ export default function Accueil() {
       </section>
 
       {/* ── NÉHÉMIE BANNER ──────────────────────────────────────── */}
-      <section className={styles.nehemieBanner} aria-label="Projet Néhémie — collecte">
+      <section className={styles.nehemieBanner} aria-label={t('accueil.nehemieBanner.eyebrow')}>
 
         {/* Image promesse — sanctuaire */}
         <div className={styles.nehemieBannerImg}>
           <img
-            src="/images/sanctuaire.jpeg"
-            alt="Vue du sanctuaire du projet Néhémie"
+            src={asset('/images/sanctuaire.jpeg')}
+            alt={t('accueil.nehemieBanner.imgAlt')}
             className={styles.nehemieBannerImgEl}
             loading="eager"
           />
@@ -252,13 +295,14 @@ export default function Accueil() {
 
         {/* Contenu */}
         <div className={styles.nehemieBannerCopy}>
-          <div className={`${styles.eyebrow} ${styles.eyebrowNote}`}>Projet Néhémie</div>
+          <div className={`${styles.eyebrow} ${styles.eyebrowNote}`}>
+            {t('accueil.nehemieBanner.eyebrow')}
+          </div>
           <h3 className={styles.nehemieBannerTitre}>
-            Bâtissons<br/>ensemble.
+            {t('accueil.nehemieBanner.titreLine1')}<br/>{t('accueil.nehemieBanner.titreLine2')}
           </h3>
           <p className={styles.nehemieBannerDesc}>
-            Acquisition et rénovation d'une salle permanente pour la prière,
-            l'enseignement et le rayonnement de l'assemblée. Chaque don nous rapproche.
+            {t('accueil.nehemieBanner.desc')}
           </p>
 
           {/* Jauge de collecte */}
@@ -266,10 +310,10 @@ export default function Accueil() {
             <div className={styles.progressNums}>
               <span className={styles.progressRaised}>
                 <b>{formatMontant(projetNehemie.collecte)} {projetNehemie.devise}</b>
-                {' '}collectés
+                {' '}{t('accueil.nehemieBanner.raisedSuffix')}
               </span>
               <span className={styles.progressGoal}>
-                Objectif {formatMontant(projetNehemie.objectif)} {projetNehemie.devise}
+                {t('accueil.nehemieBanner.goalPrefix')} {formatMontant(projetNehemie.objectif)} {projetNehemie.devise}
               </span>
             </div>
             <div
@@ -278,13 +322,13 @@ export default function Accueil() {
               aria-valuenow={pct}
               aria-valuemin={0}
               aria-valuemax={100}
-              aria-label={`${pct} % de l'objectif atteint`}
+              aria-label={`${pct} % ${t('nehemie.objectifAtteint')}`}
             >
               <div className={styles.progressBarFill} style={{ width: `${pct}%` }} />
             </div>
             <div className={styles.progressPct}>
               <strong>{pct} %</strong>
-              <span> du chemin parcouru</span>
+              <span> {t('accueil.nehemieBanner.percentSuffix')}</span>
             </div>
           </div>
 
@@ -293,7 +337,7 @@ export default function Accueil() {
               {t('actions.contribuer')}
             </Button>
             <Button variant="secondary" as="a" href="/nehemie">
-              En savoir plus
+              {t('actions.enSavoirPlus')}
             </Button>
           </div>
         </div>

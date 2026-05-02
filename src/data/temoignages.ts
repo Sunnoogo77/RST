@@ -1,5 +1,4 @@
 import type { Temoignage } from '../types';
-import sanctuaryImg from '../../assets-source/de882da8-ee8f-485c-9773-4a9274eea5fb.jpg';
 
 /* ============================================================
    Témoignages — placeholders Lorem Ipsum.
@@ -32,7 +31,7 @@ export const temoignages: Temoignage[] = [
     titre: 'Lorem ipsum dolor sit amet.',
     corps:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    image: sanctuaryImg,
+    image: '/images/sanctuaire.jpeg',
     hasDetail: true,
     date: '2026-03-14',
     detail: {
