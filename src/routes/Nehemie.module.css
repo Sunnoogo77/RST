@@ -296,12 +296,14 @@
 
 .statNum {
   font-family: var(--f-num);
-  font-size: clamp(1.9rem, 2.6vw, 2.8rem);
+  /* Plafonné pour que "500 000 €" tienne sur une seule ligne dans une colonne tiers */
+  font-size: clamp(1.35rem, 1.9vw, 2.1rem);
   font-weight: 400;
   color: var(--ink);
   margin: 0;
   line-height: 1;
-  letter-spacing: .01em;
+  letter-spacing: 0;
+  white-space: nowrap;
 }
 
 .statHighlight .statNum {
@@ -382,11 +384,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  /* Bleu RST officiel — token --accent (#15364B) du design system */
   background: var(--accent);
   color: var(--paper);
-  font-family: var(--f-num);
-  font-size: 22px;
-  line-height: 1;
+  box-shadow: 0 6px 16px rgba(21, 54, 75, .22);
+}
+
+.infoIcon svg {
+  width: 34px;
+  height: 34px;
+  display: block;
 }
 
 .infoCard h3 {
@@ -436,10 +443,11 @@
   display: grid;
   grid-template-columns: 1.05fr .85fr .85fr;
   gap: 0;
-  background: #061b38;
+  /* Bleu officiel du design system — token --accent (#15364B) */
+  background: var(--accent);
   color: var(--paper);
   margin-bottom: 52px;
-  box-shadow: 0 18px 40px rgba(6,9,28,.10);
+  box-shadow: 0 18px 40px rgba(21, 54, 75, .14);
 }
 
 .bandBlock {
@@ -552,7 +560,7 @@
   letter-spacing: .08em;
   color: var(--accent);
   text-decoration: none;
-  border-bottom: 1px solid rgba(30,71,161,.35);
+  border-bottom: 1px solid rgba(21,54,75,.35);
   padding-bottom: 2px;
 }
 

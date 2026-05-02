@@ -35,7 +35,7 @@ export const annonces: Annonce[] = [
     dl: 'VEN. MAI',
     lieu: 'Salle Bacchus, Vitry-sur-Seine',
     description:
-      "Soirée d'enseignement dédiée aux couples mariés et fiancés de l'assemblée. Temps de prière, partage et étude biblique sur le foyer.",
+      "Soirée d'enseignement dédiée aux couples mariés et fiancés de l'assemblée. Temps de prière, partage et échange autour du foyer.",
     affiche: '/images/annonces/reunion-couples/affiche.png',
     estPhare: true,
     featuredEyebrow: 'Annonce phare · Mai 2026',

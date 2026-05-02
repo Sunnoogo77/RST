@@ -6,6 +6,58 @@ import { Lightbox, type LightboxImage } from '../components/ui/Lightbox/Lightbox
 import { asset } from '../utils/asset';
 
 /* ────────────────────────────────────────────────────────────────────
+   ICÔNES — quatre piliers du projet Néhémie
+   Inline SVG pour rester indépendant de toute dépendance externe.
+   ──────────────────────────────────────────────────────────────────── */
+const IconUsers = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"
+       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+    <circle cx="9" cy="7" r="4" />
+    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+  </svg>
+);
+
+const IconBricks = (
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <rect x="1.5"  y="4"  width="6.5" height="4" rx=".4" />
+    <rect x="8.75" y="4"  width="6.5" height="4" rx=".4" />
+    <rect x="16"   y="4"  width="6.5" height="4" rx=".4" />
+    <rect x="5"    y="10" width="6.5" height="4" rx=".4" />
+    <rect x="12.5" y="10" width="6.5" height="4" rx=".4" />
+    <rect x="1.5"  y="16" width="6.5" height="4" rx=".4" />
+    <rect x="8.75" y="16" width="6.5" height="4" rx=".4" />
+    <rect x="16"   y="16" width="6.5" height="4" rx=".4" />
+  </svg>
+);
+
+const IconHandHeart = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"
+       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M11 14h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 16" />
+    <path d="m7 20 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9" />
+    <path d="m2 15 6 6" />
+    <path d="M19.5 8.5c.7-.7 1.5-1.6 1.5-2.7A2.7 2.7 0 0 0 18.3 3c-.9 0-1.5.4-2.3 1.2-.8-.8-1.4-1.2-2.3-1.2A2.7 2.7 0 0 0 11 5.8c0 1.1.8 2 1.5 2.7L16 12l3.5-3.5z" />
+  </svg>
+);
+
+const IconTrumpet = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"
+       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {/* Pavillon (cône large) */}
+    <path d="M22 6 13 8v8l9 2V6Z" fill="currentColor" />
+    {/* Tube */}
+    <path d="M13 10H6c-1.7 0-3 .9-3 2s1.3 2 3 2h7" />
+    {/* Embouchure */}
+    <circle cx="3" cy="12" r="1.6" fill="currentColor" />
+    {/* Pistons */}
+    <line x1="9"  y1="11" x2="9"  y2="14" />
+    <line x1="11" y1="11" x2="11" y2="14" />
+  </svg>
+);
+
+/* ────────────────────────────────────────────────────────────────────
    AUTO-DISCOVERY DES IMAGES — galerie « Notre futur lieu de culte »
    Toute image (.png, .jpg, .jpeg, .webp) déposée dans
    src/assets/nehemie/ est automatiquement incluse dans la galerie.
@@ -143,28 +195,28 @@ export default function Nehemie() {
 
           <div className={styles.projectInfoGrid}>
             <article className={styles.infoCard}>
-              <span className={styles.infoIcon} aria-hidden="true">01</span>
+              <span className={styles.infoIcon} aria-hidden="true">{IconUsers}</span>
               <h3>{t('nehemie.whyTitle')}</h3>
               <ul>
                 {whyItems.map((item) => <li key={item}>{item}</li>)}
               </ul>
             </article>
             <article className={styles.infoCard}>
-              <span className={styles.infoIcon} aria-hidden="true">02</span>
+              <span className={styles.infoIcon} aria-hidden="true">{IconBricks}</span>
               <h3>{t('nehemie.buildTitle')}</h3>
               <ul>
                 {buildItems.map((item) => <li key={item}>{item}</li>)}
               </ul>
             </article>
             <article className={styles.infoCard}>
-              <span className={styles.infoIcon} aria-hidden="true">03</span>
+              <span className={styles.infoIcon} aria-hidden="true">{IconHandHeart}</span>
               <h3>{t('nehemie.participationTitle')}</h3>
               <ul>
                 {participationItems.map((item) => <li key={item}>{item}</li>)}
               </ul>
             </article>
             <article className={`${styles.infoCard} ${styles.infoCardCall}`}>
-              <span className={styles.infoIcon} aria-hidden="true">04</span>
+              <span className={styles.infoIcon} aria-hidden="true">{IconTrumpet}</span>
               <h3>{t('nehemie.appealTitle')}</h3>
               <p>{t('nehemie.appealText')}</p>
               <strong>{t('nehemie.appealVerse')}</strong>

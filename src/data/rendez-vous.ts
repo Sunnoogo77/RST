@@ -4,10 +4,10 @@ export const rendezVous: RendezVous[] = [
   {
     id: 'mercredi',
     jour: 'mercredi',
-    titre: 'Étude biblique',
+    titre: 'Culte du mercredi',
     heureDebut: '19H00',
     heureFin: '21H00',
-    description: 'Étude approfondie de la Parole, verset par verset, dans la lumière du Message.',
+    description: 'Culte de milieu de semaine autour de la Parole et de la communion fraternelle.',
   },
   {
     id: 'dimanche',
@@ -21,7 +21,7 @@ export const rendezVous: RendezVous[] = [
   {
     id: 'vendredi',
     jour: 'vendredi',
-    titre: 'Veillée de prière',
+    titre: 'Réunion de prière',
     heureDebut: '19H00',
     heureFin: '21H00',
     description: 'Réunion de prière intercessive et de communion fraternelle.',

@@ -10,17 +10,17 @@ import type { Sermon } from '../types';
 
 export const sermons: Sermon[] = [
 
-  /* ── Avril 2026 — étude biblique du mercredi (la plus récente) ─── */
+  /* ── Avril 2026 — service du mercredi (le plus récent) ─── */
   {
     id: 'demi-chretiens-2026-04-29',
     titre: 'Nous ne sommes pas des demi-chrétiens.',
     titleEm: 'des demi-chrétiens.',
-    serie: 'Étude biblique',
+    serie: 'Culte du mercredi',
     date: '2026-04-29',
     heure: '19H30',
     predicateur: 'Fr. Michel Orodapo',
     description:
-      "Étude biblique du mercredi à l'assemblée Roc Séculaire Tabernacle, Vitry-sur-Seine.",
+      "Service du mercredi à l'assemblée Roc Séculaire Tabernacle, Vitry-sur-Seine.",
     videoUrl: 'https://www.youtube.com/watch?v=WmhljxW5zUU',
     audioUrl: undefined,
     passages: [],
@@ -63,15 +63,15 @@ export const sermons: Sermon[] = [
     plan: [],
   },
 
-  /* ── Octobre 2024 — étude biblique du mercredi ─────── */
+  /* ── Octobre 2024 — service du mercredi ─────── */
   {
     id: 'service-mercredi-23-10-2024',
     titre: 'Service du mercredi',
-    serie: 'Étude biblique',
+    serie: 'Culte du mercredi',
     date: '2024-10-23',
     heure: '19H30',
     predicateur: 'Rév. Robert Ndaye M.',
-    description: 'Étude biblique en direct, mercredi soir.',
+    description: 'Service en direct, mercredi soir.',
     videoUrl: 'https://www.youtube.com/watch?v=oStj4xjdXzs',
     audioUrl: undefined,
     passages: [],
@@ -122,7 +122,7 @@ export const sermons: Sermon[] = [
     date: '2022-04-13',
     heure: '19H30',
     predicateur: 'Rév. Robert Ndaye M.',
-    description: 'Étude biblique du mercredi 13 avril 2022.',
+    description: 'Service du mercredi 13 avril 2022.',
     videoUrl: 'https://www.youtube.com/watch?v=dzvVBbZlVoM',
     audioUrl: undefined,
     passages: [],
