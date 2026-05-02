@@ -18,11 +18,11 @@
   content: '';
   position: absolute;
   top: 0;
-  right: 0;
+  left: 0;
   width: min(46vw, 760px);
   height: var(--header-h);
   background:
-    linear-gradient(to right, rgba(2,4,15,0) 0%, rgba(2,4,15,.72) 32%, #01020a 72%, #000 100%);
+    linear-gradient(to left, rgba(2,4,15,0) 0%, rgba(2,4,15,.72) 32%, #01020a 72%, #000 100%);
   pointer-events: none;
   z-index: 2;
 }
@@ -32,9 +32,9 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 50% 56% at 20% 54%, rgba(18,48,152,.40) 0%, rgba(12,32,112,.16) 48%, transparent 70%),
-    linear-gradient(to right, transparent 42%, rgba(5,10,34,.44) 52%, rgba(2,4,16,.92) 62%, #01020a 68%),
-    #030617;
+    radial-gradient(ellipse 54% 58% at 76% 54%, rgba(18,48,152,.34) 0%, rgba(12,32,112,.14) 44%, transparent 70%),
+    linear-gradient(to left, transparent 36%, rgba(9,18,58,.16) 48%, rgba(5,10,34,.46) 61%, rgba(2,4,16,.82) 74%),
+    linear-gradient(90deg, #050609 0%, #07133a 56%, #030617 100%);
   pointer-events: none;
   z-index: 0;
 }
@@ -44,16 +44,16 @@
   z-index: 1;
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr 0.52fr;
+  grid-template-columns: 0.52fr 1fr;
   min-height: calc(88vh - var(--header-h));
 }
 
 .heroInner::after {
   content: '';
   position: absolute;
-  inset: 0 34.2% 0 0;
+  inset: 0 0 0 34.2%;
   background:
-    linear-gradient(to right, transparent 48%, rgba(5,10,34,.18) 68%, rgba(2,4,16,.78) 88%, #01020a 100%);
+    linear-gradient(to left, transparent 42%, rgba(11,22,68,.12) 58%, rgba(7,16,52,.32) 76%, rgba(3,7,24,.66) 100%);
   pointer-events: none;
   z-index: 2;
 }
@@ -65,8 +65,8 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start; /* groupe collé à gauche de la colonne */
-  padding: 56px 0 80px clamp(80px, 9vw, 300px);
+  align-items: center;
+  padding: 56px clamp(32px, 4vw, 72px) 80px clamp(56px, 7vw, 180px);
 }
 
 /* Groupe interne — le contenu est centré en lui-même */
@@ -150,9 +150,7 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(to right,  rgba(0,0,0,.98) 0%, rgba(0,0,0,.82) 5%, rgba(0,0,0,.42) 13%, rgba(0,0,0,.10) 25%, transparent 36%),
-    linear-gradient(to bottom, rgba(0,0,0,.96) 0%, rgba(0,0,0,.70) 10%, rgba(0,0,0,.24) 22%, transparent 34%),
-    linear-gradient(to top,    rgba(0,0,0,.72) 0%, transparent 18%);
+    linear-gradient(to left, rgba(5,12,40,.52) 0%, rgba(8,18,56,.24) 16%, rgba(10,22,68,.08) 28%, transparent 42%);
   pointer-events: none;
 }
 

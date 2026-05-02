@@ -74,7 +74,17 @@ export default function Accueil() {
         <div className={styles.heroBackdrop} aria-hidden="true" />
 
         <div className={styles.heroInner}>
-          {/* Colonne texte — bloc positionné à gauche, contenu centré */}
+          {/* Image du Christ — fixe, à gauche */}
+          <div className={styles.heroJesus} aria-hidden="true">
+            <img
+              src={asset('/images/jesus.jpg')}
+              alt={t('accessibility.portraitAlt')}
+              className={styles.heroJesusImg}
+              loading="eager"
+            />
+          </div>
+
+          {/* Colonne texte — bloc positionné à droite, contenu centré */}
           <div className={styles.heroText}>
             <div className={styles.heroTextGroup}>
               <p className={styles.heroAssemblee}>{t('accueil.heroAssemblee')}</p>
@@ -88,16 +98,6 @@ export default function Accueil() {
                 </button>
               </div>
             </div>
-          </div>
-
-          {/* Image du Christ — fixe, à droite */}
-          <div className={styles.heroJesus} aria-hidden="true">
-            <img
-              src={asset('/images/jesus.jpg')}
-              alt={t('accessibility.portraitAlt')}
-              className={styles.heroJesusImg}
-              loading="eager"
-            />
           </div>
         </div>
       </section>
