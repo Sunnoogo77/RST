@@ -41,6 +41,10 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.10);
 }
 
+.onProtectedDark {
+  background: #06091c;
+}
+
 .onDark .navLink {
   color: rgba(255, 255, 255, 0.62);
 }

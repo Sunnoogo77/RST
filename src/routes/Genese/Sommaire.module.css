@@ -6,9 +6,12 @@
 /* Note : pas de padding-top + var(--header-h) ici — GeneseLayout fournit
    déjà un .headerSpacer de hauteur var(--header-h) au-dessus du sous-nav. */
 .hero {
-  background: var(--paper);
+  background:
+    radial-gradient(ellipse 48% 64% at 50% 45%, rgba(30,71,161,.20) 0%, rgba(6,9,28,.04) 58%, transparent 76%),
+    linear-gradient(to bottom, #06091c 0%, #030617 100%);
   padding: 56px var(--pad-x) 64px;
-  border-bottom: 1.5px solid var(--ink);
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  color: var(--paper);
 }
 
 .heroInner {
@@ -28,12 +31,12 @@
   font-style: italic;
   line-height: 1.0;
   letter-spacing: -0.02em;
-  color: var(--ink);
+  color: var(--paper);
   margin: 0;
 }
 .heroTitre em {
   font-style: italic;
-  color: var(--ink-2);
+  color: rgba(255,255,255,.76);
 }
 
 .heroSubtitre {
@@ -41,7 +44,7 @@
   font-size: 22px;
   font-style: italic;
   line-height: 1.55;
-  color: var(--ink-2);
+  color: rgba(255,255,255,.72);
   margin: 0;
 }
 
@@ -49,7 +52,7 @@
   font-family: var(--f-serif);
   font-size: 17px;
   line-height: 1.7;
-  color: var(--ink-2);
+  color: rgba(255,255,255,.58);
   margin: 8px auto 0;
   max-width: 60ch;
 }
@@ -57,12 +60,12 @@
 /* SECTIONS ─────────────────────────────────────────────────────────── */
 .sectionPiliers,
 .sectionEvenements {
-  background: var(--paper);
+  background: #fbfaf7;
   padding: 80px var(--pad-x);
 }
 
 .sectionEvenements {
-  background: #fbfaf7;
+  background: #f8f6f1;
 }
 
 .sectionInner {

@@ -13,8 +13,11 @@ export default function Header() {
   const { direction, scrollY, pastHero } = useScrollDirection(80);
 
   const hidden = direction === 'down' && scrollY > 80;
-  // Fond sombre sur l'Accueil et Néhémie dont le hero est bleu naval
-  const onDark = (pathname === '/' || pathname === '/nehemie') && !pastHero;
+  // Fond sombre sur les pages dont l'entrée est bleu naval.
+  const hasShortDarkIntro = pathname.startsWith('/genese') || pathname.startsWith('/eglise');
+  const onDark =
+    ((pathname === '/' || pathname === '/nehemie') && !pastHero) ||
+    (hasShortDarkIntro && scrollY < 420);
 
   const toggleLang = () => {
     void i18n.changeLanguage(i18n.language === 'fr' ? 'en' : 'fr');
@@ -30,6 +33,7 @@ export default function Header() {
           styles.header,
           hidden ? styles.hidden : '',
           onDark ? styles.onDark : styles.onLight,
+          onDark && hasShortDarkIntro ? styles.onProtectedDark : '',
           scrollY > 12 && !onDark ? styles.scrolled : '',
         ]
           .filter(Boolean)

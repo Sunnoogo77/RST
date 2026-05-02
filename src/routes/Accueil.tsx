@@ -246,7 +246,7 @@ export default function Accueil() {
           {/* Portrait du pasteur */}
           <div className={styles.histoireImg}>
             <img
-              src="/pastor-ndaye.jpeg"
+              src={asset('/pastor-ndaye.jpeg')}
               alt="Rev. Robert Ndaye M., pasteur de Roc Séculaire Tabernacle"
               className={styles.histoireImgEl}
               loading="lazy"

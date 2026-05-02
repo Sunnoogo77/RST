@@ -2,14 +2,14 @@
    CETTE SEMAINE
    ══════════════════════════════════════════════════════════════════════ */
 
-/* ── HERO ─────────────────────────────────────────────────────────────
-   Section extérieure → fond blanc + padding généreux
-   heroInner → grille 2 colonnes centrée (max 1 100 px)
-   ──────────────────────────────────────────────────────────────────── */
+/* ── HERO ───────────────────────────────────────────────────────────── */
 .hero {
-  background: var(--paper);
+  background:
+    radial-gradient(ellipse 58% 78% at 30% 42%, rgba(30, 71, 161, .22) 0%, rgba(6, 9, 28, .08) 58%, transparent 76%),
+    linear-gradient(to bottom, #06091c 0%, #030617 100%);
   padding: 52px var(--pad-x);
-  border-bottom: var(--border-soft);
+  border-bottom: 1px solid rgba(255, 255, 255, .10);
+  color: var(--paper);
 }
 
 .heroInner {
@@ -33,6 +33,8 @@
   position: relative;
   aspect-ratio: 3 / 2;
   background: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, .12);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .28);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -137,7 +139,7 @@
   50%       { opacity: 0.4; transform: scale(0.75); }
 }
 
-/* Panneau informations — clair */
+/* Panneau informations */
 .heroContent {
   display: flex;
   flex-direction: column;
@@ -150,7 +152,7 @@
   font-weight: 600;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: rgba(255, 255, 255, .48);
   margin: 0;
 }
 
@@ -160,14 +162,14 @@
   font-weight: 500;
   line-height: 1.05;
   letter-spacing: -0.015em;
-  color: var(--ink);
+  color: var(--paper);
   margin: 0;
 }
 
 /* L'em final est en italique — rendu par global h1 em { color: var(--ink-2) }
-   On surcharge pour garder --ink ici */
+   On surcharge pour garder le contraste sur fond sombre */
 .heroTitre em {
-  color: var(--ink);
+  color: rgba(255, 255, 255, .78);
   font-style: italic;
 }
 
@@ -175,7 +177,7 @@
   font-family: var(--f-serif);
   font-size: 17px;
   font-weight: 500;
-  color: var(--ink);
+  color: rgba(255, 255, 255, .86);
   margin: 0;
   line-height: 1.4;
 }
@@ -183,14 +185,14 @@
 .heroPredicateur {
   font-family: var(--f-body);
   font-size: 14px;
-  color: var(--ink-3);
+  color: rgba(255, 255, 255, .58);
   margin: 0;
 }
 
 .heroVerset {
   margin: 4px 0 0;
   padding: 0 0 0 18px;
-  border-left: 2px solid var(--ink-3);
+  border-left: 2px solid rgba(255, 255, 255, .35);
 }
 
 .heroVersetTexte {
@@ -198,7 +200,7 @@
   font-size: 16px;
   font-style: italic;
   line-height: 1.65;
-  color: var(--ink-2);
+  color: rgba(255, 255, 255, .72);
   margin: 0 0 10px;
 }
 
@@ -208,13 +210,13 @@
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: rgba(255, 255, 255, .46);
   font-style: normal;
 }
 
 /* ── FIL DU MESSAGE ────────────────────────────────────────────────── */
 .fil {
-  background: var(--paper);
+  background: #fbfaf7;
   padding: 72px var(--pad-x);
   border-bottom: var(--border-soft);
 }

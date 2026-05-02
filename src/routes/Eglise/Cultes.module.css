@@ -1,13 +1,18 @@
 /* ── HERO ────────────────────────────────────────────────── */
 .hero {
-  max-width: 1280px;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
+  background:
+    radial-gradient(ellipse 48% 64% at 50% 44%, rgba(30,71,161,.20) 0%, rgba(6,9,28,.04) 58%, transparent 76%),
+    linear-gradient(to bottom, #06091c 0%, #030617 100%);
   padding: 60px 32px 40px;
-  border-bottom: 1.5px solid var(--ink);
+  border-bottom: 1px solid rgba(255,255,255,.10);
+  color: var(--paper);
 }
 
 .heroInner {
-  max-width: none;
+  max-width: 1280px;
+  margin: 0 auto;
   text-align: center;
 }
 
@@ -16,7 +21,7 @@
   font-size: 11px;
   letter-spacing: .22em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: rgba(255,255,255,.48);
   margin-bottom: 0;
 }
 
@@ -27,12 +32,12 @@
   line-height: 1.04;
   letter-spacing: -0.01em;
   margin: 14px 0 18px;
-  color: var(--ink);
+  color: var(--paper);
   text-wrap: pretty;
 }
 .heroTitle em {
   font-style: italic;
-  color: var(--ink-2);
+  color: rgba(255,255,255,.78);
 }
 
 .heroRef {
@@ -40,7 +45,7 @@
   font-size: 11px;
   letter-spacing: .26em;
   text-transform: uppercase;
-  color: var(--note);
+  color: #ff5a50;
   font-weight: 600;
   margin: -8px 0 22px;
 }
@@ -49,7 +54,7 @@
   font-family: var(--f-serif);
   font-size: 19px;
   line-height: 1.55;
-  color: var(--ink-2);
+  color: rgba(255,255,255,.68);
   max-width: 720px;
   margin: 0 auto;
 }
@@ -58,12 +63,12 @@
   margin: 26px auto 0;
   padding: 18px 22px;
   border-top: 2px solid var(--note);
-  background: var(--paper-2);
+  background: rgba(255,255,255,.06);
   font-family: var(--f-serif);
   font-style: italic;
   font-size: 16px;
   line-height: 1.5;
-  color: var(--ink);
+  color: rgba(255,255,255,.84);
   max-width: 720px;
   text-align: center;
 }
@@ -76,11 +81,14 @@
   font-size: 10.5px;
   letter-spacing: .22em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: rgba(255,255,255,.44);
 }
 
 /* ── FILTRES ─────────────────────────────────────────────── */
 .filters {
+  background: #fbfaf7;
+  box-shadow: 0 0 0 100vmax #fbfaf7;
+  clip-path: inset(0 -100vmax);
   max-width: 1280px;
   margin: 0 auto;
   padding: 22px 32px;
