@@ -32,8 +32,7 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 42% 48% at 68% 55%, rgba(18,50,162,.28) 0%, rgba(9,28,98,.16) 42%, rgba(4,9,34,0) 72%),
-    linear-gradient(90deg, #050609 0%, #03040a 37%, #010208 43%, #061238 58%, #07184a 76%, #030716 100%);
+    linear-gradient(90deg, #050609 0%, #03040a 36%, #010208 43%, #020817 56%, #030716 72%, #030716 100%);
   pointer-events: none;
   z-index: 0;
 }
@@ -52,8 +51,8 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, transparent 0%, transparent 30%, rgba(0,0,0,.22) 35%, rgba(0,0,0,.92) 42%, rgba(3,7,23,.8) 49%, rgba(5,16,61,.24) 62%, transparent 78%),
-    radial-gradient(ellipse 34% 74% at 40% 52%, rgba(0,0,0,.04) 0%, rgba(0,0,0,.38) 72%, rgba(0,0,0,0) 100%);
+    linear-gradient(90deg, transparent 0%, transparent 30%, rgba(0,0,0,.22) 35%, rgba(0,0,0,.92) 42%, rgba(3,7,23,.64) 49%, rgba(5,16,61,.18) 62%, transparent 82%),
+    radial-gradient(ellipse 34% 74% at 40% 52%, rgba(0,0,0,.04) 0%, rgba(0,0,0,.34) 72%, rgba(0,0,0,0) 100%);
   pointer-events: none;
   z-index: 2;
 }
@@ -71,12 +70,35 @@
 
 /* Groupe interne — le contenu est centré en lui-même */
 .heroTextGroup {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 24px;
-  margin-top: clamp(104px, 15vh, 152px);
+  margin-top: clamp(140px, 19vh, 190px);
+  transform: translateX(clamp(28px, 3.7vw, 76px));
+}
+
+.heroTextGroup::before {
+  content: '';
+  position: absolute;
+  width: min(980px, 66vw);
+  height: min(560px, 56vh);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -46%);
+  background:
+    radial-gradient(ellipse at center, rgba(22,68,186,.28) 0%, rgba(13,42,139,.2) 32%, rgba(7,22,78,.09) 58%, rgba(7,22,78,0) 82%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.heroAssemblee,
+.heroTitle,
+.heroCtas {
+  position: relative;
+  z-index: 1;
 }
 
 .heroAssemblee {
@@ -91,7 +113,7 @@
 
 .heroTitle {
   font-family: var(--f-engrave);
-  font-size: clamp(2.1rem, 3.45vw, 3.25rem);
+  font-size: clamp(1.98rem, 3.12vw, 3rem);
   font-weight: 600;
   line-height: 1.08;
   letter-spacing: .04em;

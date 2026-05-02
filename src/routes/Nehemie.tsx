@@ -43,17 +43,20 @@ const IconHandHeart = (
 );
 
 const IconTrumpet = (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"
-       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    {/* Pavillon (cône large) */}
-    <path d="M22 6 13 8v8l9 2V6Z" fill="currentColor" />
-    {/* Tube */}
-    <path d="M13 10H6c-1.7 0-3 .9-3 2s1.3 2 3 2h7" />
+  <svg viewBox="0 0 24 24" fill="#d59a22" aria-hidden="true">
     {/* Embouchure */}
-    <circle cx="3" cy="12" r="1.6" fill="currentColor" />
-    {/* Pistons */}
-    <line x1="9"  y1="11" x2="9"  y2="14" />
-    <line x1="11" y1="11" x2="11" y2="14" />
+    <circle cx="2.4" cy="12" r="1.6" />
+    <rect x="3.4" y="11.4" width="1.4" height="1.2" rx=".2" />
+    {/* Tube horizontal */}
+    <rect x="4.6" y="11" width="11.2" height="2.4" rx=".4" />
+    {/* Trois pistons sur le tube */}
+    <rect x="6.6"  y="7.8" width="1.6" height="6.2" rx=".3" />
+    <rect x="9.6"  y="7.8" width="1.6" height="6.2" rx=".3" />
+    <rect x="12.6" y="7.8" width="1.6" height="6.2" rx=".3" />
+    {/* Pavillon évasé à droite */}
+    <path d="M15.4 9.2 22.5 5.6V18.4l-7.1-3.6Z" />
+    {/* Reflet brillant sur le pavillon */}
+    <path d="M16.6 10.4l4-2v7.2l-4-2Z" fill="#edbd55" />
   </svg>
 );
 
