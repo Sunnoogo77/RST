@@ -1,13 +1,18 @@
 /* ── HERO ──────────────────────────────────────────────────────── */
 .hero {
-  max-width: 1280px;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
   padding: 60px 32px 40px;
-  border-bottom: 1.5px solid var(--ink);
+  border-bottom: 1px solid rgba(255, 255, 255, .10);
+  background:
+    radial-gradient(ellipse 48% 64% at 50% 45%, rgba(30, 71, 161, .20) 0%, rgba(6, 9, 28, .04) 58%, transparent 76%),
+    linear-gradient(to bottom, #06091c 0%, #030617 100%);
+  color: var(--paper);
 }
 
 .heroInner {
-  max-width: none;
+  max-width: 1280px;
+  margin: 0 auto;
   text-align: center;
 }
 
@@ -16,7 +21,7 @@
   font-size: 11px;
   letter-spacing: .22em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: rgba(255, 255, 255, .48);
 }
 
 .heroTitle {
@@ -26,19 +31,19 @@
   line-height: 1.04;
   letter-spacing: -0.01em;
   margin: 14px 0 18px;
-  color: var(--ink);
+  color: var(--paper);
   text-wrap: pretty;
 }
 .heroTitle em {
   font-style: italic;
-  color: var(--ink-2);
+  color: rgba(255, 255, 255, .78);
 }
 
 .heroLede {
   font-family: var(--f-serif);
   font-size: 19px;
   line-height: 1.55;
-  color: var(--ink-2);
+  color: rgba(255, 255, 255, .68);
   max-width: 720px;
   margin: 0 auto;
 }
@@ -49,6 +54,9 @@
   margin: 0 auto;
   padding: 22px 32px;
   border-bottom: 1px solid rgba(12, 14, 20, .15);
+  background: #fbfaf7;
+  box-shadow: 0 0 0 100vmax #fbfaf7;
+  clip-path: inset(0 -100vmax);
 }
 
 .filtersInner {
