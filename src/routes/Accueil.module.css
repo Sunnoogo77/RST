@@ -73,7 +73,7 @@
   align-items: center;
   text-align: center;
   gap: 24px;
-  margin-top: clamp(140px, 19vh, 190px);
+  margin-top: clamp(164px, 21vh, 218px);
   transform: translateX(clamp(28px, 3.7vw, 76px));
 }
 
@@ -110,7 +110,7 @@
 
 .heroTitle {
   font-family: var(--f-engrave);
-  font-size: clamp(1.98rem, 3.12vw, 3rem);
+  font-size: clamp(1.86rem, 2.9vw, 2.78rem);
   font-weight: 600;
   line-height: 1.08;
   letter-spacing: .04em;
@@ -187,7 +187,12 @@
 }
 
 .heroJesus::after {
-  display: none;
+  inset: 0;
+  z-index: 3;
+  background:
+    radial-gradient(ellipse 30% 34% at 52% 46%, rgba(255,210,146,.18) 0%, rgba(255,190,118,.1) 36%, rgba(255,190,118,0) 72%);
+  mix-blend-mode: screen;
+  opacity: .78;
 }
 
 /* ── EYEBROW (section-level — avec tiret préfixe) ─────────────────────── */
