@@ -60,6 +60,49 @@ const IconTrumpet = (
   </svg>
 );
 
+/* Icônes de la bande "Moyens de participation" */
+const IconCash = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"
+       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="2" y="6" width="20" height="12" rx="2" />
+    <circle cx="12" cy="12" r="2.5" />
+    <path d="M5 9.5h.01M19 14.5h.01" />
+  </svg>
+);
+
+const IconBank = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"
+       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M3 21h18" />
+    <path d="M3 10h18" />
+    <path d="M5 6l7-3 7 3" />
+    <path d="M4 10v11" />
+    <path d="M20 10v11" />
+    <path d="M8 14v3" />
+    <path d="M12 14v3" />
+    <path d="M16 14v3" />
+  </svg>
+);
+
+const IconOnline = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"
+       strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="2" y="4" width="20" height="14" rx="2" />
+    <line x1="8" y1="22" x2="16" y2="22" />
+    <line x1="12" y1="18" x2="12" y2="22" />
+    <path d="M12 14l-2.6-2.6a1.6 1.6 0 0 1 2.6-1.85 1.6 1.6 0 0 1 2.6 1.85L12 14z" fill="currentColor" />
+  </svg>
+);
+
+/* ────────────────────────────────────────────────────────────────────
+   IMAGES DE FOND — bande "Ensemble allons plus loin"
+   2 visuels rotatifs choisis aléatoirement à chaque chargement.
+   ──────────────────────────────────────────────────────────────────── */
+const BAND_BG_URLS = [
+  '/images/nehemie/nehemi-1.jpg',
+  '/images/nehemie/nehemi-2.jpg',
+];
+
 /* ────────────────────────────────────────────────────────────────────
    AUTO-DISCOVERY DES IMAGES — galerie « Notre futur lieu de culte »
    Toute image (.png, .jpg, .jpeg, .webp) déposée dans
@@ -106,6 +149,12 @@ export default function Nehemie() {
   const [lbIndex, setLbIndex] = useState<number | null>(null);
   const openLightbox = (i: number) => setLbIndex(i);
   const closeLightbox = () => setLbIndex(null);
+
+  // Image de fond de la bande "Ensemble allons plus loin" — choisie
+  // une seule fois au montage (= rotation à chaque rafraîchissement).
+  const [bandBg] = useState(
+    () => BAND_BG_URLS[Math.floor(Math.random() * BAND_BG_URLS.length)],
+  );
 
   return (
     <main id="main-content">

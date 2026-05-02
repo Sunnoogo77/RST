@@ -31,8 +31,7 @@
 .heroBackdrop {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(90deg, #050609 0%, #03040a 36%, #010208 43%, #020817 56%, #030716 72%, #030716 100%);
+  background: #030716;
   pointer-events: none;
   z-index: 0;
 }
@@ -50,9 +49,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(90deg, transparent 0%, transparent 30%, rgba(0,0,0,.22) 35%, rgba(0,0,0,.92) 42%, rgba(3,7,23,.64) 49%, rgba(5,16,61,.18) 62%, transparent 82%),
-    radial-gradient(ellipse 34% 74% at 40% 52%, rgba(0,0,0,.04) 0%, rgba(0,0,0,.34) 72%, rgba(0,0,0,0) 100%);
+  display: none;
   pointer-events: none;
   z-index: 2;
 }
@@ -158,7 +155,7 @@
   overflow: visible;
   align-self: stretch;
   height: calc(100vh - var(--header-h));
-  background: #050609;
+  background: transparent;
 }
 
 .heroJesusImg {
@@ -183,17 +180,14 @@
 }
 
 .heroJesus::before {
-  inset: 0 -115% 0 0;
-  z-index: 2;
+  inset: 0 -96% 0 0;
+  z-index: 0;
   background:
-    linear-gradient(90deg, transparent 0%, transparent 47%, rgba(0,0,0,.2) 56%, rgba(0,0,0,.86) 68%, #010208 78%, rgba(5,15,50,.5) 91%, rgba(5,15,50,0) 100%);
+    radial-gradient(ellipse 38% 88% at 39% 52%, rgba(0,0,0,.94) 0%, rgba(0,0,0,.76) 34%, rgba(0,0,0,.32) 62%, rgba(0,0,0,0) 88%);
 }
 
 .heroJesus::after {
-  inset: 0 -115% 0 0;
-  z-index: 3;
-  background:
-    linear-gradient(90deg, transparent 0%, transparent 54%, rgba(0,0,0,.28) 64%, rgba(0,0,0,.72) 76%, rgba(0,0,0,.08) 100%);
+  display: none;
 }
 
 /* ── EYEBROW (section-level — avec tiret préfixe) ─────────────────────── */
