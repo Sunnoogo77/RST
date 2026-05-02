@@ -203,6 +203,40 @@
 
     "contentEyebrow": "Projet Néhémie",
     "contentTitle": "Une maison à préparer ensemble.",
+    "objectiveTitle": "Acquérir un lieu de culte permanent pour l'extension de l'œuvre de Dieu.",
+    "progressNote": "Chiffres indicatifs · mise à jour chaque mois",
+    "whyTitle": "Pourquoi ce projet ?",
+    "whyItems": [
+      "Offrir un lieu stable pour l'adoration et l'enseignement",
+      "Accueillir les générations actuelles et futures",
+      "Développer nos activités spirituelles",
+      "Avoir notre propre local accessible à tout moment"
+    ],
+    "buildTitle": "Ce que nous allons bâtir",
+    "buildItems": [
+      "Une salle de culte moderne et fonctionnelle",
+      "Des espaces pour les réunions, rendez-vous et activités",
+      "Un lieu d'accueil chaleureux et accessible à tous"
+    ],
+    "participationTitle": "Comment participer ?",
+    "participationItems": [
+      "Par la prière",
+      "Par le partage du projet",
+      "Par vos dons selon vos moyens"
+    ],
+    "appealTitle": "Notre appel",
+    "appealText": "Comme au temps de Néhémie, chacun a une part à jouer. Unissons-nous, croyons et bâtissons !",
+    "appealVerse": "Ne méprisons aucun jour de petits commencements.",
+    "appealRef": "Zacharie 4:10",
+    "goFurtherTitle": "Ensemble, allons plus loin !",
+    "goFurtherText": "Ce projet n'est pas seulement un bâtiment, c'est une œuvre pour Dieu et un héritage pour nos enfants.",
+    "goFurtherVerse": "Dieu pourvoira !",
+    "followTitle": "Suivez l'avancement du projet",
+    "followText": "Restez informés chaque mois via nos communications, réunions, affiches et site web.",
+    "waysTitle": "Moyens de participation",
+    "waysText": "Espèces · Virement bancaire · Don en ligne",
+    "contactEmail": "roc.seculaire.france@gmail.com",
+    "contactPhone": "+33 7 52 27 85 85",
 
     "objectif": "Objectif",
     "collecte": "Collecté",

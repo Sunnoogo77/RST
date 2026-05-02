@@ -216,26 +216,8 @@
   margin: 0;
 }
 
-.actionGrid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(360px, .68fr);
-  gap: 32px;
-  align-items: stretch;
-  margin-bottom: 56px;
-}
-
-/* ─ Col 1 : Avancement ─ */
-.colAvancement {
-  background: rgba(255,255,255,.54);
-  border-top: 1.5px solid var(--ink);
-  border-bottom: 1.5px solid var(--ink);
-  padding: 34px 36px 36px;
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
-}
-
-.colEyebrow {
+.colEyebrow,
+.boardEyebrow {
   font-family: var(--f-body);
   font-size: 10px;
   font-weight: 600;
@@ -245,23 +227,61 @@
   margin: 0;
 }
 
-/* Stats en ligne horizontale */
+.projectBoard {
+  display: grid;
+  grid-template-columns: minmax(280px, .62fr) minmax(0, 1fr);
+  gap: 28px;
+  align-items: stretch;
+  margin-bottom: 42px;
+  border-top: 1.5px solid var(--ink);
+  border-bottom: 1.5px solid var(--ink);
+  background: rgba(255,255,255,.46);
+}
+
+.objectivePanel {
+  padding: 36px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+}
+
+.objectiveTitle {
+  font-family: var(--f-body);
+  font-size: clamp(1.1rem, 1.55vw, 1.55rem);
+  font-weight: 700;
+  line-height: 1.28;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0;
+  max-width: 22ch;
+}
+
+.progressPanel {
+  padding: 28px 34px 30px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+}
+
 .stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  border: 1.5px solid var(--ink);
-  background: #fbfaf7;
+  gap: 12px;
 }
 
 .stat {
-  padding: 20px 22px 22px;
+  min-height: 128px;
+  padding: 18px 20px 20px;
   display: flex;
   flex-direction: column;
-  gap: 7px;
-}
-
-.stat + .stat {
-  border-left: 1px solid var(--line-soft);
+  justify-content: center;
+  gap: 8px;
+  background: #fffdfa;
+  border: 1px solid rgba(12,14,20,.16);
+  box-shadow: 0 12px 26px rgba(6,9,28,.06);
 }
 
 .statLabel {
@@ -276,7 +296,7 @@
 
 .statNum {
   font-family: var(--f-num);
-  font-size: clamp(1.75rem, 2.4vw, 2.5rem);
+  font-size: clamp(1.9rem, 2.6vw, 2.8rem);
   font-weight: 400;
   color: var(--ink);
   margin: 0;
@@ -298,110 +318,172 @@
 
 /* Barre de progression */
 .progressBar {
-  height: 34px;
-  background: rgba(12,14,20,.07);
-  border: 1.5px solid var(--ink);
+  height: 32px;
+  background: #fffdfa;
+  border: 2px solid #d59a22;
+  border-radius: 999px;
   position: relative;
   overflow: hidden;
+  box-shadow: inset 0 0 0 3px rgba(255,255,255,.80);
 }
 
 .progressFill {
   position: absolute;
   inset: 0 auto 0 0;
-  background: linear-gradient(90deg, var(--accent) 0%, #2b5fc8 100%);
+  background: linear-gradient(90deg, #d59a22 0%, #edbd55 100%);
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding-right: 10px;
-  min-width: 44px;
+  padding-right: 12px;
+  min-width: 54px;
 }
 
 .progressLabel {
   font-family: var(--f-body);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: #fff;
   white-space: nowrap;
 }
 
-.colCta {
-  font-family: var(--f-body);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--ink);
-  text-decoration: none;
-  border: 1.5px solid var(--ink);
-  padding: 11px 20px;
-  width: fit-content;
-  align-self: flex-start;
-  transition: background var(--transition-fast), color var(--transition-fast);
-}
-.colCta:hover {
-  background: var(--ink);
-  color: var(--paper);
-}
-
-/* ─ Col 2 : Participez — rectangle compact ─ */
-.colParticiper {
-  background: #06091c;
-  padding: 38px 36px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 22px;
-  text-align: center;
-  box-shadow: 0 22px 48px rgba(6,9,28,.13);
-}
-
-.participerEyebrow {
+.progressNote {
   font-family: var(--f-body);
   font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,.42);
-  margin: 0;
+  letter-spacing: .08em;
+  color: var(--ink-3);
+  margin: -6px 0 0;
 }
 
-.participerItems {
+.projectInfoGrid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
-  width: 100%;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-bottom: 42px;
+  border-top: 1px solid rgba(213,154,34,.55);
+  border-bottom: 1px solid rgba(213,154,34,.55);
 }
 
-.participerItem {
-  border-top: 1px solid rgba(255,255,255,.10);
-  padding-top: 14px;
+.infoCard {
+  padding: 30px 28px 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
 }
 
-.participerLabel {
+.infoCard + .infoCard {
+  border-left: 1px solid rgba(213,154,34,.55);
+}
+
+.infoIcon {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: var(--paper);
+  font-family: var(--f-num);
+  font-size: 22px;
+  line-height: 1;
+}
+
+.infoCard h3 {
   font-family: var(--f-body);
-  font-size: 9.5px;
+  font-size: 14px;
   font-weight: 700;
-  letter-spacing: .22em;
+  letter-spacing: .08em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.82);
-  margin: 0 0 5px;
+  color: var(--accent);
+  margin: 0;
+  line-height: 1.2;
 }
 
-.participerDesc {
+.infoCard ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.infoCard li,
+.infoCard p {
+  font-family: var(--f-body);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: 0 0 8px;
+}
+
+.infoCard strong {
+  font-family: var(--f-body);
+  font-size: 13.5px;
+  line-height: 1.35;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-top: auto;
+}
+
+.infoCard small {
+  font-family: var(--f-body);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #d59a22;
+}
+
+.participationBand {
+  display: grid;
+  grid-template-columns: 1.05fr .85fr .85fr;
+  gap: 0;
+  background: #061b38;
+  color: var(--paper);
+  margin-bottom: 52px;
+  box-shadow: 0 18px 40px rgba(6,9,28,.10);
+}
+
+.bandBlock {
+  padding: 30px 34px 32px;
+}
+
+.bandBlock + .bandBlock {
+  border-left: 1px solid rgba(213,154,34,.55);
+}
+
+.bandBlock h3 {
   font-family: var(--f-body);
   font-size: 13px;
-  color: rgba(255,255,255,.40);
+  font-weight: 700;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: #edbd55;
   margin: 0;
-  line-height: 1.5;
+}
+
+.bandBlock p {
+  font-family: var(--f-body);
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(255,255,255,.74);
+  margin: 10px 0 0;
+}
+
+.bandBlock strong {
+  display: block;
+  font-family: var(--f-serif);
+  font-size: 24px;
+  font-style: italic;
+  font-weight: 500;
+  color: #edbd55;
+  margin-top: 10px;
 }
 
 .donBtn {
   display: inline-flex;
   align-items: center;
   gap: var(--space-8);
-  padding: 11px 28px;
-  margin-top: var(--space-8);
+  padding: 12px 32px;
+  margin-top: 2px;
   background: var(--note);
   color: #fff;
   font-family: var(--f-body);
@@ -453,6 +535,25 @@
   line-height: 1.6;
   color: var(--ink-2);
   margin: 0;
+}
+
+.futureContact {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.futureContact a {
+  width: fit-content;
+  font-family: var(--f-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(30,71,161,.35);
+  padding-bottom: 2px;
 }
 
 /* ── Galerie « Notre futur lieu de culte » ───────────────────────────
@@ -615,20 +716,36 @@
     margin-bottom: 28px;
   }
 
-  .actionGrid {
+  .projectBoard {
     grid-template-columns: 1fr;
-    gap: 24px;
-    margin-bottom: 44px;
+    gap: 0;
+    margin-bottom: 34px;
   }
 
-  .colAvancement {
-    padding: 30px var(--pad-x-mob);
+  .objectivePanel,
+  .progressPanel {
+    padding: 28px var(--pad-x-mob);
   }
 
-  .stats { grid-template-columns: 1fr; }
-  .stat + .stat { border-left: none; border-top: var(--border-soft); }
+  .objectiveTitle {
+    max-width: none;
+  }
 
-  .colParticiper { padding: 34px var(--pad-x-mob); }
+  .stats,
+  .projectInfoGrid,
+  .participationBand {
+    grid-template-columns: 1fr;
+  }
+
+  .stat {
+    min-height: auto;
+  }
+
+  .infoCard + .infoCard,
+  .bandBlock + .bandBlock {
+    border-left: none;
+    border-top: 1px solid rgba(213,154,34,.45);
+  }
 
   .futurePanel {
     grid-template-columns: 1fr;
@@ -662,11 +779,6 @@
   .contentTitle,
   .futureTitle {
     font-size: 1.85rem;
-  }
-
-  .colAvancement {
-    padding-inline: 0;
-    background: transparent;
   }
 
   .progressBar {

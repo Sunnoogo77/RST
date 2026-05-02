@@ -43,6 +43,9 @@ export default function Nehemie() {
 
   const pct = Math.round((projetNehemie.collecte / projetNehemie.objectif) * 100);
   const restant = projetNehemie.objectif - projetNehemie.collecte;
+  const whyItems = t('nehemie.whyItems', { returnObjects: true }) as string[];
+  const buildItems = t('nehemie.buildItems', { returnObjects: true }) as string[];
+  const participationItems = t('nehemie.participationItems', { returnObjects: true }) as string[];
 
   // Lightbox state
   const [lbIndex, setLbIndex] = useState<number | null>(null);
@@ -98,10 +101,13 @@ export default function Nehemie() {
             <h2 className={styles.contentTitle}>{t('nehemie.contentTitle')}</h2>
           </div>
 
-          <div className={styles.actionGrid}>
-            <div className={styles.colAvancement}>
-              <p className={styles.colEyebrow}>{t('nehemie.avancementEyebrow')}</p>
+          <div className={styles.projectBoard}>
+            <div className={styles.objectivePanel}>
+              <p className={styles.boardEyebrow}>{t('nehemie.avancementEyebrow')}</p>
+              <h3 className={styles.objectiveTitle}>{t('nehemie.objectiveTitle')}</h3>
+            </div>
 
+            <div className={styles.progressPanel}>
               <div className={styles.stats}>
                 <div className={styles.stat}>
                   <p className={styles.statLabel}>{t('nehemie.objectif')}</p>
@@ -131,28 +137,55 @@ export default function Nehemie() {
                 </div>
               </div>
 
-              <a href="mailto:tresorier@rst-vitry.fr" className={styles.colCta}>
-                {t('actions.voirTableau')}
-              </a>
+              <p className={styles.progressNote}>{t('nehemie.progressNote')}</p>
             </div>
+          </div>
 
-            <div className={styles.colParticiper}>
-              <p className={styles.participerEyebrow}>{t('nehemie.participerEyebrow')}</p>
-              <div className={styles.participerItems}>
-                <div className={styles.participerItem}>
-                  <p className={styles.participerLabel}>{t('nehemie.participer.priezLabel')}</p>
-                  <p className={styles.participerDesc}>{t('nehemie.participer.priezDesc')}</p>
-                </div>
-                <div className={styles.participerItem}>
-                  <p className={styles.participerLabel}>{t('nehemie.participer.partagezLabel')}</p>
-                  <p className={styles.participerDesc}>{t('nehemie.participer.partagezDesc')}</p>
-                </div>
-                <div className={styles.participerItem}>
-                  <p className={styles.participerLabel}>{t('nehemie.participer.donnezLabel')}</p>
-                  <p className={styles.participerDesc}>{t('nehemie.participer.donnezDesc')}</p>
-                </div>
-              </div>
-              <a href="mailto:tresorier@rst-vitry.fr" className={styles.donBtn}>
+          <div className={styles.projectInfoGrid}>
+            <article className={styles.infoCard}>
+              <span className={styles.infoIcon} aria-hidden="true">01</span>
+              <h3>{t('nehemie.whyTitle')}</h3>
+              <ul>
+                {whyItems.map((item) => <li key={item}>{item}</li>)}
+              </ul>
+            </article>
+            <article className={styles.infoCard}>
+              <span className={styles.infoIcon} aria-hidden="true">02</span>
+              <h3>{t('nehemie.buildTitle')}</h3>
+              <ul>
+                {buildItems.map((item) => <li key={item}>{item}</li>)}
+              </ul>
+            </article>
+            <article className={styles.infoCard}>
+              <span className={styles.infoIcon} aria-hidden="true">03</span>
+              <h3>{t('nehemie.participationTitle')}</h3>
+              <ul>
+                {participationItems.map((item) => <li key={item}>{item}</li>)}
+              </ul>
+            </article>
+            <article className={`${styles.infoCard} ${styles.infoCardCall}`}>
+              <span className={styles.infoIcon} aria-hidden="true">04</span>
+              <h3>{t('nehemie.appealTitle')}</h3>
+              <p>{t('nehemie.appealText')}</p>
+              <strong>{t('nehemie.appealVerse')}</strong>
+              <small>{t('nehemie.appealRef')}</small>
+            </article>
+          </div>
+
+          <div className={styles.participationBand}>
+            <div className={styles.bandBlock}>
+              <h3>{t('nehemie.goFurtherTitle')}</h3>
+              <p>{t('nehemie.goFurtherText')}</p>
+              <strong>{t('nehemie.goFurtherVerse')}</strong>
+            </div>
+            <div className={styles.bandBlock}>
+              <h3>{t('nehemie.followTitle')}</h3>
+              <p>{t('nehemie.followText')}</p>
+            </div>
+            <div className={styles.bandBlock}>
+              <h3>{t('nehemie.waysTitle')}</h3>
+              <p>{t('nehemie.waysText')}</p>
+              <a href={`mailto:${t('nehemie.contactEmail')}`} className={styles.donBtn}>
                 {t('nehemie.donCta')}
               </a>
             </div>
@@ -162,7 +195,13 @@ export default function Nehemie() {
             <div className={styles.futureCopy}>
               <p className={styles.colEyebrow}>{t('nehemie.futurEyebrow')}</p>
               <h3 className={styles.futureTitle}>{t('nehemie.futurTitre')}</h3>
-              <p className={styles.futureCaption}>{t('nehemie.futurCaption')}</p>
+            <p className={styles.futureCaption}>{t('nehemie.futurCaption')}</p>
+              <div className={styles.futureContact}>
+                <a href={`mailto:${t('nehemie.contactEmail')}`}>{t('nehemie.contactEmail')}</a>
+                <a href={`tel:${String(t('nehemie.contactPhone')).replace(/\s/g, '')}`}>
+                  {t('nehemie.contactPhone')}
+                </a>
+              </div>
             </div>
 
             {/* Galerie : 3 vignettes visibles maximum (1 grande + 2 verticales).
