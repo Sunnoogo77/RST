@@ -1,0 +1,89 @@
+/* ============================================================
+   RST — Design Tokens
+   Source : PRD §3.1 et §3.2 — NE PAS MODIFIER sans validation
+   ============================================================ */
+
+:root {
+  /* ----------------------------------------------------------
+     Palette de couleurs (codes hex exacts — figés)
+  ---------------------------------------------------------- */
+  --ink:        #0C0E14;   /* noir principal — titres, corps */
+  --ink-2:      #2A2E3A;   /* gris-noir secondaire */
+  --ink-3:      #6B7280;   /* gris discret — méta, captions */
+  --line-soft:  rgba(12, 14, 20, .15); /* hairlines */
+
+  --paper:      #FFFFFF;   /* fond principal */
+  --paper-2:    #F4F1EA;   /* fond crème — citations Branham, encadrés */
+
+  --accent:     #1E47A1;   /* BLEU RST — actions, dons, CTA majeurs */
+  --note:       #C8332A;   /* ROUGE RST — vidéo, live, YouTube UNIQUEMENT */
+
+  /* ----------------------------------------------------------
+     Typographie
+     Sémantique d'usage stricte (PRD §3.2) :
+     - --f-serif  : corps éditorial, titres h1-h3, citations, lede
+     - --f-engrave: Cinzel — NOM de l'assemblée, horaires de culte
+     - --f-num    : TOUS les chiffres (€, %, dates, numéros)
+     - --f-body   : eyebrow, méta, nav, boutons, captions
+  ---------------------------------------------------------- */
+  --f-serif:    "Cormorant Garamond", "EB Garamond", Georgia, serif;
+  --f-engrave:  "Cinzel", "Trajan Pro", serif;
+  --f-num:      "Bodoni Moda", "Didot", "Bodoni 72", serif;
+  --f-body:     "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* ----------------------------------------------------------
+     Espacements (échelle cohérente)
+  ---------------------------------------------------------- */
+  --space-4:    4px;
+  --space-8:    8px;
+  --space-12:   12px;
+  --space-16:   16px;
+  --space-24:   24px;
+  --space-32:   32px;
+  --space-40:   40px;
+  --space-48:   48px;
+  --space-60:   60px;
+  --space-80:   80px;
+  --space-120:  120px;
+
+  /* ----------------------------------------------------------
+     Layout
+  ---------------------------------------------------------- */
+  --max-width:    1280px;  /* sections pleine largeur */
+  --max-content:  1100px;  /* sections internes */
+  --max-article:  760px;   /* page Histoire, récits longs */
+  --pad-x:        32px;    /* padding latéral desktop */
+  --pad-x-mob:    22px;    /* padding latéral mobile */
+
+  /* ----------------------------------------------------------
+     Bordures
+  ---------------------------------------------------------- */
+  --border-major: 1.5px solid var(--ink);          /* séparations majeures */
+  --border-soft:  1px solid var(--line-soft);       /* divisions internes */
+  --border-accent: 2px solid var(--accent);         /* filet citations pull */
+  --border-note:   2px solid var(--note);           /* filet citations Branham */
+
+  /* ----------------------------------------------------------
+     Rayons — éditorial = carré, pill = interactions
+  ---------------------------------------------------------- */
+  --r-sm:   6px;    /* vidéos, posters */
+  --r-pill: 999px;  /* boutons pill, chips, badges */
+
+  /* ----------------------------------------------------------
+     Ombres (soft — wireframe shadows supprimées en hi-fi)
+  ---------------------------------------------------------- */
+  --shadow-soft:     0 1px 2px rgba(0, 0, 0, .04), 0 4px 12px rgba(0, 0, 0, .06);
+  --shadow-red-soft: 0 4px 16px rgba(200, 51, 42, .28);
+  --shadow-blue-soft: 0 4px 16px rgba(30, 71, 161, .22);
+
+  /* ----------------------------------------------------------
+     Header
+  ---------------------------------------------------------- */
+  --header-h: 62px;
+
+  /* ----------------------------------------------------------
+     Transitions
+  ---------------------------------------------------------- */
+  --transition-fast:   150ms ease;
+  --transition-normal: 250ms ease;
+}

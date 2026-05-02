@@ -1,0 +1,131 @@
+{
+  "lang": "EN",
+  "nav": {
+    "accueil": "Home",
+    "nehemie": "Nehemiah Project",
+    "histoire": "History",
+    "eglise": "The Church",
+    "live": "LIVE",
+    "liveLabel": "Live stream"
+  },
+  "eglise": {
+    "nav": {
+      "cette-semaine": "This week",
+      "cultes": "Services",
+      "cantiques": "Hymns",
+      "annonces": "Announcements",
+      "temoignages": "Testimonies"
+    }
+  },
+  "footer": {
+    "identite": "Identity",
+    "liturgie": "Ministry",
+    "nations": "Eleven nations",
+    "contact": "Contact",
+    "legal": "© Roc Séculaire Tabernacle · Vitry-sur-Seine · All rights reserved",
+    "youtube": "YouTube channel"
+  },
+  "actions": {
+    "contribuer": "Contribute",
+    "decouvrir": "Discover the church",
+    "ecouterMessage": "Listen to the message",
+    "voirReplay": "Watch replay",
+    "voirAnnonces": "See all announcements",
+    "enSavoirPlus": "Learn more",
+    "lireRecit": "Read full account",
+    "partager": "Share",
+    "telechargerAudio": "Audio MP3",
+    "telechargerVideo": "Video MP4",
+    "telechargerPlan": "Outline PDF"
+  },
+  "cantiques": {
+    "tous": "All",
+    "recueil": "From the hymnal",
+    "message": "From the Message",
+    "compose": "Composed here",
+    "recherche": "Search a hymn…",
+    "toolbar": {
+      "reduire": "A−",
+      "normal": "A",
+      "agrandir": "A+",
+      "pdf": "↓ PDF"
+    }
+  },
+  "annonces": {
+    "filtres": {
+      "toutes": "All",
+      "aVenir": "Upcoming",
+      "aujourdhui": "Today",
+      "passees": "Past"
+    },
+    "types": {
+      "reunion": "Meeting",
+      "voyage": "Trip",
+      "sortie": "Outing",
+      "exceptionnelle": "Special"
+    },
+    "statuts": {
+      "a-venir": "Upcoming",
+      "aujourd-hui": "Today",
+      "passee": "Past"
+    }
+  },
+  "cultes": {
+    "filtres": {
+      "date": "Date",
+      "serie": "Series",
+      "livre": "Biblical book",
+      "recherche": "Search…"
+    },
+    "periodes": {
+      "2026": "2026",
+      "2025": "2025",
+      "2024": "2024",
+      "archives": "Archives ↓"
+    },
+    "onglets": {
+      "passages": "Passages",
+      "citations": "Branham Quotes",
+      "plan": "Outline"
+    }
+  },
+  "temoignages": {
+    "partager": "Share my testimony",
+    "compteur": "{{count}} testimonies · since {{depuis}}"
+  },
+  "nehemie": {
+    "objectif": "Goal",
+    "collecte": "Collected",
+    "collectes": "Collected",
+    "objectifAtteint": "of goal reached",
+    "miseAJour": "Last updated:",
+    "reste": "Remaining",
+    "contributions": {
+      "titre": "Choose your contribution"
+    },
+    "donner": {
+      "titre": "How to give",
+      "virement": "Bank transfer",
+      "cheque": "Cheque",
+      "carte": "Card",
+      "especes": "Cash"
+    }
+  },
+  "histoire": {
+    "sections": {
+      "commencements": "The beginnings",
+      "enracinement": "Taking root",
+      "extension": "Expansion",
+      "aujourd-hui": "Today"
+    }
+  },
+  "accessibility": {
+    "skipToContent": "Skip to main content",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "logoAlt": "Roc Séculaire Tabernacle logo",
+    "portraitAlt": "Portrait",
+    "langFr": "Switch to French",
+    "langEn": "Switch to English"
+  }
+}

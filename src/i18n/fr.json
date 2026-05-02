@@ -1,0 +1,131 @@
+{
+  "lang": "FR",
+  "nav": {
+    "accueil": "Accueil",
+    "nehemie": "Projet Néhémie",
+    "histoire": "Histoire",
+    "eglise": "L'Église",
+    "live": "LIVE",
+    "liveLabel": "En direct"
+  },
+  "eglise": {
+    "nav": {
+      "cette-semaine": "Cette semaine",
+      "cultes": "Cultes",
+      "cantiques": "Cantiques",
+      "annonces": "Annonces",
+      "temoignages": "Témoignages"
+    }
+  },
+  "footer": {
+    "identite": "Identité",
+    "liturgie": "Liturgie",
+    "nations": "Onze nations",
+    "contact": "Contact",
+    "legal": "© Roc Séculaire Tabernacle · Vitry-sur-Seine · Tous droits réservés",
+    "youtube": "Chaîne YouTube"
+  },
+  "actions": {
+    "contribuer": "Contribuer",
+    "decouvrir": "Découvrir l'église",
+    "ecouterMessage": "Écouter le message",
+    "voirReplay": "Voir le replay",
+    "voirAnnonces": "Voir toutes les annonces",
+    "enSavoirPlus": "En savoir plus",
+    "lireRecit": "Lire le récit complet",
+    "partager": "Partager",
+    "telechargerAudio": "Audio MP3",
+    "telechargerVideo": "Vidéo MP4",
+    "telechargerPlan": "Plan en PDF"
+  },
+  "cantiques": {
+    "tous": "Tous",
+    "recueil": "Du recueil",
+    "message": "Du Message",
+    "compose": "Composés ici",
+    "recherche": "Rechercher un cantique…",
+    "toolbar": {
+      "reduire": "A−",
+      "normal": "A",
+      "agrandir": "A+",
+      "pdf": "↓ PDF"
+    }
+  },
+  "annonces": {
+    "filtres": {
+      "toutes": "Toutes",
+      "aVenir": "À venir",
+      "aujourdhui": "Aujourd'hui",
+      "passees": "Passées"
+    },
+    "types": {
+      "reunion": "Réunion",
+      "voyage": "Voyage",
+      "sortie": "Sortie",
+      "exceptionnelle": "Exceptionnelle"
+    },
+    "statuts": {
+      "a-venir": "À venir",
+      "aujourd-hui": "Aujourd'hui",
+      "passee": "Passée"
+    }
+  },
+  "cultes": {
+    "filtres": {
+      "date": "Date",
+      "serie": "Série",
+      "livre": "Livre biblique",
+      "recherche": "Rechercher…"
+    },
+    "periodes": {
+      "2026": "2026",
+      "2025": "2025",
+      "2024": "2024",
+      "archives": "Archives ↓"
+    },
+    "onglets": {
+      "passages": "Passages",
+      "citations": "Citations Branham",
+      "plan": "Plan"
+    }
+  },
+  "temoignages": {
+    "partager": "Partager mon témoignage",
+    "compteur": "{{count}} témoignages · depuis {{depuis}}"
+  },
+  "nehemie": {
+    "objectif": "Objectif",
+    "collecte": "Collecté",
+    "collectes": "Collectés",
+    "objectifAtteint": "de l'objectif atteint",
+    "miseAJour": "Mise à jour :",
+    "reste": "Reste à collecter",
+    "contributions": {
+      "titre": "Choisir votre contribution"
+    },
+    "donner": {
+      "titre": "Comment donner",
+      "virement": "Virement",
+      "cheque": "Chèque",
+      "carte": "Carte",
+      "especes": "Espèces"
+    }
+  },
+  "histoire": {
+    "sections": {
+      "commencements": "Les commencements",
+      "enracinement": "L'enracinement",
+      "extension": "L'extension",
+      "aujourd-hui": "Aujourd'hui"
+    }
+  },
+  "accessibility": {
+    "skipToContent": "Aller au contenu principal",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "logoAlt": "Logo Roc Séculaire Tabernacle",
+    "portraitAlt": "Portrait",
+    "langFr": "Passer en français",
+    "langEn": "Switch to English"
+  }
+}

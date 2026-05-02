@@ -1,0 +1,128 @@
+/* Base commune à tous les boutons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  font-family: var(--f-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    opacity var(--transition-fast),
+    box-shadow var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ----------------------------------------------------------
+   video — Pill rouge (LIVE, vidéo, YouTube UNIQUEMENT)
+---------------------------------------------------------- */
+.video {
+  padding: 10px 22px;
+  border-radius: var(--r-pill);
+  background: var(--note);
+  color: #fff;
+  box-shadow: var(--shadow-red-soft);
+  animation: videoGlow 2.4s ease-in-out infinite;
+}
+
+.video:hover:not(:disabled) {
+  opacity: 0.88;
+}
+
+@keyframes videoGlow {
+  0%,
+  100% {
+    box-shadow: var(--shadow-red-soft);
+  }
+  50% {
+    box-shadow: 0 6px 24px rgba(166, 32, 32, 0.42);
+  }
+}
+
+/* ----------------------------------------------------------
+   blue — Pill bleu (CTA actions, dons)
+---------------------------------------------------------- */
+.blue {
+  padding: 10px 22px;
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  color: #fff;
+  box-shadow: var(--shadow-blue-soft);
+}
+
+.blue:hover:not(:disabled) {
+  background: #0d2535;
+}
+
+/* ----------------------------------------------------------
+   secondary — Pill outline noir
+---------------------------------------------------------- */
+.secondary {
+  padding: 10px 22px;
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--ink);
+  border: 1.5px solid var(--ink);
+}
+
+.secondary:hover:not(:disabled) {
+  background: var(--ink);
+  color: #fff;
+}
+
+/* Variante pour fond sombre (hero) */
+.secondary.onDark {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.secondary.onDark:hover:not(:disabled) {
+  background: #fff;
+  color: var(--ink);
+}
+
+/* ----------------------------------------------------------
+   line — Rectangle outline noir, téléchargements
+---------------------------------------------------------- */
+.line {
+  padding: 8px 16px;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  font-size: 11px;
+}
+
+.line:hover:not(:disabled) {
+  background: var(--ink);
+  color: #fff;
+}
+
+/* ----------------------------------------------------------
+   more — Lien inline "En savoir plus →"
+---------------------------------------------------------- */
+.more {
+  padding: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  border-radius: 0;
+}
+
+.more:hover:not(:disabled) {
+  color: var(--accent);
+}

@@ -1,0 +1,471 @@
+/* ══════════════════════════════════════════════════════════════════════
+   NÉHÉMIE — Refonte v3
+   Hero : panel bleu étroit (~15 %) | image large (~85 %)
+   Texte déborde visuellement sur l'image (z-index + overflow visible)
+   Contenu : 3 colonnes compactes — Avancement | Participez | Image portrait
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── §1 HERO ──────────────────────────────────────────────────────────── */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 5.5fr;   /* ~15 % panel | ~85 % image */
+  min-height: 28vh;
+  padding-top: var(--header-h);
+  overflow: hidden;
+  background: #06091c;
+}
+
+/* ─ Panneau sombre gauche ─ */
+.heroDark {
+  position: relative;
+  z-index: 2;
+  overflow: visible;                   /* texte peut déborder sur l'image */
+  background:
+    radial-gradient(ellipse 280% 90% at 70% 65%, rgba(22,48,152,.28) 0%, transparent 55%),
+    #06091c;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;            /* texte centré verticalement */
+  gap: var(--space-12);
+  padding: var(--space-32) var(--space-12) var(--space-32) var(--pad-x);
+  color: var(--paper);
+}
+
+/* Fondu du panneau vers l'image */
+.heroDark::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -80px;
+  bottom: 0;
+  width: 80px;
+  background: linear-gradient(to right, #06091c 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.heroEyebrow {
+  font-family: var(--f-engrave);
+  font-size: 9px;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.42);
+  white-space: nowrap;
+}
+
+.heroTitle {
+  font-family: var(--f-serif);
+  font-size: clamp(2.4rem, 4.6vw, 4.2rem);
+  font-weight: 400;
+  line-height: 1.05;
+  color: var(--paper);
+  margin: 0;
+  /* Permet au texte de dépasser la colonne sur la zone image (gradient dark) */
+  white-space: nowrap;
+}
+
+.heroTitle em {
+  font-style: italic;
+  color: var(--note);
+  display: block;
+  white-space: nowrap;
+}
+
+.heroSub {
+  font-family: var(--f-body);
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: rgba(255,255,255,.58);
+  margin: 0;
+  max-width: 38ch;
+}
+
+.heroCta {
+  display: inline-block;
+  font-family: var(--f-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--paper);
+  text-decoration: none;
+  border: 1.5px solid rgba(255,255,255,.46);
+  padding: 9px 18px;
+  border-radius: var(--r-pill);
+  width: fit-content;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+.heroCta:hover {
+  background: rgba(255,255,255,.10);
+  border-color: rgba(255,255,255,.78);
+}
+
+/* ─ Zone image droite ─ */
+.heroImg {
+  position: relative;
+  overflow: hidden;
+}
+
+.heroImgEl {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  display: block;
+}
+
+/* Gradient : bord gauche (jonction panel) + bord supérieur fort + bas */
+.heroImg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right,
+      #06091c 0%,
+      rgba(6,9,28,.70) 6%,
+      rgba(6,9,28,.20) 13%,
+      transparent 22%),
+    linear-gradient(to bottom,
+      rgba(0,0,0,.85) 0%,
+      rgba(0,0,0,.55) 12%,
+      rgba(0,0,0,.18) 24%,
+      transparent 36%),
+    linear-gradient(to top,
+      rgba(0,0,0,.55) 0%,
+      transparent 24%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Encadré verset — descendu tout en bas de l'image */
+.heroQuoteBox {
+  position: absolute;
+  bottom: 5%;
+  right: 5%;
+  z-index: 2;
+  background: rgba(6, 9, 28, 0.82);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 20px 24px;
+  max-width: 34ch;
+  border-left: 2px solid var(--note);
+  margin: 0;
+}
+
+.heroQuoteGlyph {
+  font-family: var(--f-serif);
+  font-size: 48px;
+  line-height: 0.4;
+  color: var(--note);
+  display: block;
+  margin-bottom: var(--space-12);
+}
+
+.heroQuoteBox p {
+  font-family: var(--f-serif);
+  font-size: 16px;
+  font-style: italic;
+  line-height: 1.5;
+  color: rgba(255,255,255,.90);
+  margin: 0 0 10px;
+}
+
+.heroQuoteBox cite {
+  font-family: var(--f-body);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.46);
+  font-style: normal;
+}
+
+/* ── §2 GRILLE CONTENU ────────────────────────────────────────────────── */
+.content {
+  background: var(--paper);
+  margin-top: var(--space-16);
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.68fr;
+  align-items: start;
+}
+
+/* ─ Col 1 : Avancement ─ */
+.colAvancement {
+  padding: 28px 32px 28px var(--pad-x);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.colEyebrow {
+  font-family: var(--f-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0;
+}
+
+/* Stats en ligne horizontale */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1.5px solid var(--ink);
+}
+
+.stat {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.stat + .stat {
+  border-left: 1px solid var(--line-soft);
+}
+
+.statLabel {
+  font-family: var(--f-body);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: .20em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0;
+}
+
+.statNum {
+  font-family: var(--f-num);
+  font-size: clamp(1.25rem, 1.8vw, 1.65rem);
+  font-weight: 400;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1;
+  letter-spacing: .01em;
+}
+
+.statHighlight .statNum {
+  color: var(--note);
+}
+
+.statPct {
+  font-family: var(--f-body);
+  font-size: 11px;
+  color: var(--note);
+  margin: 0;
+  font-weight: 600;
+}
+
+/* Barre de progression */
+.progressBar {
+  height: 30px;
+  background: rgba(12,14,20,.07);
+  border: 1.5px solid var(--ink);
+  position: relative;
+  overflow: hidden;
+}
+
+.progressFill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 10px;
+  min-width: 44px;
+}
+
+.progressLabel {
+  font-family: var(--f-body);
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.colCta {
+  font-family: var(--f-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  border: 1.5px solid var(--ink);
+  padding: 9px 18px;
+  width: fit-content;
+  align-self: center;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+.colCta:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* ─ Col 2 : Participez — rectangle compact ─ */
+.colParticiper {
+  background: var(--ink);
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-14);
+  text-align: center;
+}
+
+.participerEyebrow {
+  font-family: var(--f-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.42);
+  margin: 0;
+}
+
+.participerItems {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-12);
+  width: 100%;
+}
+
+.participerItem {
+  border-top: 1px solid rgba(255,255,255,.10);
+  padding-top: var(--space-12);
+}
+
+.participerLabel {
+  font-family: var(--f-body);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.82);
+  margin: 0 0 5px;
+}
+
+.participerDesc {
+  font-family: var(--f-body);
+  font-size: 11.5px;
+  color: rgba(255,255,255,.40);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.donBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: 11px 28px;
+  margin-top: var(--space-8);
+  background: var(--note);
+  color: #fff;
+  font-family: var(--f-body);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow-red-soft);
+  border: none;
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+.donBtn:hover {
+  opacity: .88;
+}
+
+/* ─ Col 3 : Image portrait — hauteur fixée ─ */
+.colImage {
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.futureImg {
+  overflow: hidden;
+  height: 160px;
+  flex-shrink: 0;
+}
+
+.futureImgEl {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  filter: grayscale(.08);
+}
+
+.futureCaption {
+  font-family: var(--f-serif);
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--ink-2);
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   RESPONSIVE 820px
+   ══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 820px) {
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .heroDark {
+    min-height: 56vw;
+    justify-content: flex-end;
+    padding: 40px var(--pad-x-mob) var(--space-40);
+    overflow: hidden;
+  }
+
+  .heroDark::after { display: none; }
+  .heroTitle { white-space: normal; }
+  .heroTitle em { white-space: normal; }
+
+  .heroImg { height: 60vw; }
+
+  .heroQuoteBox {
+    bottom: 8%;
+    right: 4%;
+    left: 4%;
+    max-width: unset;
+  }
+
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .colAvancement {
+    padding: 36px var(--pad-x-mob);
+    border-bottom: var(--border-soft);
+  }
+
+  .stats { grid-template-columns: 1fr; }
+  .stat + .stat { border-left: none; border-top: var(--border-soft); }
+
+  .colParticiper { padding: 32px var(--pad-x-mob); }
+  .participerItems { grid-template-columns: 1fr; }
+
+  .colImage {
+    padding: 36px var(--pad-x-mob);
+    border-top: var(--border-soft);
+  }
+
+  .futureImg { height: 200px; }
+}
+
+@media (max-width: 480px) {
+  .heroTitle { font-size: 1.5rem; }
+}

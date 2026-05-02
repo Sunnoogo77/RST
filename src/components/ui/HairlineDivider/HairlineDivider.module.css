@@ -1,0 +1,12 @@
+.divider {
+  border: none;
+  margin: 0;
+}
+
+.soft {
+  border-top: var(--border-soft);
+}
+
+.major {
+  border-top: var(--border-major);
+}
