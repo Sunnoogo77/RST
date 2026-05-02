@@ -1,190 +1,179 @@
 import type { Sermon } from '../types';
 
+/* ============================================================
+   Prédications réelles archivées sur la chaîne YouTube Kollonell.
+   Les `videoUrl` pointent vers les vraies vidéos publiques.
+   Les passages bibliques sont conservés comme propositions
+   éditoriales — les citations Branham et plans sont laissés
+   vides volontairement (à renseigner par l'équipe pastorale).
+   ============================================================ */
+
 export const sermons: Sermon[] = [
 
-  /* ── Avril 2026 ─────────────────────────────────────────── */
+  /* ── Février 2026 — service dominical le plus récent ─── */
   {
-    id: 'ordre-eglise-14',
-    titre: 'Le Roc qui ne tombe pas.',
-    titleEm: 'ne tombe pas.',
-    serie: "L'Ordre de l'Église",
-    numeroSerie: 14,
-    date: '2026-04-26',
+    id: 'cle-de-voute-bible',
+    titre: 'La clé de voûte de la Bible',
+    titleEm: 'de la Bible',
+    serie: "Étude doctrinale",
+    date: '2026-02-01',
     heure: '09H00',
-    predicateur: 'Rev. Robert Ndaye M.',
-    duree: '1H 28MIN',
+    predicateur: 'Rév. Robert Ndaye M.',
+    duree: '1H 32MIN',
     description:
-      "À partir de Matthieu 7.24–27, une méditation sur la fondation inébranlable de la foi chrétienne dans le contexte du Message.",
-    videoUrl: undefined,
+      "Service dominical en direct depuis l'assemblée Roc Séculaire Tabernacle, Vitry-sur-Seine.",
+    videoUrl: 'https://www.youtube.com/watch?v=BIek0FhvbuE',
     audioUrl: undefined,
     passages: [
       {
-        reference: 'Matthieu 7 . 24–27',
+        reference: 'Éphésiens 2 . 19-22',
         texte:
-          "C'est pourquoi, quiconque entend ces paroles que je dis et les met en pratique, sera semblable à un homme prudent qui a bâti sa maison sur le roc. La pluie est tombée, les torrents sont venus, les vents ont soufflé et se sont jetés contre cette maison : elle n'est point tombée, parce qu'elle était fondée sur le roc.",
+          "Ainsi donc, vous n'êtes plus des étrangers, ni des hommes du dehors ; mais vous êtes concitoyens des saints, gens de la maison de Dieu. Vous avez été édifiés sur le fondement des apôtres et des prophètes, Jésus-Christ lui-même étant la pierre angulaire.",
       },
       {
-        reference: '1 Corinthiens 3 . 11',
+        reference: '1 Pierre 2 . 6-7',
         texte:
-          "Car personne ne peut poser un autre fondement que celui qui a été posé, savoir Jésus-Christ.",
+          "Voici, je mets en Sion une pierre angulaire, choisie, précieuse ; et celui qui croit en elle ne sera point confus. L'honneur est donc pour vous, qui croyez. Mais, pour les incrédules, la pierre qu'ont rejetée ceux qui bâtissaient est devenue la principale de l'angle.",
       },
       {
-        reference: 'Ésaïe 28 . 16',
+        reference: 'Psaume 118 . 22',
         texte:
-          "C'est pourquoi ainsi parle le Seigneur, l'Éternel : Voici, j'ai mis pour fondement en Sion une pierre, une pierre éprouvée, une pierre angulaire de prix, solidement posée ; celui qui la prendra pour appui n'aura point hâte de fuir.",
-      },
-      {
-        reference: 'Psaume 18 . 2',
-        texte:
-          "L'Éternel est mon rocher, ma forteresse, mon libérateur. Mon Dieu est mon rocher, où je trouve un abri.",
+          "La pierre qu'ont rejetée ceux qui bâtissaient est devenue la principale de l'angle.",
       },
     ],
-    citationsBranham: [
-      {
-        source: 'CHRIST IS THE MYSTERY OF GOD REVEALED · 63-0728 · §117',
-        texte:
-          "La maison qui est bâtie sur le Roc, c'est la maison qui est bâtie sur la révélation de qui est Jésus-Christ — pas l'imagination de qui Il est, mais la révélation.",
-      },
-      {
-        source: 'THE TOKEN · 63-0901M · §244',
-        texte:
-          "Quand le vent souffle, mes amis, vérifiez votre fondement. Ce que vous croyez en silence le dimanche, c'est ce qui tient le mardi.",
-      },
-      {
-        source: 'THE STATURE OF A PERFECT MAN · 62-1014M · §389',
-        texte:
-          "Vous ne pouvez pas bâtir sur le sable et appeler ça un édifice. Le Roc, c'est Christ — la révélation que la Parole est ce qu'Elle dit qu'Elle est.",
-      },
-    ],
-    plan: [
-      {
-        numero: 'I',
-        titre: "Le fondement n'est ni une opinion ni une émotion",
-        description: 'Distinction entre la foi héritée et la foi éprouvée. Trois épreuves nommées sans détour.',
-      },
-      {
-        numero: 'II',
-        titre: 'Ce qui tient quand le vent souffle',
-        description: 'La Parole lue, comprise, mise en pratique. Lecture en parallèle de Matthieu 7 et 1 Corinthiens 3.',
-      },
-      {
-        numero: 'III',
-        titre: 'Ce qui tombe — et pourquoi',
-        description: 'Le sable comme image de la vie sans fondement révélé. Avertissements pastoraux.',
-      },
-      {
-        numero: 'IV',
-        titre: 'Application pour cette semaine',
-        description: "Trois pratiques concrètes : la lecture quotidienne, l'autel domestique, la prière silencieuse.",
-      },
-    ],
+    citationsBranham: [],
+    plan: [],
   },
 
+  /* ── Octobre 2024 — étude biblique du mercredi ─────── */
   {
-    id: 'ordre-eglise-13',
-    titre: 'Le serviteur fidèle',
-    serie: "L'Ordre de l'Église",
-    numeroSerie: 13,
-    date: '2026-04-22',
+    id: 'service-mercredi-23-10-2024',
+    titre: 'Service du mercredi',
+    serie: 'Étude biblique',
+    date: '2024-10-23',
     heure: '19H30',
-    predicateur: 'Rev. Robert Ndaye M.',
-    description: 'Description à fournir par le pasteur.',
-    videoUrl: undefined,
+    predicateur: 'Rév. Robert Ndaye M.',
+    description: 'Étude biblique en direct, mercredi soir.',
+    videoUrl: 'https://www.youtube.com/watch?v=oStj4xjdXzs',
     audioUrl: undefined,
     passages: [],
     citationsBranham: [],
     plan: [],
   },
 
+  /* ── Convention internationale ─────────────────────── */
   {
-    id: 'ordre-eglise-12',
-    titre: 'Une prière qui tient',
+    id: 'bon-et-fidele-serviteur',
+    titre: 'Bon et fidèle serviteur',
+    titleEm: 'serviteur',
+    serie: 'Convention Internationale',
+    date: '2024-08-15',
+    heure: '10H00',
+    predicateur: 'Fr. Jules Kayembe',
+    description: 'Message de la Convention internationale.',
+    videoUrl: 'https://www.youtube.com/watch?v=0T3fd4EN9PM',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  /* ── Novembre 2022 ─────────────────────────────────── */
+  {
+    id: 'caractere-des-membres',
+    titre: "Le caractère des membres fait la beauté d'une église",
+    titleEm: "d'une église",
     serie: "L'Ordre de l'Église",
-    numeroSerie: 12,
-    date: '2026-04-19',
+    date: '2022-11-13',
     heure: '09H00',
-    predicateur: 'Rev. Robert Ndaye M.',
-    description: 'Description à fournir par le pasteur.',
-    videoUrl: undefined,
+    predicateur: 'Rév. Robert Ndaye M.',
+    description: 'Service dominical du 13 novembre 2022.',
+    videoUrl: 'https://www.youtube.com/watch?v=BVIswVRY-EQ',
     audioUrl: undefined,
     passages: [],
     citationsBranham: [],
     plan: [],
   },
 
+  /* ── Avril 2022 ──────────────────────────────────────── */
   {
-    id: 'ordre-eglise-11',
-    titre: "L'autel oublié",
-    serie: "L'Ordre de l'Église",
-    numeroSerie: 11,
-    date: '2026-04-15',
-    heure: '19H30',
-    predicateur: 'Rev. Robert Ndaye M.',
-    description: 'Description à fournir par le pasteur.',
-    videoUrl: undefined,
-    audioUrl: undefined,
-    passages: [],
-    citationsBranham: [],
-    plan: [],
-  },
-
-  {
-    id: 'etude-libre-2604-12',
-    titre: 'Quand le silence parle',
+    id: 'pouvoir-du-sang',
+    titre: 'Le pouvoir du sang de Jésus-Christ',
+    titleEm: 'de Jésus-Christ',
     serie: 'Étude libre',
-    date: '2026-04-12',
-    heure: '09H00',
-    predicateur: 'Rev. Robert Ndaye M.',
-    description: 'Description à fournir par le pasteur.',
-    videoUrl: undefined,
+    date: '2022-04-13',
+    heure: '19H30',
+    predicateur: 'Rév. Robert Ndaye M.',
+    description: 'Étude biblique du mercredi 13 avril 2022.',
+    videoUrl: 'https://www.youtube.com/watch?v=dzvVBbZlVoM',
     audioUrl: undefined,
     passages: [],
     citationsBranham: [],
     plan: [],
   },
 
-  /* ── Mars 2026 ───────────────────────────────────────────── */
+  /* ── Pâques 2022 ────────────────────────────────────── */
   {
-    id: 'ordre-eglise-10',
-    titre: 'La maison du potier',
-    serie: "L'Ordre de l'Église",
+    id: 'vrai-sens-calvaire',
+    titre: 'Le vrai sens du Calvaire',
+    titleEm: 'du Calvaire',
+    serie: 'Étude libre',
+    date: '2022-04-17',
+    heure: '09H00',
+    predicateur: 'Rév. Robert Ndaye M.',
+    description: 'Méditation pascale.',
+    videoUrl: 'https://www.youtube.com/watch?v=Xw3toA100_4',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  /* ── Janvier 2022 ───────────────────────────────────── */
+  {
+    id: 'veritable-revelation-eglise-10',
+    titre: "La véritable révélation de la véritable Église — part. 10",
+    serie: "La véritable révélation de la véritable Église",
     numeroSerie: 10,
-    date: '2026-03-29',
+    date: '2022-01-16',
     heure: '09H00',
-    predicateur: 'Rev. Robert Ndaye M.',
-    description: 'Description à fournir par le pasteur.',
-    videoUrl: undefined,
+    predicateur: 'Past. Robert Ndaye M.',
+    description: 'Dixième volet de la série doctrinale sur l\'Église.',
+    videoUrl: 'https://www.youtube.com/watch?v=WNwUFO-C9Dk',
     audioUrl: undefined,
     passages: [],
     citationsBranham: [],
     plan: [],
   },
 
+  /* ── 2021 — promesses divines ──────────────────────── */
   {
-    id: 'ordre-eglise-09',
-    titre: 'Bâtir sans précipiter',
-    serie: "L'Ordre de l'Église",
-    numeroSerie: 9,
-    date: '2026-03-25',
-    heure: '19H30',
-    predicateur: 'Rev. Robert Ndaye M.',
-    description: 'Description à fournir par le pasteur.',
-    videoUrl: undefined,
-    audioUrl: undefined,
-    passages: [],
-    citationsBranham: [],
-    plan: [],
-  },
-
-  {
-    id: 'etude-libre-2603-22',
-    titre: 'Le pain quotidien',
+    id: 'infaillibilite-promesses-divines',
+    titre: "L'infaillibilité des promesses divines",
+    titleEm: 'des promesses divines',
     serie: 'Étude libre',
-    date: '2026-03-22',
+    date: '2021-11-07',
     heure: '09H00',
-    predicateur: 'Rev. Robert Ndaye M.',
-    description: 'Description à fournir par le pasteur.',
-    videoUrl: undefined,
+    predicateur: 'Past. Robert Ndaye M.',
+    description: 'Méditation sur la fidélité de Dieu à Sa Parole.',
+    videoUrl: 'https://www.youtube.com/watch?v=NumCPxov-aw',
+    audioUrl: undefined,
+    passages: [],
+    citationsBranham: [],
+    plan: [],
+  },
+
+  /* ── 2021 — espérance ──────────────────────────────── */
+  {
+    id: 'espere-en-eternel',
+    titre: "Ce qui espère en l'Éternel ne mourra jamais",
+    titleEm: 'ne mourra jamais',
+    serie: 'Étude libre',
+    date: '2021-01-30',
+    heure: '09H00',
+    predicateur: 'Rév. Robert Ndaye M.',
+    description: "Méditation sur l'espérance chrétienne.",
+    videoUrl: 'https://www.youtube.com/watch?v=QeGaWZ4BGcE',
     audioUrl: undefined,
     passages: [],
     citationsBranham: [],

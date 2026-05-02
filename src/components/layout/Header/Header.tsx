@@ -64,10 +64,10 @@ export default function Header() {
               {t('nav.nehemie')}
             </NavLink>
             <NavLink
-              to="/histoire"
+              to="/genese"
               className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
             >
-              {t('nav.histoire')}
+              {t('nav.genese')}
             </NavLink>
             <NavLink
               to="/eglise"

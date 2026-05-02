@@ -7,10 +7,24 @@
 .hero {
   position: relative;
   min-height: 88vh;
-  background: #06091c;
+  background: #02040f;
   overflow: hidden;
   color: var(--paper);
   padding-top: var(--header-h);
+  margin-bottom: -1px;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(46vw, 760px);
+  height: var(--header-h);
+  background:
+    linear-gradient(to right, rgba(2,4,15,0) 0%, rgba(2,4,15,.72) 32%, #01020a 72%, #000 100%);
+  pointer-events: none;
+  z-index: 2;
 }
 
 /* Backdrop : halo centré sur le titre + fondu vers la photo */
@@ -19,8 +33,8 @@
   inset: 0;
   background:
     radial-gradient(ellipse 50% 56% at 20% 54%, rgba(18,48,152,.40) 0%, rgba(12,32,112,.16) 48%, transparent 70%),
-    linear-gradient(to right, transparent 46%, rgba(4,6,20,.68) 53%, rgba(3,5,18,.96) 61%, #06091c 65%),
-    #050819;
+    linear-gradient(to right, transparent 42%, rgba(5,10,34,.44) 52%, rgba(2,4,16,.92) 62%, #01020a 68%),
+    #030617;
   pointer-events: none;
   z-index: 0;
 }
@@ -34,8 +48,20 @@
   min-height: calc(88vh - var(--header-h));
 }
 
+.heroInner::after {
+  content: '';
+  position: absolute;
+  inset: 0 34.2% 0 0;
+  background:
+    linear-gradient(to right, transparent 48%, rgba(5,10,34,.18) 68%, rgba(2,4,16,.78) 88%, #01020a 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
 /* ─ Texte hero ─ */
 .heroText {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -105,6 +131,7 @@
 /* ─ Image du Christ (droite, pleine hauteur, flush right) ─ */
 .heroJesus {
   position: relative;
+  z-index: 1;
   overflow: hidden;
   align-self: stretch;
 }
@@ -123,9 +150,9 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(to right,  rgba(0,0,0,.94) 0%, rgba(0,0,0,.68) 8%, rgba(0,0,0,.16) 18%, transparent 28%),
-    linear-gradient(to bottom, rgba(0,0,0,.90) 0%, rgba(0,0,0,.58) 12%, rgba(0,0,0,.18) 24%, transparent 36%),
-    linear-gradient(to top,    rgba(0,0,0,.75) 0%, transparent 18%);
+    linear-gradient(to right,  rgba(0,0,0,.98) 0%, rgba(0,0,0,.82) 5%, rgba(0,0,0,.42) 13%, rgba(0,0,0,.10) 25%, transparent 36%),
+    linear-gradient(to bottom, rgba(0,0,0,.96) 0%, rgba(0,0,0,.70) 10%, rgba(0,0,0,.24) 22%, transparent 34%),
+    linear-gradient(to top,    rgba(0,0,0,.72) 0%, transparent 18%);
   pointer-events: none;
 }
 
@@ -172,7 +199,7 @@
 
 /* ── PROCHAINES RÉUNIONS ──────────────────────────────────────────────── */
 .schedule {
-  background: var(--paper);
+  background: #f8f6f1;
   padding: 72px var(--pad-x);
 }
 
@@ -271,7 +298,8 @@
 
 /* ── DERNIER MESSAGE ─────────────────────────────────────────────────── */
 .lastMsg {
-  background: var(--paper-2);
+  background:
+    linear-gradient(to bottom, #f8f6f1 0%, #f1ede4 28%, var(--paper-2) 100%);
   padding: 72px var(--pad-x);
 }
 
@@ -432,7 +460,7 @@
 
 /* ── NOTRE HISTOIRE ─────────────────────────────────────────────────── */
 .histoire {
-  background: var(--paper);
+  background: #fbfaf7;
   padding: 72px var(--pad-x);
 }
 
@@ -440,25 +468,27 @@
   max-width: 1280px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 64px;
+  grid-template-columns: 0.92fr 1.24fr;
+  gap: 56px;
   align-items: start;
 }
 
 .histoireImg {
+  width: min(92%, 520px);
   aspect-ratio: 4/5;
   border: 1.5px solid var(--ink);
   overflow: hidden;
   background: var(--ink-2);
   position: relative;
+  justify-self: center;
 }
 
 .histoireImgEl {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center top;
   display: block;
-  filter: grayscale(.3);
 }
 
 /* Placeholder identité quand pas de photo sanctuaire */
@@ -497,7 +527,7 @@
 .histoireCopy {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
   padding-top: 4px;
 }
 
@@ -519,9 +549,17 @@
 .histoireP {
   font-family: var(--f-serif);
   font-size: 17px;
-  line-height: 1.7;
+  line-height: 1.52;
   color: var(--ink-2);
   margin: 0;
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.bibleRef {
+  font-weight: 700;
+  font-style: italic;
+  color: var(--ink);
 }
 
 /* Drop-cap éditorial sur la lettre "N" de "Née" */
@@ -557,9 +595,29 @@
   border-color: var(--ink-2);
 }
 
+/* Bénédiction et signature du Mot du pasteur */
+.histoireBenediction {
+  font-family: var(--f-serif);
+  font-size: 17px;
+  font-style: italic;
+  line-height: 1.45;
+  color: var(--ink);
+  margin: 4px 0 0;
+}
+
+.histoireSignature {
+  font-family: var(--f-serif);
+  font-size: 16px;
+  font-style: italic;
+  line-height: 1.35;
+  color: var(--ink-2);
+  margin: 0 0 4px;
+}
+
 /* ── NÉHÉMIE BANNER ─────────────────────────────────────────────────── */
 .nehemieBanner {
-  background: var(--paper-2);
+  background:
+    linear-gradient(to bottom, #fbfaf7 0%, #f1ede4 100%);
   border-top: 1.5px solid var(--ink);
   border-bottom: 1.5px solid var(--ink);
   display: grid;
@@ -569,16 +627,27 @@
 
 .nehemieBannerImg {
   overflow: hidden;
-  background: var(--ink-2);
+  background: var(--ink);
   position: relative;
+}
+
+.nehemieBannerImg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right, rgba(12,14,20,.12) 0%, rgba(12,14,20,.03) 48%, rgba(12,14,20,.22) 100%),
+    linear-gradient(to top, rgba(12,14,20,.48) 0%, rgba(12,14,20,.1) 42%, transparent 70%);
+  pointer-events: none;
 }
 
 .nehemieBannerImgEl {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
-  filter: grayscale(.35) brightness(.88);
+  filter: grayscale(.16) contrast(1.04) brightness(.9);
 }
 
 .nehemieBannerCopy {
@@ -599,51 +668,52 @@
 }
 
 .nehemieBannerDesc {
-  font-family: var(--f-body);
-  font-size: 14.5px;
-  line-height: 1.74;
+  font-family: var(--f-serif);
+  font-size: 17px;
+  line-height: 1.56;
   color: var(--ink-2);
   margin: 0;
-  max-width: 52ch;
+  max-width: 48ch;
 }
 
 /* ─ Jauge de collecte ─ */
 .progress {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin: 8px 0;
+  gap: 10px;
+  margin: 12px 0 4px;
+  width: min(100%, 760px);
 }
 
 .progressNums {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: baseline;
   gap: 12px;
 }
 
 .progressRaised {
   font-family: var(--f-body);
-  font-size: 14px;
+  font-size: 15px;
   color: var(--ink);
 }
 .progressRaised b {
   font-family: var(--f-num);
-  font-size: 1.125rem;
+  font-size: 1.45rem;
   font-weight: 400;
   letter-spacing: .02em;
 }
 
 .progressGoal {
   font-family: var(--f-body);
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--ink-3);
   text-align: right;
 }
 
 .progressBar {
-  height: 8px;
-  background: var(--paper-2);
+  height: 18px;
+  background: rgba(255,255,255,.46);
   border: 1.5px solid var(--ink);
   position: relative;
   overflow: hidden;
@@ -652,14 +722,25 @@
 .progressBarFill {
   position: absolute;
   inset: 0 auto 0 0;
-  background: var(--note);
+  background: linear-gradient(90deg, var(--note) 0%, #a62020 100%);
 }
 
 .progressPct {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
   font-family: var(--f-body);
-  font-size: 12px;
-  color: var(--ink-3);
+  font-size: 13px;
+  color: var(--ink-2);
   letter-spacing: .04em;
+}
+
+.progressPct strong {
+  font-family: var(--f-num);
+  font-size: 21px;
+  font-weight: 400;
+  letter-spacing: .02em;
+  color: var(--ink);
 }
 
 .nehemieBannerCtas {
@@ -683,6 +764,9 @@
     grid-template-columns: 1fr;
     grid-template-rows: 52vw auto;
     min-height: calc(100svh - var(--header-h));
+  }
+  .heroInner::after {
+    display: none;
   }
 
   .heroText {
@@ -743,6 +827,7 @@
   }
 
   .histoireImg {
+    width: 100%;
     aspect-ratio: 3/2;
   }
 

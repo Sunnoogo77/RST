@@ -52,7 +52,7 @@
   border-bottom-color: #fff;
 }
 .onDark .logoName {
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.76);
 }
 .onDark .lang {
   color: rgba(255, 255, 255, 0.5);
@@ -90,7 +90,7 @@
   border-bottom-color: var(--note);
 }
 .onLight .logoName {
-  color: var(--ink-3);
+  color: var(--ink-2);
 }
 .onLight .lang {
   color: var(--ink-3);
@@ -121,23 +121,24 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1px;
+  gap: 3px;
   flex-shrink: 0;
   text-decoration: none;
+  transform: translateY(-2px);
 }
 
 .logoImg {
   display: block;
   object-fit: contain;
-  width: 60px;
-  height: 38px;
-  filter: brightness(1.3) contrast(1.05);
+  width: 72px;
+  height: 44px;
+  filter: brightness(1.42) contrast(1.08);
 }
 
 .logoName {
   font-family: var(--f-engrave);
-  font-size: 8px;
-  letter-spacing: 0.13em;
+  font-size: 9px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   line-height: 1;
   text-align: center;

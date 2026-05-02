@@ -6,7 +6,10 @@
   border-bottom: 1.5px solid var(--ink);
 }
 
-.heroInner { max-width: 760px; }
+.heroInner {
+  max-width: none;
+  text-align: center;
+}
 
 .eyebrow {
   font-family: var(--f-body);
@@ -31,13 +34,23 @@
   color: var(--ink-2);
 }
 
+.heroRef {
+  font-family: var(--f-body);
+  font-size: 11px;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--note);
+  font-weight: 600;
+  margin: -8px 0 22px;
+}
+
 .heroLede {
   font-family: var(--f-serif);
   font-size: 19px;
   line-height: 1.55;
   color: var(--ink-2);
-  max-width: 620px;
-  margin: 0;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 /* ── ONGLETS FAMILLES + RECHERCHE ────────────────────────── */
@@ -138,10 +151,32 @@
 .cardFeatured .thumb {
   aspect-ratio: 16 / 10;
 }
+
+/* Miniature YouTube hqdefault */
+.thumbImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--transition-normal);
+}
+.card:hover .thumbImg {
+  transform: scale(1.04);
+}
+
+/* Voile sombre pour garder le bouton + tag lisibles sur la miniature */
 .thumb::before {
   content: "";
   position: absolute;
   inset: 0;
+  background: linear-gradient(135deg, rgba(12, 14, 20, .25), rgba(12, 14, 20, .55));
+  z-index: 1;
+}
+
+/* Fallback : pas de vidéo → on retombe sur le dégradé bleu d'origine */
+.thumbFallback::before {
   background: linear-gradient(135deg, rgba(34, 53, 109, .85), rgba(12, 14, 20, .95));
 }
 
@@ -304,6 +339,16 @@
   border-radius: 6px;
   overflow: hidden;
   margin-bottom: 10px;
+}
+
+.videoIframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 6px;
+  background: #050507;
+  margin-bottom: 10px;
+  display: block;
 }
 
 .detailPlayBtn {

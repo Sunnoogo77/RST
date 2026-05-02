@@ -7,9 +7,10 @@
 
 /* ── §1 HERO ──────────────────────────────────────────────────────────── */
 .hero {
+  position: relative;
   display: grid;
-  grid-template-columns: 1fr 5.5fr;   /* ~15 % panel | ~85 % image */
-  min-height: 28vh;
+  grid-template-columns: 1fr 9fr;     /* ~10 % panel | ~90 % image */
+  min-height: 100svh;
   padding-top: var(--header-h);
   overflow: hidden;
   background: #06091c;
@@ -18,30 +19,10 @@
 /* ─ Panneau sombre gauche ─ */
 .heroDark {
   position: relative;
-  z-index: 2;
-  overflow: visible;                   /* texte peut déborder sur l'image */
-  background:
-    radial-gradient(ellipse 280% 90% at 70% 65%, rgba(22,48,152,.28) 0%, transparent 55%),
-    #06091c;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;            /* texte centré verticalement */
-  gap: var(--space-12);
-  padding: var(--space-32) var(--space-12) var(--space-32) var(--pad-x);
-  color: var(--paper);
-}
-
-/* Fondu du panneau vers l'image */
-.heroDark::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: -80px;
-  bottom: 0;
-  width: 80px;
-  background: linear-gradient(to right, #06091c 0%, transparent 100%);
-  pointer-events: none;
-  z-index: 1;
+  z-index: 0;
+  /* Pur #06091c — strictement la même teinte que le point de départ
+     de .heroImg::before, pour une transition invisible */
+  background: #06091c;
 }
 
 .heroEyebrow {
@@ -76,7 +57,7 @@
   font-size: 12.5px;
   line-height: 1.7;
   color: rgba(255,255,255,.58);
-  margin: 0;
+  margin: var(--space-8) 0 0;
   max-width: 38ch;
 }
 
@@ -93,6 +74,7 @@
   padding: 9px 18px;
   border-radius: var(--r-pill);
   width: fit-content;
+  margin-top: var(--space-12);
   transition: background var(--transition-fast), border-color var(--transition-fast);
 }
 .heroCta:hover {
@@ -100,21 +82,22 @@
   border-color: rgba(255,255,255,.78);
 }
 
-/* ─ Zone image droite ─ */
+/* ─ Zone image (cellule droite du grid) ─ */
 .heroImg {
   position: relative;
   overflow: hidden;
+  z-index: 0;
 }
 
 .heroImgEl {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 25%;
+  object-position: center 38%;
   display: block;
 }
 
-/* Gradient : bord gauche (jonction panel) + bord supérieur fort + bas */
+/* Fondu bleu→image continu (gauche) + vignettes haut/bas */
 .heroImg::before {
   content: '';
   position: absolute;
@@ -122,25 +105,49 @@
   background:
     linear-gradient(to right,
       #06091c 0%,
-      rgba(6,9,28,.70) 6%,
-      rgba(6,9,28,.20) 13%,
-      transparent 22%),
+      rgba(6,9,28,.94) 8%,
+      rgba(6,9,28,.70) 18%,
+      rgba(6,9,28,.40) 28%,
+      rgba(6,9,28,.15) 38%,
+      transparent 48%),
     linear-gradient(to bottom,
-      rgba(0,0,0,.85) 0%,
-      rgba(0,0,0,.55) 12%,
-      rgba(0,0,0,.18) 24%,
-      transparent 36%),
+      rgba(0,0,0,.65) 0%,
+      rgba(0,0,0,.25) 14%,
+      transparent 28%),
     linear-gradient(to top,
-      rgba(0,0,0,.55) 0%,
-      transparent 24%);
+      rgba(0,0,0,.50) 0%,
+      transparent 22%);
   z-index: 1;
   pointer-events: none;
+}
+
+/* Couche 1 : texte overlay sur image + panel */
+.heroContent {
+  --hero-copy-x: clamp(92px, 9vw, 176px);
+  position: absolute;
+  top: var(--header-h);
+  left: var(--hero-copy-x);
+  bottom: 0;
+  width: min(760px, calc(62% - var(--hero-copy-x)));
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-12);
+  padding: var(--space-40) 0 var(--space-64);
+  color: var(--paper);
+  pointer-events: none;
+  transform: translateY(24px);
+}
+
+.heroContent > * {
+  pointer-events: auto;
 }
 
 /* Encadré verset — descendu tout en bas de l'image */
 .heroQuoteBox {
   position: absolute;
-  bottom: 5%;
+  bottom: 7%;
   right: 5%;
   z-index: 2;
   background: rgba(6, 9, 28, 0.82);
@@ -180,24 +187,52 @@
   font-style: normal;
 }
 
-/* ── §2 GRILLE CONTENU ────────────────────────────────────────────────── */
+/* ── §2 CONTENU PROJET ────────────────────────────────────────────────── */
 .content {
-  background: var(--paper);
-  margin-top: var(--space-16);
+  background: #f8f6f1;
+  margin-top: 0;
+  padding: 80px var(--pad-x) 96px;
 }
 
-.contentGrid {
+.contentInner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.contentIntro {
   display: grid;
-  grid-template-columns: 1fr 1fr 0.68fr;
-  align-items: start;
+  grid-template-columns: minmax(220px, .72fr) 1fr;
+  gap: 40px;
+  align-items: end;
+  margin-bottom: 32px;
+}
+
+.contentTitle {
+  font-family: var(--f-serif);
+  font-size: clamp(2rem, 3.2vw, 3.25rem);
+  font-weight: 500;
+  line-height: 1.04;
+  color: var(--ink);
+  margin: 0;
+}
+
+.actionGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, .68fr);
+  gap: 32px;
+  align-items: stretch;
+  margin-bottom: 56px;
 }
 
 /* ─ Col 1 : Avancement ─ */
 .colAvancement {
-  padding: 28px 32px 28px var(--pad-x);
+  background: rgba(255,255,255,.54);
+  border-top: 1.5px solid var(--ink);
+  border-bottom: 1.5px solid var(--ink);
+  padding: 34px 36px 36px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-16);
+  gap: 22px;
 }
 
 .colEyebrow {
@@ -215,13 +250,14 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   border: 1.5px solid var(--ink);
+  background: #fbfaf7;
 }
 
 .stat {
-  padding: 14px 16px;
+  padding: 20px 22px 22px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 7px;
 }
 
 .stat + .stat {
@@ -240,7 +276,7 @@
 
 .statNum {
   font-family: var(--f-num);
-  font-size: clamp(1.25rem, 1.8vw, 1.65rem);
+  font-size: clamp(1.75rem, 2.4vw, 2.5rem);
   font-weight: 400;
   color: var(--ink);
   margin: 0;
@@ -262,7 +298,7 @@
 
 /* Barre de progression */
 .progressBar {
-  height: 30px;
+  height: 34px;
   background: rgba(12,14,20,.07);
   border: 1.5px solid var(--ink);
   position: relative;
@@ -272,7 +308,7 @@
 .progressFill {
   position: absolute;
   inset: 0 auto 0 0;
-  background: var(--accent);
+  background: linear-gradient(90deg, var(--accent) 0%, #2b5fc8 100%);
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -297,9 +333,9 @@
   color: var(--ink);
   text-decoration: none;
   border: 1.5px solid var(--ink);
-  padding: 9px 18px;
+  padding: 11px 20px;
   width: fit-content;
-  align-self: center;
+  align-self: flex-start;
   transition: background var(--transition-fast), color var(--transition-fast);
 }
 .colCta:hover {
@@ -309,13 +345,15 @@
 
 /* ─ Col 2 : Participez — rectangle compact ─ */
 .colParticiper {
-  background: var(--ink);
-  padding: 24px 28px;
+  background: #06091c;
+  padding: 38px 36px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-14);
+  justify-content: center;
+  gap: 22px;
   text-align: center;
+  box-shadow: 0 22px 48px rgba(6,9,28,.13);
 }
 
 .participerEyebrow {
@@ -330,14 +368,14 @@
 
 .participerItems {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-12);
+  grid-template-columns: 1fr;
+  gap: 14px;
   width: 100%;
 }
 
 .participerItem {
   border-top: 1px solid rgba(255,255,255,.10);
-  padding-top: var(--space-12);
+  padding-top: 14px;
 }
 
 .participerLabel {
@@ -352,7 +390,7 @@
 
 .participerDesc {
   font-family: var(--f-body);
-  font-size: 11.5px;
+  font-size: 13px;
   color: rgba(255,255,255,.40);
   margin: 0;
   line-height: 1.5;
@@ -382,36 +420,67 @@
   opacity: .88;
 }
 
-/* ─ Col 3 : Image portrait — hauteur fixée ─ */
-.colImage {
-  padding: 28px 24px;
+.futurePanel {
+  display: grid;
+  grid-template-columns: minmax(260px, .42fr) minmax(0, 1fr);
+  gap: 34px;
+  align-items: stretch;
+  padding-top: 40px;
+  border-top: 1.5px solid var(--ink);
+}
+
+.futureCopy {
   display: flex;
   flex-direction: column;
-  gap: var(--space-12);
+  justify-content: center;
+  gap: 16px;
+  padding: 24px 0;
 }
 
-.futureImg {
-  overflow: hidden;
-  height: 160px;
-  flex-shrink: 0;
-}
-
-.futureImgEl {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  display: block;
-  filter: grayscale(.08);
+.futureTitle {
+  font-family: var(--f-serif);
+  font-size: clamp(1.9rem, 3vw, 3rem);
+  font-weight: 500;
+  line-height: 1.05;
+  color: var(--ink);
+  margin: 0;
 }
 
 .futureCaption {
   font-family: var(--f-serif);
-  font-size: 14px;
+  font-size: 18px;
   font-style: italic;
   line-height: 1.6;
   color: var(--ink-2);
   margin: 0;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: 1.35fr .72fr;
+  grid-template-rows: repeat(2, minmax(150px, 1fr));
+  gap: 14px;
+  min-height: 430px;
+}
+
+.galleryMain,
+.gallerySide {
+  overflow: hidden;
+  background: var(--ink);
+  margin: 0;
+}
+
+.galleryMain {
+  grid-row: 1 / span 2;
+}
+
+.galleryImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  filter: grayscale(.08) contrast(1.03) brightness(.94);
 }
 
 /* ══════════════════════════════════════════════════════════════════════
@@ -423,18 +492,35 @@
     min-height: auto;
   }
 
-  .heroDark {
-    min-height: 56vw;
-    justify-content: flex-end;
-    padding: 40px var(--pad-x-mob) var(--space-40);
-    overflow: hidden;
-  }
+  .heroDark { display: none; }
 
-  .heroDark::after { display: none; }
   .heroTitle { white-space: normal; }
   .heroTitle em { white-space: normal; }
 
-  .heroImg { height: 60vw; }
+  .heroImg {
+    position: relative;
+    inset: auto;
+    height: 60vw;
+  }
+
+  .heroImg::before {
+    background:
+      linear-gradient(to bottom, rgba(0,0,0,.55) 0%, transparent 28%),
+      linear-gradient(to top, rgba(0,0,0,.50) 0%, transparent 22%);
+  }
+
+  .heroContent {
+    --hero-copy-x: 0px;
+    position: relative;
+    top: auto;
+    left: auto;
+    bottom: auto;
+    width: 100%;
+    padding: var(--space-32) var(--pad-x-mob);
+    background: #06091c;
+    order: -1;
+    transform: none;
+  }
 
   .heroQuoteBox {
     bottom: 8%;
@@ -443,29 +529,71 @@
     max-width: unset;
   }
 
-  .contentGrid {
+  .content {
+    padding: 56px var(--pad-x-mob) 64px;
+  }
+
+  .contentIntro {
     grid-template-columns: 1fr;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .actionGrid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-bottom: 44px;
   }
 
   .colAvancement {
-    padding: 36px var(--pad-x-mob);
-    border-bottom: var(--border-soft);
+    padding: 30px var(--pad-x-mob);
   }
 
   .stats { grid-template-columns: 1fr; }
   .stat + .stat { border-left: none; border-top: var(--border-soft); }
 
-  .colParticiper { padding: 32px var(--pad-x-mob); }
-  .participerItems { grid-template-columns: 1fr; }
+  .colParticiper { padding: 34px var(--pad-x-mob); }
 
-  .colImage {
-    padding: 36px var(--pad-x-mob);
-    border-top: var(--border-soft);
+  .futurePanel {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding-top: 32px;
   }
 
-  .futureImg { height: 200px; }
+  .futureCopy {
+    padding: 0;
+  }
+
+  .gallery {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    min-height: unset;
+  }
+
+  .galleryMain {
+    grid-row: auto;
+    aspect-ratio: 4 / 3;
+  }
+
+  .gallerySide {
+    aspect-ratio: 16 / 9;
+  }
 }
 
 @media (max-width: 480px) {
   .heroTitle { font-size: 1.5rem; }
+
+  .contentTitle,
+  .futureTitle {
+    font-size: 1.85rem;
+  }
+
+  .colAvancement {
+    padding-inline: 0;
+    background: transparent;
+  }
+
+  .progressBar {
+    height: 30px;
+  }
 }

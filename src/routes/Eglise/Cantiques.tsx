@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { cantiques, cantiqueCounts } from '../../data/cantiques';
 import type { CantiqueFamille } from '../../types';
+import { youtubeEmbedUrl, youtubeThumbnail } from '../../utils/youtube';
 import styles from './Cantiques.module.css';
 
 /* ── Constants ───────────────────────────────────────────── */
@@ -35,6 +36,9 @@ export default function Cantiques() {
   const [activeFamily, setActiveFamily] = useState<FamilyFilter>('tous');
   const [selectedId, setSelectedId] = useState(featuredId);
   const [lyricSize, setLyricSize] = useState<LyricSize>('md');
+  // Démarrage de la vidéo en autoplay uniquement après un clic utilisateur :
+  // au chargement initial le cantique vedette n'est pas lancé sans demande.
+  const [autoplay, setAutoplay] = useState(false);
 
   const detailRef = useRef<HTMLElement>(null);
 
@@ -48,6 +52,7 @@ export default function Cantiques() {
   const handleCardClick = (id: string) => {
     setSelectedId(id);
     setLyricSize('md');
+    setAutoplay(true);
     setTimeout(
       () => detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
       50
@@ -85,8 +90,9 @@ export default function Cantiques() {
         <div className={styles.heroInner}>
           <div className={styles.eyebrow}>L'hymnaire</div>
           <h1 className={styles.heroTitle}>
-            Les chants<br/><em>de l'assemblée.</em>
+            « Que tout ce qui respire<br/><em>loue l'Éternel ! »</em>
           </h1>
+          <div className={styles.heroRef}>Psaumes 150 . 6</div>
           <p className={styles.heroLede}>
             Les cantiques sont la voix de Roc Séculaire. Ceux du recueil, ceux du Message,
             ceux qui sont nés ici. Trois familles, un seul hymnaire.
@@ -125,7 +131,9 @@ export default function Cantiques() {
           GRILLE 4 COLONNES
           ══════════════════════════════════════════════════════════ */}
       <section className={styles.grid} aria-label="Hymnaire">
-        {filtered.map((c) => (
+        {filtered.map((c) => {
+          const thumb = youtubeThumbnail(c.videoUrl);
+          return (
           <article
             key={c.id}
             className={`${styles.card} ${c.estVedette ? styles.cardFeatured : ''}`}
@@ -133,7 +141,15 @@ export default function Cantiques() {
             aria-label={c.titre}
             aria-pressed={selectedId === c.id}
           >
-            <div className={styles.thumb}>
+            <div className={`${styles.thumb} ${thumb ? '' : styles.thumbFallback}`}>
+              {thumb && (
+                <img
+                  src={thumb}
+                  alt=""
+                  className={styles.thumbImg}
+                  loading="lazy"
+                />
+              )}
               <button
                 className={`${styles.thumbPlay} ${c.estVedette ? styles.thumbPlayFeatured : ''}`}
                 aria-label={`Lire ${c.titre}`}
@@ -141,7 +157,6 @@ export default function Cantiques() {
               >
                 ▶
               </button>
-              <span className={styles.famTag}>{FAMILLE_OVERLAY[c.famille]}</span>
             </div>
             <div className={styles.cardBody}>
               <h3 className={c.estVedette ? styles.cardTitleFeatured : styles.cardTitle}>
@@ -156,7 +171,8 @@ export default function Cantiques() {
               </div>
             </div>
           </article>
-        ))}
+          );
+        })}
       </section>
 
       {/* ══════════════════════════════════════════════════════════
@@ -193,9 +209,24 @@ export default function Cantiques() {
 
           {/* Vidéo */}
           <div className={styles.detailVideo}>
-            <div className={styles.videoPoster} aria-label="Vidéo du cantique">
-              <button className={styles.detailPlayBtn} aria-label="Lire le cantique">▶</button>
-            </div>
+            {(() => {
+              const embed = youtubeEmbedUrl(selected.videoUrl, { autoplay });
+              return embed ? (
+                <iframe
+                  key={selected.id}
+                  className={styles.videoIframe}
+                  src={embed}
+                  title={`Lecteur YouTube — ${selected.titre}`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  loading="lazy"
+                />
+              ) : (
+                <div className={styles.videoPoster} aria-label="Vidéo du cantique">
+                  <button className={styles.detailPlayBtn} aria-label="Lire le cantique">▶</button>
+                </div>
+              );
+            })()}
             <div className={styles.videoMeta}>
               {videoMetaParts.length > 0 ? videoMetaParts.join(' · ') : 'vidéo disponible'}
             </div>

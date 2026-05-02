@@ -102,6 +102,10 @@ export interface Cantique {
 export type AnnonceStatut = 'a-venir' | 'aujourd-hui' | 'passee';
 export type AnnonceType = 'reunion' | 'voyage' | 'sortie' | 'exceptionnelle';
 
+export type AnnonceContentBlock =
+  | { kind: 'paragraph'; text: string }
+  | { kind: 'image'; src: string; alt?: string; size?: 'small' | 'medium' | 'wide' };
+
 export interface Annonce {
   id: string;
   titre: string;
@@ -111,11 +115,14 @@ export interface Annonce {
   sousType?: string;          // sous-catégorie : "Jeunesse", "Famille", "Culte", "Prière", "Mission"
   sousTypeLabel?: string;     // surcharge du span ann-type complet : "Réunion · Exceptionnelle"
   date: string;               // ISO "2026-05-10"
+  dateFin?: string;           // ISO "2026-05-25" — réunions sur plusieurs jours
   dl?: string;                // abréviation jour+mois : "SAM. MAI" (surcharge d'affichage)
   dateDisplay?: string;       // surcharge globale : "DATE À VENIR", "ÉTÉ 2026"
   lieu: string;
   description: string;
   image?: string;
+  affiche?: string;           // URL de l'affiche officielle (poster)
+  contentBlocks?: AnnonceContentBlock[]; // compte-rendu — paragraphes + images intercalées (annonces passées)
   estPhare?: boolean;
   featuredEyebrow?: string;   // "Annonce phare · Été 2026"
   featuredMeta?: Array<{ lbl: string; val: string }>;
@@ -191,16 +198,46 @@ export interface ProjetNehemie {
 }
 
 /* ----------------------------------------------------------
-   Page Histoire
+   Genèse — archives intégrales du blog historique
+   Bloc générique reproduisant fidèlement la mise en page d'origine.
 ---------------------------------------------------------- */
-export interface SectionHistoire {
-  id: string;
-  titre: string;          // "Les commencements"
-  periode: string;        // "1999–2003"
-  lede: string;           // 1 phrase courte
-  corps: string;          // paragraphe (placeholder éditorial)
-  citationPull?: string;
-  citationSource?: string;
+export type GeneseBlockKind =
+  | 'paragraph'   // paragraphe ordinaire
+  | 'heading'     // intertitre (level 2 ou 3)
+  | 'quote'       // citation (Branham, prière, autre)
+  | 'bibleRef'    // référence biblique avec texte
+  | 'image'       // illustration insérée dans le flux
+  | 'list'        // liste de témoignages historiques
+  | 'pull'        // citation pull-quote forte
+  | 'signature';  // signature de fin (« — Robert Ndaye »)
+
+export interface GeneseTemoignageItem {
+  auteur: string;  // « Naomi FRANCOIS »
+  recit: string;   // « La puissance de la prière offerte par le révérend Ndaye… »
+}
+
+export interface GeneseBlock {
+  kind: GeneseBlockKind;
+  content?: string;          // texte principal (paragraph, heading, quote, signature)
+  level?: 2 | 3;             // pour heading
+  source?: string;           // attribution d'une citation
+  reference?: string;        // pour bibleRef ou pull (référence)
+  text?: string;             // pour bibleRef (corps du verset)
+  src?: string;              // pour image (chemin /genese/...)
+  alt?: string;              // pour image
+  caption?: string;          // pour image
+  items?: GeneseTemoignageItem[]; // pour list (Actes du Saint-Esprit)
+}
+
+export interface GenesePage {
+  id: string;                // 'presentation', 'naissance', etc.
+  slug: string;              // identique à id pour les routes
+  titre: string;             // « Présentation »
+  titreEm?: string;          // partie italique du titre éditorial
+  eyebrow: string;           // « § II · Naissance », « Genèse · Mémoire »
+  sousTitre?: string;        // sous-titre éditorial sous le H1
+  publieLe: string;          // ISO « 2005-11-10 » — date archive d'origine
+  blocs: GeneseBlock[];
 }
 
 /* ----------------------------------------------------------

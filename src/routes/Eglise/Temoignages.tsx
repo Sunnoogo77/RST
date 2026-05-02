@@ -162,7 +162,7 @@ export default function Temoignages() {
           </div>
 
           <h2 className={styles.detailTitle}>
-            « J'ai retrouvé<br /><em>mon père dans le Père. »</em>
+            Lorem ipsum<br /><em>dolor sit amet.</em>
           </h2>
 
           <div className={styles.detailBy}>{detail.byline}</div>

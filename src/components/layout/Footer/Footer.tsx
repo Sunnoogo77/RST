@@ -14,11 +14,11 @@ export default function Footer() {
             src="/logo-rst.png"
             alt="Roc Séculaire Tabernacle"
             className={styles.logoImg}
-            width={56}
-            height={35}
+            width={120}
+            height={75}
           />
           <p className={styles.phrase}>
-            Assemblée chrétienne francophone<br/>à Vitry-sur-Seine.
+            Assemblée chrétienne<br/>Roc Séculaire Tabernacle.
           </p>
         </div>
 
@@ -46,11 +46,11 @@ export default function Footer() {
           <ul className={styles.schedule}>
             <li>
               <span className={styles.schedDay}>Mercredi</span>
-              <span className={styles.schedTime}>19H00 — 21H00 · Étude biblique</span>
+              <span className={styles.schedTime}>19H00 — 21H00 · Culte</span>
             </li>
             <li>
               <span className={styles.schedDay}>Dimanche</span>
-              <span className={styles.schedTime}>09H00 — 12H30 · Culte d'adoration</span>
+              <span className={styles.schedTime}>09H00 — 12H30 · Culte</span>
             </li>
             <li>
               <span className={styles.schedDay}>Vendredi</span>
@@ -59,12 +59,15 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Colonne 4 — Contact */}
+        {/* Colonne 4 — Secrétariat */}
         <div className={styles.col}>
-          <p className={styles.colLabel}>Contact</p>
+          <p className={styles.colLabel}>Secrétariat de l'Église</p>
           <div className={styles.contactLinks}>
-            <a href="mailto:contact@rocseculaire.fr" className={styles.contactLink}>
-              contact@rocseculaire.fr
+            <a href="tel:+33000000000" className={styles.contactLink}>
+              +33 0 00 00 00 00
+            </a>
+            <a href="mailto:secretariat@rocseculaire.fr" className={styles.contactLink}>
+              secretariat@rocseculaire.fr
             </a>
             <a
               href="https://www.youtube.com/@kollonell"

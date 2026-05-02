@@ -1,43 +1,48 @@
 import type { ImageSemaine } from '../types';
 
-// Galerie de la semaine — 6 photos en grille asymétrique (2 grandes + 4 petites).
-// Photos à fournir chaque semaine par le pasteur ou le responsable de communication.
-// Voir README.md §Mise à jour hebdomadaire.
+/* ============================================================
+   Galerie de la semaine — 6 emplacements en grille asymétrique
+   (2 grandes + 4 petites).
+   Les 2 premières photos viennent de la réunion des jeunes
+   du 1er mai 2026.  Les 4 autres sont à fournir par l'équipe
+   média après chaque culte.
+   ============================================================ */
+
 export const imagesSemaine: ImageSemaine[] = [
   {
     id: 'img-01',
-    src: '/images/placeholder-gallery.svg',
-    caption: 'Culte du dimanche 27 avril 2026',
+    src: '/images/annonces/reunion-jeunes/photo-1.png',
+    caption: 'Réunion des jeunes · vendredi 1er mai 2026',
     estGrande: true,
   },
   {
     id: 'img-02',
-    src: '/images/placeholder-gallery.svg',
-    caption: 'Moment de louange',
+    src: '/images/annonces/reunion-jeunes/photo-2.png',
+    caption: 'Réunion des jeunes · vendredi 1er mai 2026',
     estGrande: true,
   },
   {
     id: 'img-03',
     src: '/images/placeholder-gallery.svg',
-    caption: 'Fraternité après le culte',
+    caption: 'Photo à fournir',
     estGrande: false,
   },
   {
     id: 'img-04',
     src: '/images/placeholder-gallery.svg',
-    caption: 'École du dimanche',
+    caption: 'Photo à fournir',
     estGrande: false,
   },
   {
     id: 'img-05',
     src: '/images/placeholder-gallery.svg',
-    caption: 'Prière en assemblée',
+    caption: 'Photo à fournir',
     estGrande: false,
   },
   {
     id: 'img-06',
     src: '/images/placeholder-gallery.svg',
-    caption: 'Accueil des visiteurs',
+    caption: 'Photo à fournir',
     estGrande: false,
   },
 ];

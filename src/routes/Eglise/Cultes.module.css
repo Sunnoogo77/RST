@@ -6,7 +6,10 @@
   border-bottom: 1.5px solid var(--ink);
 }
 
-.heroInner { max-width: 760px; }
+.heroInner {
+  max-width: none;
+  text-align: center;
+}
 
 .eyebrow {
   font-family: var(--f-body);
@@ -47,21 +50,22 @@
   font-size: 19px;
   line-height: 1.55;
   color: var(--ink-2);
-  max-width: 620px;
-  margin: 0;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 .heroBran {
-  margin: 26px 0 0;
+  margin: 26px auto 0;
   padding: 18px 22px;
-  border-left: 2px solid var(--note);
+  border-top: 2px solid var(--note);
   background: var(--paper-2);
   font-family: var(--f-serif);
   font-style: italic;
   font-size: 16px;
   line-height: 1.5;
   color: var(--ink);
-  max-width: 640px;
+  max-width: 720px;
+  text-align: center;
 }
 
 .heroBranCite {
@@ -327,6 +331,16 @@
   height: 100%;
   object-fit: cover;
   filter: grayscale(.3) brightness(.55);
+}
+
+.videoIframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 6px;
+  background: #050507;
+  margin-bottom: 10px;
+  display: block;
 }
 
 .playBtn {

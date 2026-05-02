@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { sermons } from '../../data/sermons';
 import type { Sermon } from '../../types';
+import { youtubeEmbedUrl } from '../../utils/youtube';
 import styles from './Cultes.module.css';
 
 /* ── Helpers ─────────────────────────────────────────────── */
@@ -200,9 +201,24 @@ export default function Cultes() {
           <div className={styles.sermonBy}>{activeSermon.predicateur}</div>
 
           <div className={styles.sermonVideo}>
-            <div className={styles.videoPoster} aria-label="Vidéo du sermon">
-              <button className={styles.playBtn} aria-label="Lire le sermon">▶</button>
-            </div>
+            {(() => {
+              const embed = youtubeEmbedUrl(activeSermon.videoUrl);
+              return embed ? (
+                <iframe
+                  key={activeSermon.id}
+                  className={styles.videoIframe}
+                  src={embed}
+                  title={`Lecteur YouTube — ${activeSermon.titre}`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  loading="lazy"
+                />
+              ) : (
+                <div className={styles.videoPoster} aria-label="Vidéo du sermon">
+                  <button className={styles.playBtn} aria-label="Lire le sermon">▶</button>
+                </div>
+              );
+            })()}
             <div className={styles.videoRuntime}>
               {[activeSermon.duree, 'audio + vidéo', 'disponible en téléchargement']
                 .filter(Boolean)

@@ -5,6 +5,7 @@ import { Button } from '../components/ui/Button/Button';
 import { rendezVous } from '../data/rendez-vous';
 import { sermons } from '../data/sermons';
 import { projetNehemie } from '../data/nehemie';
+import { motDuPasteur } from '../data/genese/mot-du-pasteur';
 import type { RendezVous } from '../types';
 import styles from './Accueil.module.css';
 
@@ -22,6 +23,23 @@ function schedTime(rv: RendezVous): string {
 
 function formatMontant(n: number): string {
   return n.toLocaleString('fr-FR');
+}
+
+const BIBLE_REF_PATTERN =
+  /(Zacharie 14:7|Malachie 4:5-6|Luc 17:26-30|Actes 3:17-21|Apocalypse 10:7)/g;
+const BIBLE_REF_MATCH =
+  /^(Zacharie 14:7|Malachie 4:5-6|Luc 17:26-30|Actes 3:17-21|Apocalypse 10:7)$/;
+
+function renderPastorParagraph(text: string) {
+  return text.split(BIBLE_REF_PATTERN).map((part, idx) =>
+    BIBLE_REF_MATCH.test(part) ? (
+      <span key={`${part}-${idx}`} className={styles.bibleRef}>
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  );
 }
 
 export default function Accueil() {
@@ -155,7 +173,8 @@ export default function Accueil() {
               </h3>
 
               <p className={styles.lastMsgSerie}>
-                {dernierSermon.serie} #{dernierSermon.numeroSerie}
+                {dernierSermon.serie}
+                {dernierSermon.numeroSerie ? ` #${dernierSermon.numeroSerie}` : ''}
                 {' · '}
                 {dernierSermon.titre.replace(/\.$/, '').toUpperCase()}
               </p>
@@ -177,35 +196,42 @@ export default function Accueil() {
         </div>
       </section>
 
-      {/* ── NOTRE HISTOIRE ──────────────────────────────────────── */}
-      <section className={styles.histoire} aria-label="Notre histoire">
+      {/* ── LE MOT DU PASTEUR ───────────────────────────────────── */}
+      <section className={styles.histoire} aria-label="Le mot du pasteur">
         <div className={styles.histoireInner}>
 
-          {/* Identité de l'assemblée en lieu de la photo à fournir */}
+          {/* Portrait du pasteur */}
           <div className={styles.histoireImg}>
-            <div className={styles.histoireImgPlaceholder}>
-              <span className={styles.histoireImgLabel}>Roc Séculaire<br/>Tabernacle</span>
-              <span className={styles.histoireImgSub}>Assemblée Chrétienne · Vitry-sur-Seine</span>
-            </div>
+            <img
+              src="/pastor-ndaye.jpeg"
+              alt="Rev. Robert Ndaye M., pasteur de Roc Séculaire Tabernacle"
+              className={styles.histoireImgEl}
+              loading="lazy"
+            />
           </div>
 
-          {/* Texte éditorial */}
+          {/* Mot du pasteur — retranscription intégrale (RST_archives/Le-mot-du-pasteur.txt) */}
           <div className={styles.histoireCopy}>
-            <div className={styles.eyebrow}>Notre histoire</div>
+            <div className={styles.eyebrow}>{t('accueil.motDuPasteur.eyebrow')}</div>
             <h2 className={styles.histoireTitre}>
-              L'assemblée RST,<br/>en quelques mots.
+              {t('accueil.motDuPasteur.titre')}
             </h2>
-            <p className={`${styles.histoireP} ${styles.histoirePFirst}`}>
-              Née du désir d'entendre le Message de l'Heure dans la langue française,
-              l'assemblée Roc Séculaire Tabernacle se rassemble depuis plusieurs années
-              à Vitry sur Seine, sous le ministère du Rev. Robert Ndaye.
-            </p>
-            <p className={styles.histoireP}>
-              Nous croyons que Jésus-Christ est le même hier, aujourd'hui et éternellement,
-              et que la Voix du septième ange éclaire l'Écriture pour ce temps.
-            </p>
-            <Link to="/histoire" className={styles.histoireLink}>
-              Lire l'histoire complète →
+            {motDuPasteur.paragraphes.map((p, idx) => (
+              <p
+                key={idx}
+                className={
+                  idx === 0
+                    ? `${styles.histoireP} ${styles.histoirePFirst}`
+                    : styles.histoireP
+                }
+              >
+                {renderPastorParagraph(p)}
+              </p>
+            ))}
+            <p className={styles.histoireBenediction}>{motDuPasteur.benediction}</p>
+            <p className={styles.histoireSignature}>— {motDuPasteur.signature}</p>
+            <Link to="/genese" className={styles.histoireLink}>
+              {t('accueil.motDuPasteur.cta')}
             </Link>
           </div>
         </div>
@@ -214,8 +240,15 @@ export default function Accueil() {
       {/* ── NÉHÉMIE BANNER ──────────────────────────────────────── */}
       <section className={styles.nehemieBanner} aria-label="Projet Néhémie — collecte">
 
-        {/* Image promesse — placeholder éditorial */}
-        <div className={styles.nehemieBannerImg} aria-hidden="true" />
+        {/* Image promesse — sanctuaire */}
+        <div className={styles.nehemieBannerImg}>
+          <img
+            src="/images/sanctuaire.jpeg"
+            alt="Vue du sanctuaire du projet Néhémie"
+            className={styles.nehemieBannerImgEl}
+            loading="eager"
+          />
+        </div>
 
         {/* Contenu */}
         <div className={styles.nehemieBannerCopy}>
@@ -224,8 +257,8 @@ export default function Accueil() {
             Bâtissons<br/>ensemble.
           </h3>
           <p className={styles.nehemieBannerDesc}>
-            Acquisition d'une salle permanente pour la prière, l'enseignement et le
-            rayonnement de l'assemblée. Chaque don nous rapproche.
+            Acquisition et rénovation d'une salle permanente pour la prière,
+            l'enseignement et le rayonnement de l'assemblée. Chaque don nous rapproche.
           </p>
 
           {/* Jauge de collecte */}
@@ -249,7 +282,10 @@ export default function Accueil() {
             >
               <div className={styles.progressBarFill} style={{ width: `${pct}%` }} />
             </div>
-            <div className={styles.progressPct}>~ {pct} % du chemin parcouru</div>
+            <div className={styles.progressPct}>
+              <strong>{pct} %</strong>
+              <span> du chemin parcouru</span>
+            </div>
           </div>
 
           <div className={styles.nehemieBannerCtas}>

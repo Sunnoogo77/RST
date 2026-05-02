@@ -1,14 +1,25 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/layout/Header/Header';
 import Footer from './components/layout/Footer/Footer';
 import Accueil from './routes/Accueil';
 import Nehemie from './routes/Nehemie';
-import Histoire from './routes/Histoire';
+import GeneseLayout from './routes/Genese/GeneseLayout';
+import Sommaire from './routes/Genese/Sommaire';
+import Presentation from './routes/Genese/Presentation';
+import Naissance from './routes/Genese/Naissance';
+import Mission from './routes/Genese/Mission';
+import Branham from './routes/Genese/Branham';
+import Actes from './routes/Genese/Actes';
+import Offices from './routes/Genese/Offices';
+import Services from './routes/Genese/Services';
+import Marseille from './routes/Genese/Marseille';
+import ReunionJeunes2005 from './routes/Genese/ReunionJeunes2005';
 import EgliseLayout from './routes/Eglise/EgliseLayout';
 import CetteSemaine from './routes/Eglise/CetteSemaine';
 import Cultes from './routes/Eglise/Cultes';
 import Cantiques from './routes/Eglise/Cantiques';
 import Annonces from './routes/Eglise/Annonces';
+import AnnonceDetail from './routes/Eglise/AnnonceDetail';
 import Temoignages from './routes/Eglise/Temoignages';
 import NotFound from './routes/NotFound';
 import DesignSystem from './routes/DesignSystem';
@@ -20,12 +31,30 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Accueil />} />
         <Route path="/nehemie" element={<Nehemie />} />
-        <Route path="/histoire" element={<Histoire />} />
+
+        {/* Genèse — sommaire + 7 piliers + 2 événements marquants */}
+        <Route path="/genese" element={<GeneseLayout />}>
+          <Route index element={<Sommaire />} />
+          <Route path="presentation" element={<Presentation />} />
+          <Route path="naissance" element={<Naissance />} />
+          <Route path="mission" element={<Mission />} />
+          <Route path="branham" element={<Branham />} />
+          <Route path="actes-du-saint-esprit" element={<Actes />} />
+          <Route path="offices" element={<Offices />} />
+          <Route path="services" element={<Services />} />
+          <Route path="marseille" element={<Marseille />} />
+          <Route path="reunion-jeunes-2005" element={<ReunionJeunes2005 />} />
+        </Route>
+
+        {/* Redirection legacy : /histoire → /genese */}
+        <Route path="/histoire" element={<Navigate to="/genese" replace />} />
+
         <Route path="/eglise" element={<EgliseLayout />}>
           <Route index element={<CetteSemaine />} />
           <Route path="cultes" element={<Cultes />} />
           <Route path="cantiques" element={<Cantiques />} />
           <Route path="annonces" element={<Annonces />} />
+          <Route path="annonces/:id" element={<AnnonceDetail />} />
           <Route path="temoignages" element={<Temoignages />} />
         </Route>
         <Route path="/design-system" element={<DesignSystem />} />

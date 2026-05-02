@@ -6,7 +6,10 @@
   border-bottom: 1.5px solid var(--ink);
 }
 
-.heroInner { max-width: 760px; }
+.heroInner {
+  max-width: none;
+  text-align: center;
+}
 
 .eyebrow {
   font-family: var(--f-body);
@@ -36,8 +39,8 @@
   font-size: 19px;
   line-height: 1.55;
   color: var(--ink-2);
-  max-width: 620px;
-  margin: 0;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 /* ── FILTRES ──────────────────────────────────────────────────── */
@@ -110,11 +113,87 @@
   gap: 0;
   border: 1.5px solid var(--ink);
   background: var(--paper);
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow .2s, transform .2s;
+}
+.featuredCard:hover {
+  box-shadow: 0 8px 24px rgba(12, 14, 20, .10);
+  transform: translateY(-2px);
+}
+
+/* ── Carousel — navigation entre annonces à venir ───────────── */
+.carouselNav {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.carouselArrow {
+  font-family: var(--f-body);
+  font-size: 18px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(12, 14, 20, .25);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color .15s, background .15s;
+}
+.carouselArrow:hover {
+  border-color: var(--ink);
+  background: rgba(12, 14, 20, .04);
+}
+
+.carouselDots {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.carouselDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(12, 14, 20, .22);
+  transition: background .2s, transform .2s;
+}
+.carouselDotActive {
+  background: var(--ink);
+  transform: scale(1.4);
+}
+
+.carouselCount {
+  font-family: var(--f-num);
+  font-size: 12px;
+  color: var(--ink-3);
+  letter-spacing: .04em;
+  min-width: 36px;
+  text-align: center;
+}
+
+/* ── Liste vide ─────────────────────────────────────────────── */
+.empty {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--ink-3);
+  text-align: center;
+  padding: 40px 0;
 }
 
 .featuredImg {
   position: relative;
-  background: var(--paper-2);
+  /* Navy du design system : remplit les bandes latérales/haut-bas
+     quand l'affiche est en portrait. L'image elle-même est toujours
+     visible en entier grâce à `object-fit: contain`. */
+  background: #06091c;
   min-height: 380px;
   overflow: hidden;
 }
@@ -124,8 +203,10 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  filter: grayscale(.15);
+  object-fit: contain;
+  /* Léger padding interne pour que l'affiche ne touche pas les bords */
+  padding: 12px;
+  box-sizing: border-box;
 }
 
 .statusFlag {
@@ -279,8 +360,11 @@
   border-bottom: 1px solid rgba(12, 14, 20, .12);
   align-items: start;
   transition: background .15s;
+  text-decoration: none;
+  color: inherit;
 }
 .annCard:hover { background: rgba(12, 14, 20, .02); }
+.annCard:hover h3 { color: var(--note); }
 
 .statePast { opacity: 0.55; }
 

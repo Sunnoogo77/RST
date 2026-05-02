@@ -1,133 +1,132 @@
 import type { Cantique } from '../types';
 
+/* ============================================================
+   Cantiques réels de l'assemblée — vidéos hébergées
+   sur les chaînes YouTube Kollonell et AGAPAO TV.
+   Les paroles sont laissées vides volontairement
+   (à renseigner par l'équipe musicale).
+   ============================================================ */
+
 export const cantiques: Cantique[] = [
 
-  /* ── Vedette ─────────────────────────────────────────────── */
+  /* ── Vedette : Cantique spécial Pâques 2026 ─────────── */
   {
-    id: 'hymn-47',
-    numero: '47',
-    titre: "L'Éternel est ma lumière",
-    titleEm: 'ma lumière.',
+    id: 'paques-2026-amonaki-pasi',
+    numero: '01',
+    titre: 'Cantique spécial — Pâques 2026',
+    titleEm: 'Pâques 2026',
     famille: 'compose',
-    solisteOuChoeur: "Chœur RST · dirigé par fr. Jules Kayembe",
-    detailBy: "Composé et dirigé par fr. Jules Kayembe · enregistré le 13 . 04 . 2026 · Chœur RST",
-    recordedAt: '13 . 04 . 2026',
-    duration: '5MIN 42',
+    solisteOuChoeur: 'Fr. Jules Kayembe',
+    detailBy: 'Fr. Jules Kayembe · enregistré pour Pâques 2026 · Roc Séculaire Tabernacle',
+    recordedAt: 'Pâques 2026',
+    duration: '7MIN 26',
     recordingType: 'studio',
+    videoUrl: 'https://www.youtube.com/watch?v=7OLGUUubcGM',
     estVedette: true,
-    lyrics: [
-      {
-        type: 'verse',
-        label: '1',
-        lines: [
-          "L'Éternel est ma lumière et mon salut,",
-          "De qui aurais-je crainte ?",
-          "L'Éternel est le rempart de ma vie,",
-          "De qui aurais-je peur ?",
-        ],
-      },
-      {
-        type: 'refrain',
-        label: '℟',
-        lines: [
-          "Une chose, je la demande à l'Éternel,",
-          "Je la recherche : habiter dans Sa maison,",
-          "Tous les jours de ma vie.",
-        ],
-      },
-      {
-        type: 'verse',
-        label: '2',
-        lines: [
-          "Quand des méchants s'avancent contre moi,",
-          "Pour dévorer ma chair,",
-          "Ce sont eux, mes adversaires et mes ennemis,",
-          "Qui chancellent et tombent.",
-        ],
-      },
-      {
-        type: 'refrain',
-        label: '℟',
-        lines: [
-          "Une chose, je la demande à l'Éternel,",
-          "Je la recherche : habiter dans Sa maison,",
-          "Tous les jours de ma vie.",
-        ],
-      },
-      {
-        type: 'verse',
-        label: '3',
-        lines: [
-          "Espère en l'Éternel,",
-          "Fortifie-toi et que ton cœur s'affermisse,",
-          "Espère en l'Éternel.",
-        ],
-      },
-    ],
+    lyrics: [],
   },
 
-  /* ── Cartes standard ─────────────────────────────────────── */
+  /* ── Composés ici · acoustiques de fr. Jules ────────── */
   {
-    id: 'hymn-12',
-    numero: '12',
-    titre: "Seul l'Agneau est digne",
-    famille: 'message',
-    solisteOuChoeur: 'Soliste · sœur Lumumba',
-    lyrics: [],
-  },
-  {
-    id: 'hymn-309',
-    numero: '309',
-    titre: 'Près de Toi, Seigneur',
-    famille: 'recueil',
-    solisteOuChoeur: 'Chœur RST',
-    lyrics: [],
-  },
-  {
-    id: 'hymn-28',
-    numero: '28',
-    titre: "L'Aigle volera",
-    famille: 'message',
-    solisteOuChoeur: 'Chœur RST · arrangement libre',
-    lyrics: [],
-  },
-  {
-    id: 'hymn-41',
-    numero: '41',
-    titre: 'Sur le Roc je tiens',
+    id: 'chaque-instant',
+    numero: '02',
+    titre: 'Chaque instant',
     famille: 'compose',
-    solisteOuChoeur: 'Composé par fr. Jules Kayembe · 2024',
+    solisteOuChoeur: 'Fr. Jules Kayembe · acoustique',
+    recordingType: 'studio',
+    videoUrl: 'https://www.youtube.com/watch?v=op6mald-WnE',
     lyrics: [],
   },
   {
-    id: 'hymn-211',
-    numero: '211',
-    titre: 'À Toi la gloire',
-    famille: 'recueil',
-    solisteOuChoeur: 'Assemblée · culte du dimanche',
+    id: 'c-est-la-trace',
+    numero: '03',
+    titre: "C'est la trace",
+    famille: 'compose',
+    solisteOuChoeur: 'Fr. Jules Kayembe · acoustique',
+    recordingType: 'studio',
+    videoUrl: 'https://www.youtube.com/watch?v=YzBtvB5maTM',
     lyrics: [],
   },
   {
-    id: 'hymn-175',
-    numero: '175',
-    titre: 'Plus près de Toi mon Dieu',
-    famille: 'recueil',
-    solisteOuChoeur: 'Soliste · sœur Esther Ndaye',
+    id: 'ville-de-perles',
+    numero: '04',
+    titre: 'Ville de perles et de lumière',
+    famille: 'compose',
+    solisteOuChoeur: 'Fr. Jules Kayembe · acoustique',
+    recordingType: 'studio',
+    videoUrl: 'https://www.youtube.com/watch?v=JD8Zc8SffPo',
     lyrics: [],
   },
   {
-    id: 'hymn-19',
-    numero: '19',
-    titre: 'Au pied de la Croix',
-    famille: 'message',
-    solisteOuChoeur: 'Chœur RST',
+    id: 'roc-seculaire-ne-chancelle-pas',
+    numero: '05',
+    titre: 'Roc Séculaire ne chancelle pas',
+    famille: 'compose',
+    solisteOuChoeur: 'Fr. Jules Kayembe',
+    videoUrl: 'https://www.youtube.com/watch?v=oWHm58YIACI',
+    lyrics: [],
+  },
+
+  /* ── Lives au culte ─────────────────────────────────── */
+  {
+    id: 'je-veux-monter',
+    numero: '06',
+    titre: 'Je veux monter sur la montagne',
+    famille: 'compose',
+    solisteOuChoeur: 'Fr. Jules Kayembe · live au culte',
+    recordedAt: '24 . 07 . 2022',
+    recordingType: 'live',
+    videoUrl: 'https://www.youtube.com/watch?v=GIFxKt1CkRo',
+    lyrics: [],
+  },
+  {
+    id: 'que-me-serait-il-arrive',
+    numero: '07',
+    titre: 'Que me serait-il arrivé ?',
+    famille: 'compose',
+    solisteOuChoeur: 'Fr. Jules Kayembe · live au culte',
+    recordedAt: '15 . 05 . 2022',
+    recordingType: 'live',
+    videoUrl: 'https://www.youtube.com/watch?v=5u8SpeC0_qs',
+    lyrics: [],
+  },
+  {
+    id: 'ton-amour-nous-environne',
+    numero: '08',
+    titre: 'Ton amour nous environne',
+    famille: 'compose',
+    solisteOuChoeur: 'Past. Robert Ndaye feat. Fr. Jules Kayembe',
+    recordingType: 'live',
+    videoUrl: 'https://www.youtube.com/watch?v=29SmF9wfaGY',
+    lyrics: [],
+  },
+
+  /* ── Compilations ───────────────────────────────────── */
+  {
+    id: 'celebration-musique-21',
+    numero: '09',
+    titre: 'Célébration de Dieu par la musique',
+    famille: 'compose',
+    solisteOuChoeur: 'Fr. Jules Kayembe & Rév. Robert Ndaye · 21 cantiques',
+    recordingType: 'live',
+    videoUrl: 'https://www.youtube.com/watch?v=GdPuf714RkM',
+    lyrics: [],
+  },
+  {
+    id: '1h-dans-sa-presence',
+    numero: '10',
+    titre: 'Une heure dans Sa présence',
+    famille: 'compose',
+    solisteOuChoeur: 'Fr. Jules Kayembe · 11 cantiques inspirés',
+    recordingType: 'live',
+    videoUrl: 'https://www.youtube.com/watch?v=RUoXYRQnRvw',
     lyrics: [],
   },
 ];
 
 export const cantiqueCounts = {
-  tous: 84,
-  recueil: 62,
-  message: 14,
-  compose: 8,
+  tous: cantiques.length,
+  recueil: cantiques.filter((c) => c.famille === 'recueil').length,
+  message: cantiques.filter((c) => c.famille === 'message').length,
+  compose: cantiques.filter((c) => c.famille === 'compose').length,
 } as const;

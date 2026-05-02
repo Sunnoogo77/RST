@@ -7,7 +7,10 @@
   position: relative;
 }
 
-.heroInner { max-width: 760px; }
+.heroInner {
+  max-width: none;
+  text-align: center;
+}
 
 .eyebrow {
   font-family: var(--f-body);
@@ -37,8 +40,8 @@
   font-size: 19px;
   line-height: 1.55;
   color: var(--ink-2);
-  max-width: 620px;
-  margin: 0;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 /* ── ACTIONS ──────────────────────────────────────────────────── */

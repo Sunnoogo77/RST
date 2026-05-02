@@ -1,6 +1,14 @@
 import type { Temoignage } from '../types';
 import sanctuaryImg from '../../assets-source/de882da8-ee8f-485c-9773-4a9274eea5fb.jpg';
 
+/* ============================================================
+   Témoignages — placeholders Lorem Ipsum.
+   Les noms (fictifs), dates et références bibliques sont
+   conservés tels quels ; les contenus de récit sont en
+   Lorem Ipsum, à remplir par l'équipe pastorale avec de
+   vrais témoignages recueillis avec accord des fidèles.
+   ============================================================ */
+
 export const temoignages: Temoignage[] = [
 
   /* ── q1 — Citation courte (2 col) ─────────────────────────────── */
@@ -10,7 +18,7 @@ export const temoignages: Temoignage[] = [
     auteur: '— une sœur · Île-de-France',
     cite: '— une sœur · Île-de-France',
     quoteText:
-      "Je suis venue un dimanche par hasard, j'avais besoin d'entendre quelque chose de stable. Trois mois plus tard, c'est devenu mon assemblée — et ma maison tient debout.",
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua, ut enim ad minim veniam.',
     date: '2026',
   },
 
@@ -21,9 +29,9 @@ export const temoignages: Temoignage[] = [
     auteur: '— frère R. · 41 ans · baptisé le 28 . 09 . 2025',
     cite: '— frère R. · 41 ans · baptisé le 28 . 09 . 2025',
     eyebrow: 'Récit · 14 . 03 . 2026',
-    titre: "« J'ai retrouvé mon père dans le Père. »",
+    titre: 'Lorem ipsum dolor sit amet.',
     corps:
-      "J'avais quitté la foi adolescente comme on quitte une maison trop étroite. Vingt ans plus tard, à un mariage, un frère m'a parlé du Message simplement, sans pression. Je suis revenu à RST le dimanche d'après. Je n'étais pas venu chercher Dieu. C'est Lui qui m'attendait.",
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
     image: sanctuaryImg,
     hasDetail: true,
     date: '2026-03-14',
@@ -34,27 +42,27 @@ export const temoignages: Temoignage[] = [
       paragraphs: [
         {
           kind: 'lede',
-          text: "J'avais quitté la foi adolescente comme on quitte une maison trop étroite. Pendant vingt ans, j'ai cru que la liberté c'était de partir. Je l'ai compris à un mariage, en mars dernier, quand un homme que je ne connaissais pas m'a parlé de Christ comme on parle d'un ami sûr.",
+          text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
         },
         {
           kind: 'p',
-          text: "Mon père est mort quand j'avais douze ans. Je ne le savais pas, mais une grande partie de mon refus de Dieu venait de là. Comment faire confiance à un Père céleste quand le père terrestre s'absente sans préavis ? J'ai construit ma vie autour de ce silence, en faisant comme si l'absence était une réponse.",
+          text: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
         },
         {
           kind: 'pull',
-          text: "Je n'étais pas venu chercher Dieu. C'est Lui qui m'attendait.",
+          text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
         },
         {
           kind: 'p',
-          text: "Le frère, à ce mariage, n'a pas cherché à me convaincre. Il m'a juste dit : « Viens dimanche écouter, sans engagement. » Je suis venu — et le pasteur a prêché sur Matthieu 7. Pas un mot sur la performance, pas un mot sur ce qu'il fallait faire. Juste : « Sur quoi ta vie est-elle bâtie ? »",
+          text: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.',
         },
         {
           kind: 'p',
-          text: "Je suis rentré chez moi. J'ai pleuré comme un enfant. J'ai compris ce soir-là que le Père que j'avais cherché en mon père absent, je l'avais sous les yeux depuis toujours dans la Parole.",
+          text: 'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet.',
         },
         {
           kind: 'p',
-          text: "J'ai été baptisé six mois plus tard. La paix n'est pas spectaculaire — elle est solide. Comme le Roc.",
+          text: 'Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.',
         },
       ],
       versetRef: 'Matthieu 7 . 24',
@@ -71,7 +79,7 @@ export const temoignages: Temoignage[] = [
     cite: '— une mère · 33 ans',
     accentRouge: true,
     quoteText:
-      "Mon enfant a été guéri — pas comme dans un livre. Comme dans la Bible.",
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.',
     date: '2025',
   },
 
@@ -82,9 +90,9 @@ export const temoignages: Temoignage[] = [
     auteur: '— frère J.K. · 37 ans · membre depuis 2018',
     cite: '— frère J.K. · 37 ans · membre depuis 2018',
     eyebrow: 'Récit · 09 . 02 . 2026',
-    titre: "Le travail revenu après la prière de l'autel",
+    titre: 'Lorem ipsum dolor sit amet',
     corps:
-      "Trois mois sans contrat. La saison de prière commune nous a portés — mon épouse et moi. Le mardi qui a suivi le jeûne, j'ai reçu un appel d'une entreprise que je n'avais jamais sollicitée. Aujourd'hui je suis en CDI depuis un an. Je n'aurais jamais cru qu'une prière ordinaire puisse répondre aussi clairement.",
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit.',
     date: '2026-02-09',
   },
 
@@ -94,7 +102,8 @@ export const temoignages: Temoignage[] = [
     type: 'citation',
     auteur: '— jeune adulte · 23 ans',
     cite: '— jeune adulte · 23 ans',
-    quoteText: "Ici, on m'a appris à lire la Bible — pas à la commenter.",
+    quoteText:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     date: '2025',
   },
 
@@ -105,9 +114,9 @@ export const temoignages: Temoignage[] = [
     auteur: '— frère M. · 52 ans · baptisé le 24 . 01 . 2024',
     cite: '— frère M. · 52 ans · baptisé le 24 . 01 . 2024',
     eyebrow: 'Récit · 21 . 01 . 2026',
-    titre: "« Le Message ne m'a pas séduit. Il m'a tenu. »",
+    titre: 'Lorem ipsum dolor sit amet.',
     corps:
-      "Je suis arrivé sceptique. Pendant un an, j'ai écouté sans m'engager. Puis une nuit d'épreuve réelle — un deuil — la Parole prêchée a tenu là où mon mental s'est effondré. Ce qui ne sert qu'à plaire ne tient pas dans le deuil. Le Roc, oui.",
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.',
     image: '/images/wmb-portrait.jpeg',
     hasDetail: false,
     date: '2026-01-21',
@@ -120,9 +129,9 @@ export const temoignages: Temoignage[] = [
     auteur: '— un couple · 16 ans de mariage',
     cite: '— un couple · 16 ans de mariage',
     eyebrow: 'Récit · 15 . 12 . 2025',
-    titre: 'Restauration du foyer',
+    titre: 'Lorem ipsum dolor sit',
     corps:
-      "Mon mariage tenait par les murs. Aucune trahison spectaculaire — juste un silence qui s'épaississait. Une sœur âgée nous a invités à venir au culte du dimanche, sans question. Six mois plus tard, on prie ensemble. Un an après, on rit ensemble. Dieu a réparé ce qu'aucun conseil n'avait su réparer.",
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
     date: '2025-12-15',
   },
 
@@ -132,7 +141,8 @@ export const temoignages: Temoignage[] = [
     type: 'citation',
     auteur: '— une sœur · venue de R.D. Congo en 2022',
     cite: '— une sœur · venue de R.D. Congo en 2022',
-    quoteText: "Je n'ai pas trouvé une église. J'ai trouvé une maison.",
+    quoteText:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     date: '2024',
   },
 

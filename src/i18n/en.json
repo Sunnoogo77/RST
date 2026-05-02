@@ -4,6 +4,7 @@
     "accueil": "Home",
     "nehemie": "Nehemiah Project",
     "histoire": "History",
+    "genese": "Genesis",
     "eglise": "The Church",
     "live": "LIVE",
     "liveLabel": "Live stream"
@@ -117,6 +118,25 @@
       "enracinement": "Taking root",
       "extension": "Expansion",
       "aujourd-hui": "Today"
+    }
+  },
+  "genese": {
+    "nav": {
+      "sommaire": "Summary",
+      "presentation": "Presentation",
+      "naissance": "Birth",
+      "mission": "Mission",
+      "branham": "W. M. Branham",
+      "actes": "Acts of the Holy Spirit",
+      "offices": "Offices",
+      "services": "Services"
+    }
+  },
+  "accueil": {
+    "motDuPasteur": {
+      "eyebrow": "Pastor's word",
+      "titre": "A word from the pastor.",
+      "cta": "Church history →"
     }
   },
   "accessibility": {

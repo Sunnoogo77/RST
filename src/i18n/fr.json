@@ -4,6 +4,7 @@
     "accueil": "Accueil",
     "nehemie": "Projet Néhémie",
     "histoire": "Histoire",
+    "genese": "Genèse",
     "eglise": "L'Église",
     "live": "LIVE",
     "liveLabel": "En direct"
@@ -117,6 +118,25 @@
       "enracinement": "L'enracinement",
       "extension": "L'extension",
       "aujourd-hui": "Aujourd'hui"
+    }
+  },
+  "genese": {
+    "nav": {
+      "sommaire": "Sommaire",
+      "presentation": "Présentation",
+      "naissance": "Naissance",
+      "mission": "Mission",
+      "branham": "W. M. Branham",
+      "actes": "Actes du Saint-Esprit",
+      "offices": "Offices",
+      "services": "Services"
+    }
+  },
+  "accueil": {
+    "motDuPasteur": {
+      "eyebrow": "Mot du pasteur",
+      "titre": "Un mot du pasteur.",
+      "cta": "Historique de l'église →"
     }
   },
   "accessibility": {

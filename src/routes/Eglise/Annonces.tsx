@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import type { AnnonceStatut, AnnonceType } from '../../types';
 import { annonces } from '../../data/annonces';
 import styles from './Annonces.module.css';
@@ -43,10 +44,17 @@ export default function Annonces() {
   const [filterStatut, setFilterStatut] = useState<FilterStatut>('toutes');
   const [filterType,   setFilterType]   = useState<FilterType>('toutes');
 
-  const featured  = annonces.find(a => a.estPhare);
-  const chronoAll = annonces.filter(a => !a.estPhare);
+  /* Carousel : on tourne entre toutes les annonces à venir.
+     Index initial = la plus proche chronologiquement. */
+  const upcoming = annonces
+    .filter((a) => a.statut === 'a-venir')
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const [featuredIdx, setFeaturedIdx] = useState(0);
+  const featured = upcoming[featuredIdx] ?? upcoming[0];
 
-  const filtered = chronoAll.filter(a => {
+  const chronoAll = annonces.filter((a) => a.id !== featured?.id);
+
+  const filtered = chronoAll.filter((a) => {
     if (filterStatut !== 'toutes' && a.statut !== filterStatut) return false;
     if (filterType   !== 'toutes' && a.type   !== filterType)   return false;
     return true;
@@ -54,7 +62,7 @@ export default function Annonces() {
 
   /* Group by month, most-recent first */
   const monthMap = new Map<string, { label: string; key: string; items: typeof filtered }>();
-  filtered.forEach(a => {
+  filtered.forEach((a) => {
     const key   = getMonthKey(a.date);
     const label = getMonthLabel(a.date);
     if (!monthMap.has(key)) monthMap.set(key, { label, key, items: [] });
@@ -139,14 +147,21 @@ export default function Annonces() {
         </div>
       </section>
 
-      {/* ── ANNONCE PHARE ──────────────────────────────────────── */}
+      {/* ── ANNONCE PHARE — carousel sur les annonces à venir ─── */}
       {featured && (
         <section className={styles.featured}>
-          <article className={styles.featuredCard}>
+          <Link
+            to={`/eglise/annonces/${featured.id}`}
+            className={styles.featuredCard}
+            aria-label={`Voir le détail : ${featured.titre}${featured.titreEm ? ' ' + featured.titreEm : ''}`}
+          >
 
             <div className={styles.featuredImg}>
-              {featured.image && (
-                <img src={featured.image} alt={featured.titre} />
+              {(featured.affiche || featured.image) && (
+                <img
+                  src={featured.affiche ?? featured.image}
+                  alt={featured.titre}
+                />
               )}
               <span className={`${styles.statusFlag} ${featuredFlagCls}`}>
                 {featuredFlagText}
@@ -164,7 +179,7 @@ export default function Annonces() {
               <p>{featured.description}</p>
               {featured.featuredMeta && (
                 <div className={styles.featuredMeta}>
-                  {featured.featuredMeta.map(m => (
+                  {featured.featuredMeta.map((m) => (
                     <div key={m.lbl}>
                       <span className={styles.mLbl}>{m.lbl}</span>
                       <span className={styles.mVal}>{m.val}</span>
@@ -172,18 +187,50 @@ export default function Annonces() {
                   ))}
                 </div>
               )}
-              <a href={featured.ctaUrl ?? '#'} className={styles.moreLine}>
+              <span className={styles.moreLine}>
                 En savoir plus →
-              </a>
+              </span>
             </div>
 
-          </article>
+          </Link>
+
+          {upcoming.length > 1 && (
+            <div className={styles.carouselNav} aria-label="Naviguer entre les annonces à venir">
+              <button
+                type="button"
+                className={styles.carouselArrow}
+                onClick={() => setFeaturedIdx((i) => (i - 1 + upcoming.length) % upcoming.length)}
+                aria-label="Annonce précédente"
+              >
+                ←
+              </button>
+              <span className={styles.carouselDots} aria-hidden="true">
+                {upcoming.map((_, i) => (
+                  <span
+                    key={i}
+                    className={`${styles.carouselDot} ${i === featuredIdx ? styles.carouselDotActive : ''}`}
+                  />
+                ))}
+              </span>
+              <span className={styles.carouselCount}>
+                {featuredIdx + 1} / {upcoming.length}
+              </span>
+              <button
+                type="button"
+                className={styles.carouselArrow}
+                onClick={() => setFeaturedIdx((i) => (i + 1) % upcoming.length)}
+                aria-label="Annonce suivante"
+              >
+                →
+              </button>
+            </div>
+          )}
         </section>
       )}
 
       {/* ── CHRONOLOGIE ────────────────────────────────────────── */}
       <section className={styles.chrono}>
-        {groups.map(group => (
+        {groups.map((group) => (
           <div key={group.key} className={styles.chronoMonth}>
 
             <div className={styles.monthHead}>
@@ -194,7 +241,7 @@ export default function Annonces() {
             </div>
 
             <div className={styles.chronoList}>
-              {group.items.map(a => {
+              {group.items.map((a) => {
                 const stateCls =
                   a.statut === 'aujourd-hui' ? styles.stateToday :
                   a.statut === 'passee'      ? styles.statePast  :
@@ -205,7 +252,11 @@ export default function Annonces() {
                   `${TYPE_DISPLAY[a.type]}${a.sousType ? ` · ${a.sousType}` : ''}`;
 
                 return (
-                  <article key={a.id} className={`${styles.annCard} ${stateCls}`}>
+                  <Link
+                    key={a.id}
+                    to={`/eglise/annonces/${a.id}`}
+                    className={`${styles.annCard} ${stateCls}`}
+                  >
 
                     <div className={styles.annDate}>
                       <span className={styles.dn}>{getDn(a.date)}</span>
@@ -228,13 +279,19 @@ export default function Annonces() {
                        a.statut === 'passee'      ? 'Passée'      : 'À venir'}
                     </div>
 
-                  </article>
+                  </Link>
                 );
               })}
             </div>
 
           </div>
         ))}
+
+        {filtered.length === 0 && (
+          <p className={styles.empty}>
+            Aucune annonce ne correspond à ces filtres.
+          </p>
+        )}
       </section>
 
     </div>

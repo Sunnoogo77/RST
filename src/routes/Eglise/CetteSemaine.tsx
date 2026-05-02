@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { vlogSemaine } from '../../data/vlog-semaine';
 import { imagesSemaine } from '../../data/images-semaine';
 import { annonces } from '../../data/annonces';
+import { youtubeEmbedUrl, youtubeThumbnail } from '../../utils/youtube';
 import styles from './CetteSemaine.module.css';
 
 /* ── helpers date ───────────────────────────────────────────── */
@@ -21,6 +23,10 @@ function formatAnnonceDate(iso: string): string {
 }
 
 export default function CetteSemaine() {
+  const [heroPlaying, setHeroPlaying] = useState(false);
+  const heroEmbed = youtubeEmbedUrl(vlogSemaine.replayUrl, { autoplay: true });
+  const heroThumb = youtubeThumbnail(vlogSemaine.replayUrl);
+
   const date = new Date(vlogSemaine.date + 'T12:00:00');
 
   const jourUp   = date.toLocaleDateString('fr-FR', { weekday: 'long' }).toUpperCase();
@@ -41,17 +47,41 @@ export default function CetteSemaine() {
           HERO — vidéo gauche · infos sermon droite
           ══════════════════════════════════════════════════════════ */}
       <section className={styles.hero} aria-label="Culte de cette semaine">
-        <div className={styles.heroInner}>
+        <div className={`${styles.heroInner} ${heroPlaying ? styles.heroInnerExpanded : ''}`}>
 
         {/* Gauche : vidéo / vignette */}
-        <div className={styles.heroMedia}>
-          <button className={styles.heroPlay} aria-label="Regarder le replay">
-            <span className={styles.heroPlayIcon} aria-hidden="true">▶</span>
-          </button>
-          <div className={styles.heroBadgeLive} aria-label="En direct">
-            <span className={styles.heroBadgeDot} aria-hidden="true" />
-            EN DIRECT
-          </div>
+        <div className={`${styles.heroMedia} ${heroPlaying ? styles.heroMediaExpanded : ''}`}>
+          {heroPlaying && heroEmbed ? (
+            <iframe
+              className={styles.heroIframe}
+              src={heroEmbed}
+              title={`Replay — ${vlogSemaine.titreMessage}${vlogSemaine.titreSuffix ? ' ' + vlogSemaine.titreSuffix : ''}`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          ) : (
+            <>
+              {heroThumb && (
+                <img
+                  src={heroThumb}
+                  alt={`Aperçu — ${vlogSemaine.titreMessage}`}
+                  className={styles.heroThumb}
+                  loading="lazy"
+                />
+              )}
+              <button
+                className={styles.heroPlay}
+                onClick={() => heroEmbed && setHeroPlaying(true)}
+                aria-label="Regarder le replay"
+                disabled={!heroEmbed}
+              >
+                <span className={styles.heroPlayIcon} aria-hidden="true">▶</span>
+              </button>
+              <div className={styles.heroBadgeReplay} aria-label="Replay du dernier culte">
+                REPLAY
+              </div>
+            </>
+          )}
         </div>
 
         {/* Droite : informations sermon */}
@@ -97,15 +127,27 @@ export default function CetteSemaine() {
             </p>
           </div>
           <div className={styles.galerieGrid} role="list" aria-label="Galerie photos">
-            {imagesSemaine.map((img) => (
-              <div key={img.id} className={styles.galerieItem} role="listitem">
-                <div className={styles.galeriePlaceholder} aria-label={img.caption}>
-                  <span className={styles.galeriePlaceholderLabel} aria-hidden="true">
-                    PHOTO · SEMAINE
-                  </span>
+            {imagesSemaine.map((img) => {
+              const isPlaceholder = img.src.includes('placeholder');
+              return (
+                <div key={img.id} className={styles.galerieItem} role="listitem">
+                  {isPlaceholder ? (
+                    <div className={styles.galeriePlaceholder} aria-label={img.caption}>
+                      <span className={styles.galeriePlaceholderLabel} aria-hidden="true">
+                        PHOTO · À FOURNIR
+                      </span>
+                    </div>
+                  ) : (
+                    <img
+                      src={img.src}
+                      alt={img.caption}
+                      className={styles.galerieImg}
+                      loading="lazy"
+                    />
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           <p className={styles.galerieNote} aria-hidden="true">
             grille asymétrique · {imagesSemaine.length} placeholders · l'équipe média remplace après chaque culte
@@ -124,19 +166,25 @@ export default function CetteSemaine() {
             <p className={styles.duoLabel}>CANTIQUE SPÉCIAL</p>
             <h2 className={styles.duoCantiqueTitre}>{vlogSemaine.cantiqueSemaine.titre}</h2>
             <div className={styles.duoPlayer} aria-label="Lecteur vidéo">
-              <button className={styles.duoPlayerBtn} aria-label="Lire le cantique">
-                <span className={styles.duoPlayerIcon} aria-hidden="true">▶</span>
-              </button>
+              {(() => {
+                const embed = youtubeEmbedUrl(vlogSemaine.cantiqueSemaine.videoUrl);
+                return embed ? (
+                  <iframe
+                    className={styles.duoIframe}
+                    src={embed}
+                    title={`Cantique — ${vlogSemaine.cantiqueSemaine.titre}`}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    loading="lazy"
+                  />
+                ) : (
+                  <button className={styles.duoPlayerBtn} aria-label="Lire le cantique">
+                    <span className={styles.duoPlayerIcon} aria-hidden="true">▶</span>
+                  </button>
+                );
+              })()}
             </div>
             <p className={styles.duoCantiqueSoliste}>{vlogSemaine.cantiqueSemaine.soliste}</p>
-            {vlogSemaine.cantiqueSemaine.vuesCount && (
-              <p className={styles.duoCantiqueMeta}>
-                {vlogSemaine.cantiqueSemaine.vuesCount}
-                {vlogSemaine.cantiqueSemaine.dateEnregistrement && (
-                  <> &nbsp;·&nbsp; enregistré le {vlogSemaine.cantiqueSemaine.dateEnregistrement}</>
-                )}
-              </p>
-            )}
           </div>
 
           {/* Témoignage */}
