@@ -190,9 +190,9 @@
   inset: 0;
   z-index: 3;
   background:
-    radial-gradient(ellipse 30% 34% at 52% 46%, rgba(255,210,146,.18) 0%, rgba(255,190,118,.1) 36%, rgba(255,190,118,0) 72%);
-  mix-blend-mode: screen;
-  opacity: .78;
+    radial-gradient(ellipse 42% 34% at 76% 92%, rgba(2,4,15,.58) 0%, rgba(2,4,15,.38) 36%, rgba(2,4,15,.14) 66%, rgba(2,4,15,0) 100%),
+    radial-gradient(ellipse 26% 24% at 62% 88%, rgba(2,4,15,.34) 0%, rgba(2,4,15,.16) 52%, rgba(2,4,15,0) 100%);
+  opacity: 1;
 }
 
 /* ── EYEBROW (section-level — avec tiret préfixe) ─────────────────────── */
@@ -926,8 +926,8 @@
   .heroJesus::after {
     inset: 0;
     background:
-      linear-gradient(90deg, rgba(3,7,24,.42) 0%, rgba(3,7,24,0) 38%, rgba(3,7,24,.28) 100%);
-    mix-blend-mode: normal;
+      radial-gradient(ellipse 54% 42% at 72% 94%, rgba(2,4,15,.42) 0%, rgba(2,4,15,.22) 48%, rgba(2,4,15,0) 100%);
+    opacity: 1;
   }
 
   /* Schedule */

@@ -185,7 +185,7 @@ export default function Nehemie() {
           <span className={styles.heroEyebrow}>{t('nehemie.heroEyebrow')}</span>
           <h1 className={styles.heroTitle}>
             {t('nehemie.heroTitleLine1')}<br />
-            <em>{t('nehemie.heroTitleLine2')}<br />{t('nehemie.heroTitleLine3')}</em>
+            <em>{t('nehemie.heroTitleLine2')}</em>
           </h1>
           <p className={styles.heroSub}>{t('nehemie.heroSub')}</p>
           <a href="#avancement" className={styles.heroCta}>
