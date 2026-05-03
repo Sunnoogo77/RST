@@ -210,7 +210,31 @@ Je peux ajuster autour : couleurs des typos hero (heroTitle, heroSub) si besoin 
 
 ## 7. Limitations / suggestions (à valider au réveil)
 
-_Aucune pour l'instant. Je remplirai cette section au fil du travail si je rencontre un blocage CSS-pure._
+### Préexistants (non liés au glass)
+- **Lint warning sur `Header.tsx` ligne 56** (`react-hooks/exhaustive-deps` — `burgerRef.current` may have changed). Cette warning est préexistante sur `main` et le brief §4 m'interdit de modifier les `.tsx`. `pnpm lint` se termine donc avec exit 1 à cause du `--max-warnings 0`. Solution proposée à valider : copier `burgerRef.current` dans une variable locale de l'effet (3 lignes de code dans `Header.tsx`) — à faire si tu valides la branche.
+
+### Choix d'arbitrage assumés
+- **Bleu RST**. Le bundle glass propose `#1E47A1` (Apple-flavored) alors que la vitrine actuelle utilisait `#15364B` (bleu marine). J'ai basculé `--accent` vers `#1E47A1` (alias de `--rst-blue`) car le brief §7 demande "le bleu pipetté du logo officiel" — le bundle glass affirme l'avoir pipetté du logo, donc je m'aligne. Si tu préfères revenir au bleu marine `#15364B`, il suffit de modifier la ligne `--rst-blue` dans `tokens.css`.
+- **Cormorant conservé** sur les `<p>` et headings éditoriaux malgré la recommandation du bundle de tout passer en SF Pro. C'est la voix RST — préservée. SF Pro n'arrive que sur le chrome (nav, eyebrows, méta, captions, boutons).
+- **Bodoni Moda conservé** pour les chiffres (--f-num) malgré le bundle qui pousse SF Pro pour tout. C'est l'ADN éditorial du site (collecte, dates, durées) — gardé.
+- **Header `.onProtectedDark`** garde son fond `#06091c` solide (pas de glass) pour s'adosser parfaitement à la bande hero des pages Genese / Eglise — la transition glass aurait montré une frontière visible.
+
+### Suggestions hors-périmètre (à valider/rejeter)
+- Le `--max-warnings 0` du script lint est strict. Si tu valides la branche, il faudra soit corriger le warning préexistant dans `Header.tsx` (1 effet à patcher), soit assouplir `--max-warnings`.
+- Le `participationBand` de `Nehemie` reste full-bleed dark (volontaire — moment de contraste éditorial). Si tu préfères un panneau glass uniforme, c'est facile à faire.
+- Les fichiers `.module.css` comportent des références `rgba(12, 14, 20, .x)` qui correspondent à l'ancien ink charbon ; elles n'ont pas toutes été migrées vers `var(--ink-1)` etc. pour limiter la surface de diff. Le rendu reste cohérent car `--ink: #0C0E14` est toujours défini. Migration full-token possible en un commit dédié.
+
+### Pages effectivement glassées (récap)
+- `/` (Accueil) — hero **intouché**, sections post-hero glassées.
+- `/nehemie` — hero **intouché**, sections post-hero glassées.
+- `/genese` (Sommaire) + 9 sous-pages PageGenese — sub-nav glass, articles éditoriaux en cartes glass.
+- `/eglise` (CetteSemaine) — sub-nav glass, hero, fil, galerie, duo, annonces.
+- `/eglise/cultes` — filtres + chips glass, board glass, lecteur vidéo glass.
+- `/eglise/cantiques` — familles glass, vignettes radius, lyrics panel glass.
+- `/eglise/annonces` — featuredCard glass card, filtres glass.
+- `/eglise/temoignages` — actions bar glass, mosaic tiles glass (quote / story / illu).
+- `/eglise/annonces/:id` (AnnonceDetail) — poster frame glass, CTA bleu pill.
+- `/design-system` — hérite tout du tokens.css (rien à toucher).
 
 ---
 
@@ -220,8 +244,25 @@ _Aucune pour l'instant. Je remplirai cette section au fil du travail si je renco
 - [x] Lecture des tokens et global RST actuels.
 - [x] Inventaire des `.module.css`.
 - [x] Plan détaillé écrit (ce document).
-- [ ] Application du glass sur tokens + global.
-- [ ] Application du glass sur header/footer.
-- [ ] Application du glass sur composants UI.
-- [ ] Application du glass sur pages.
-- [ ] Vérification typecheck + lint + dev server.
+- [x] Application du glass sur tokens + global.
+- [x] Application du glass sur header/footer.
+- [x] Application du glass sur composants UI.
+- [x] Application du glass sur pages (Accueil, Nehemie, Genese, Eglise).
+- [x] Vérification : `pnpm tsc --noEmit` passe (exit 0).
+- [x] Vérification : `pnpm build` réussit (159 kB CSS, 414 kB JS).
+- [x] Vérification : les 8 routes répondent en HTTP 200 sur `pnpm dev`.
+- [⚠] `pnpm lint` : 1 warning préexistant non-glass dans Header.tsx (cf. §7).
+
+### Commits réalisés sur la branche
+
+```
+git log --oneline feat/glass-redesign --not main
+```
+1. `feat(glass): introduce liquid-glass tokens and ambient canvas`
+2. `feat(glass): convert header and footer to liquid-glass surfaces`
+3. `feat(glass): liquid-glass treatment on UI primitives`
+4. `feat(glass): apply liquid glass to homepage sections`
+5. `feat(glass): apply liquid glass to Nehemie sections`
+6. `feat(glass): liquid-glass treatment for Genese pages`
+7. `feat(glass): liquid-glass treatment for Eglise pages`
+8. `chore(glass): finalize JOURNAL-GLASS.md`
