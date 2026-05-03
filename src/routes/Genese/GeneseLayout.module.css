@@ -37,8 +37,13 @@
 }
 
 .subnavDark {
-  background: #06091c;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(6, 9, 28, 0.55);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  backdrop-filter: blur(40px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
+    0 4px 14px rgba(0, 0, 0, 0.18);
 }
 
 /* Sous-nav glass clair : pill qui flotte au-dessus du contenu */
