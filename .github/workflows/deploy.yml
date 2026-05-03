@@ -5,7 +5,7 @@ name: Deploy to GitHub Pages
 #  - manuel via l'onglet Actions
 on:
   push:
-    branches: [main]
+    branches: [feat/glass-redesign]
   workflow_dispatch:
 
 # Permissions minimales nécessaires pour publier sur GitHub Pages
