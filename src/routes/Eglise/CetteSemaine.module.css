@@ -5,7 +5,7 @@
 /* ── HERO ───────────────────────────────────────────────────────────── */
 .hero {
   background:
-    radial-gradient(ellipse 58% 78% at 30% 42%, rgba(21, 54, 75, .22) 0%, rgba(6, 9, 28, .08) 58%, transparent 76%),
+    radial-gradient(ellipse 58% 78% at 30% 42%, rgba(30, 71, 161, .26) 0%, rgba(6, 9, 28, .08) 58%, transparent 76%),
     linear-gradient(to bottom, #06091c 0%, #030617 100%);
   padding: 52px var(--pad-x);
   border-bottom: 1px solid rgba(255, 255, 255, .10);
@@ -28,18 +28,21 @@
   gap: 40px;
 }
 
-/* Panneau vidéo — sombre */
+/* Panneau vidéo — sombre, radius glass */
 .heroMedia {
   position: relative;
   aspect-ratio: 3 / 2;
   background: #0a0a0a;
-  border: 1px solid rgba(255, 255, 255, .12);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, .28);
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: var(--r-md);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, .32),
+    0 1px 0 0 rgba(255, 255, 255, 0.18) inset;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: aspect-ratio .45s ease;
+  transition: aspect-ratio .45s var(--ease);
 }
 
 .heroMediaExpanded {
@@ -60,13 +63,18 @@
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.90);
-  border: none;
+  background: rgba(255, 255, 255, 0.92);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background var(--transition-fast), transform var(--transition-fast);
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.36),
+    0 1px 0 0 rgba(255, 255, 255, 0.7) inset;
+  transition: background var(--t-fast), transform var(--t-fast);
   z-index: 1;
 }
 .heroPlay:hover {
@@ -87,15 +95,17 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  padding: 5px 14px;
-  background: var(--note);
+  padding: 6px 14px;
+  background: var(--rst-red);
+  border: 1px solid rgba(255, 255, 255, 0.30);
   border-radius: var(--r-pill);
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.18em;
   color: #fff;
   z-index: 2;
+  box-shadow: var(--shadow-red);
 }
 
 /* Badge REPLAY — affiché quand le culte n'est pas en cours */
@@ -103,10 +113,13 @@
   position: absolute;
   top: 20px;
   left: 20px;
-  padding: 5px 14px;
-  background: rgba(12, 14, 20, .88);
+  padding: 6px 14px;
+  background: rgba(11, 15, 25, 0.62);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   color: #fff;
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.22em;
@@ -122,6 +135,7 @@
   width: 100%;
   height: 100%;
   border: 0;
+  border-radius: var(--r-md);
   display: block;
 }
 
@@ -214,21 +228,27 @@
   font-style: normal;
 }
 
-/* ── FIL DU MESSAGE ────────────────────────────────────────────────── */
+/* ── FIL DU MESSAGE — carte glass aérée ────────────────────────────── */
 .fil {
-  background: #fbfaf7;
+  background: transparent;
   padding: 72px var(--pad-x);
-  border-bottom: var(--border-soft);
 }
 
 .filInner {
-  max-width: 700px;
+  max-width: 760px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 32px;
+  gap: 28px;
   text-align: center;
+  padding: 40px clamp(24px, 4vw, 56px);
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-3), var(--glass-inset-highlight);
 }
 
 .filLabel {
@@ -257,9 +277,8 @@
    items 4-6 → rangée basse, 3 colonnes égales
    ──────────────────────────────────────────────────────────────────── */
 .galerie {
-  background: var(--paper);
+  background: transparent;
   padding: 64px var(--pad-x);
-  border-bottom: var(--border-soft);
 }
 
 .galerieInner {
@@ -312,6 +331,10 @@
 .galerieItem {
   overflow: hidden;
   position: relative;
+  border-radius: var(--r-md);
+  box-shadow:
+    0 4px 14px rgba(11, 15, 25, 0.10),
+    0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
 }
 
 .galerieImg {
@@ -355,9 +378,8 @@
    2 colonnes, label avec trait CSS avant le texte
    ──────────────────────────────────────────────────────────────────── */
 .duo {
-  background: var(--paper);
-  padding: 72px var(--pad-x);
-  border-bottom: var(--border-soft);
+  background: transparent;
+  padding: 64px var(--pad-x);
 }
 
 .duoInner {
@@ -365,8 +387,15 @@
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 80px;
+  gap: 56px;
   align-items: start;
+  padding: 40px clamp(24px, 4vw, 56px);
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-3), var(--glass-inset-highlight);
 }
 
 /* Label : trait horizontal + texte petites capitales */
@@ -402,7 +431,7 @@
   font-size: clamp(1.25rem, 2vw, 1.625rem);
   font-style: italic;
   font-weight: 400;
-  color: var(--accent);
+  color: var(--rst-blue);
   margin: 0 0 24px;
   line-height: 1.2;
 }
@@ -417,6 +446,10 @@
   margin-bottom: 14px;
   position: relative;
   overflow: hidden;
+  border-radius: var(--r-md);
+  box-shadow:
+    0 6px 18px rgba(11, 15, 25, 0.16),
+    0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
 }
 
 .duoIframe {
@@ -429,20 +462,25 @@
 }
 
 .duoPlayerBtn {
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.88);
-  border: none;
+  background: rgba(255, 255, 255, 0.92);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background var(--transition-fast), transform var(--transition-fast);
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.32),
+    0 1px 0 0 rgba(255, 255, 255, 0.7) inset;
+  transition: background var(--t-fast), transform var(--t-fast);
 }
 .duoPlayerBtn:hover {
   background: #fff;
-  transform: scale(1.05);
+  transform: scale(1.06);
 }
 
 .duoPlayerIcon {
@@ -459,9 +497,10 @@
 }
 
 .duoCantiqueMeta {
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 12px;
-  color: var(--note);
+  font-weight: 600;
+  color: var(--rst-red);
   margin: 0;
 }
 
@@ -485,7 +524,7 @@
   font-size: clamp(1rem, 1.4vw, 1.125rem);
   font-style: italic;
   line-height: 1.75;
-  color: var(--accent);
+  color: var(--rst-blue);
   margin: 0 0 24px;
 }
 
@@ -502,13 +541,20 @@
    Fond blanc · 3 colonnes séparées par règles verticales
    ──────────────────────────────────────────────────────────────────── */
 .annonces {
-  background: var(--paper);
+  background: transparent;
   padding: 64px var(--pad-x) 88px;
 }
 
 .annoncesInner {
   max-width: var(--max-content);
   margin: 0 auto;
+  padding: 40px clamp(24px, 4vw, 56px);
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-3), var(--glass-inset-highlight);
 }
 
 .annoncesHeader {
@@ -538,23 +584,24 @@
 }
 
 .annoncesLienAll {
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 10.5px;
   font-weight: 600;
   letter-spacing: 0.18em;
-  color: var(--accent);
+  color: var(--rst-blue);
   text-decoration: none;
   white-space: nowrap;
   padding-bottom: 6px;
-  transition: opacity var(--transition-fast);
+  transition: opacity var(--t-fast);
 }
 .annoncesLienAll:hover {
-  opacity: 0.65;
+  opacity: 0.75;
+  color: var(--rst-blue-deep);
 }
 
 .annoncesRule {
-  height: 1.5px;
-  background: var(--ink);
+  height: 1px;
+  background: var(--line-1);
 }
 
 .annoncesGrid {
@@ -582,12 +629,12 @@
 }
 
 .annonceDate {
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.20em;
   text-transform: uppercase;
-  color: var(--note);
+  color: var(--rst-red);
   margin: 0;
 }
 

@@ -131,10 +131,14 @@
 .posterFrame {
   max-width: 640px;
   width: 100%;
-  background: var(--paper-2);
-  border: 1px solid rgba(12, 14, 20, .12);
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--r-md);
   padding: 12px;
   margin-bottom: 22px;
+  box-shadow: var(--shadow-2), var(--glass-inset-highlight);
 }
 .posterFrame img {
   display: block;
@@ -150,36 +154,51 @@
 }
 
 .btnPrimary {
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: .14em;
   text-transform: uppercase;
-  background: var(--ink);
-  color: var(--paper);
-  padding: 12px 24px;
+  background: var(--rst-blue);
+  color: #fff;
+  padding: 12px 26px;
   text-decoration: none;
-  border: 1.5px solid var(--ink);
-  transition: opacity .15s;
+  border: none;
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow-blue);
+  transition: background var(--t-fast), transform var(--t-base);
 }
-.btnPrimary:hover { opacity: .85; }
+.btnPrimary:hover {
+  background: var(--rst-blue-deep);
+  transform: var(--hover-lift);
+}
 
 .btnLine {
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: .14em;
   text-transform: uppercase;
-  color: var(--ink);
-  padding: 12px 24px;
+  color: var(--ink-1);
+  padding: 12px 26px;
   text-decoration: none;
-  border: 1.5px solid var(--ink);
-  background: transparent;
-  transition: background .15s, color .15s;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-pill);
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  box-shadow: var(--shadow-1), var(--glass-inset-highlight);
+  transition:
+    background var(--t-fast),
+    border-color var(--t-fast),
+    color var(--t-fast),
+    transform var(--t-base);
 }
 .btnLine:hover {
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--glass-solid);
+  border-color: var(--rst-blue);
+  color: var(--rst-blue);
+  transform: var(--hover-lift);
 }
 
 /* ── COMPTE-RENDU ─────────────────────────────────────────────── */
@@ -228,8 +247,12 @@
 
 .reportFig {
   margin: 28px auto;
-  background: var(--paper-2);
-  border: 1px solid rgba(12, 14, 20, .12);
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-1), var(--glass-inset-highlight);
   padding: 8px;
 }
 .reportFig img {
