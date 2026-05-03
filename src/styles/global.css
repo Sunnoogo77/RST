@@ -1,6 +1,6 @@
 /* ============================================================
-   RST — Global styles
-   Reset + échelle typographique de base
+   RST — Global styles (branche feat/glass-redesign)
+   Reset + canvas Liquid Glass + échelle typographique
    ============================================================ */
 
 *,
@@ -18,17 +18,28 @@ html {
   text-size-adjust: 100%;
 }
 
+/* Canvas Liquid Glass : off-white bluish + dégradés radiaux ambiants
+   très diffus (rouge / bleu) pour donner aux surfaces glass de la
+   matière à réfracter. */
 body {
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 16px;
   line-height: 1.6;
-  color: var(--ink);
-  background-color: var(--paper);
+  color: var(--ink-1);
+  background:
+    radial-gradient(1100px 600px at 8% 0%,
+      rgba(30, 71, 161, 0.14), transparent 60%),
+    radial-gradient(900px 500px at 95% 22%,
+      rgba(200, 51, 42, 0.08), transparent 65%),
+    radial-gradient(800px 500px at 50% 110%,
+      rgba(30, 71, 161, 0.08), transparent 60%),
+    var(--bg-canvas);
+  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Headings — Cormorant Garamond, poids 500, tracking serré */
+/* Headings — Cormorant pour la voix éditoriale RST */
 h1,
 h2,
 h3,
@@ -39,45 +50,35 @@ h6 {
   font-weight: 500;
   letter-spacing: -0.01em;
   line-height: 1.04;
-  color: var(--ink);
+  color: var(--ink-1);
 }
 
-/* h1 : grande hiérarchie éditoriale */
-h1 {
-  font-size: clamp(42px, 6vw, 72px);
-}
+h1 { font-size: clamp(42px, 6vw, 72px); }
+h2 { font-size: clamp(32px, 4.5vw, 52px); }
+h3 { font-size: clamp(24px, 3vw, 36px); }
 
-h2 {
-  font-size: clamp(32px, 4.5vw, 52px);
-}
-
-h3 {
-  font-size: clamp(24px, 3vw, 36px);
-}
-
-/* Accent typographique dans les titres */
+/* Accent typographique italique dans les titres */
 h1 em,
 h2 em,
 h3 em {
   font-style: italic;
-  color: var(--ink-2);
+  color: var(--rst-blue);
 }
 
+/* Paragraphes éditoriaux — Cormorant, voix conservée */
 p {
   font-family: var(--f-serif);
   font-size: 18px;
   line-height: 1.65;
-  color: var(--ink);
+  color: var(--ink-2);
 }
 
-/* Corps éditorial plus petit */
 p.meta {
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 14px;
   color: var(--ink-3);
 }
 
-/* Lede — premier paragraphe accentué */
 p.lede {
   font-size: 22px;
   line-height: 1.5;
@@ -109,34 +110,34 @@ ol {
   list-style: none;
 }
 
-/* Citation biblique */
+/* Citation biblique — filet ink */
 blockquote.bibl {
   font-family: var(--f-serif);
   font-size: 17px;
   font-style: italic;
   line-height: 1.6;
-  border-left: 2px solid var(--ink);
+  border-left: 2px solid var(--ink-1);
   padding-left: 18px;
-  color: var(--ink);
+  color: var(--ink-1);
 }
 
-/* Citation Branham */
+/* Citation Branham — filet rouge RST */
 blockquote.bran {
   font-family: var(--f-serif);
   font-style: italic;
   font-size: 17px;
   line-height: 1.6;
-  border-left: 2px solid var(--note);
+  border-left: 2px solid var(--rst-red);
   padding-left: 18px;
-  color: var(--ink);
+  color: var(--ink-1);
 }
 
 blockquote.bran .source {
   display: block;
   margin-top: 10px;
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 10.5px;
-  letter-spacing: .2em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ink-3);
   font-style: normal;
@@ -147,12 +148,12 @@ blockquote.bran .source {
   font-family: var(--f-num);
 }
 
-/* Texte en Cinzel (usage limité) */
+/* Texte en Cinzel */
 .engrave {
   font-family: var(--f-engrave);
 }
 
-/* Conteneur éditorial centré */
+/* Conteneurs */
 .container {
   width: 100%;
   max-width: var(--max-content);
@@ -172,19 +173,20 @@ blockquote.bran .source {
   margin-inline: auto;
 }
 
-/* Accessibilité : skip-link */
+/* Skip-link — pill glass */
 .skip-link {
   position: absolute;
   top: -100%;
   left: var(--space-16);
   z-index: 10000;
   padding: var(--space-8) var(--space-16);
-  background: var(--accent);
-  color: white;
-  font-family: var(--f-body);
+  background: var(--rst-blue);
+  color: #fff;
+  font-family: var(--f-text);
   font-size: 14px;
-  border-radius: var(--r-sm);
-  transition: top var(--transition-fast);
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow-blue);
+  transition: top var(--t-fast);
 }
 
 .skip-link:focus {
@@ -204,21 +206,20 @@ blockquote.bran .source {
   border: 0;
 }
 
-/* Hairline — filet 1px discret */
+/* Hairlines */
 .hairline {
   border: none;
   border-top: var(--border-soft);
   margin: 0;
 }
 
-/* Hairline major — filet 1.5px fort */
 .hairline-major {
   border: none;
   border-top: var(--border-major);
   margin: 0;
 }
 
-/* ── Scrollbar — complètement masquée ──────────────────────────────────── */
+/* ── Scrollbar — masquée, le canvas reste calme ───────────────── */
 :root {
   scrollbar-width: none;
 }
@@ -226,7 +227,7 @@ blockquote.bran .source {
   display: none;
 }
 
-/* Responsive */
+/* ── Responsive ───────────────────────────────────────────────── */
 @media (max-width: 820px) {
   :root {
     --pad-x: var(--pad-x-mob);
@@ -238,5 +239,17 @@ blockquote.bran .source {
 
   p.lede {
     font-size: 19px;
+  }
+
+  /* Sur mobile, le canvas devient plus uniforme :
+     les dégradés ambiants sont moins expressifs pour ne pas
+     concurrencer la lecture sur petit écran. */
+  body {
+    background:
+      radial-gradient(700px 380px at 0% 0%,
+        rgba(30, 71, 161, 0.10), transparent 60%),
+      radial-gradient(600px 360px at 100% 30%,
+        rgba(200, 51, 42, 0.06), transparent 65%),
+      var(--bg-canvas);
   }
 }
