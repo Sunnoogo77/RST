@@ -1,15 +1,25 @@
+/* ============================================================
+   Header — Liquid Glass sticky panel
+   - Mêmes états que la version éditoriale (onDark / onLight /
+     scrolled / hidden / onProtectedDark) pour ne rien casser dans
+     la logique React.
+   - Surface de verre avec backdrop-blur, hairline subtle, pill
+     nav au hover et à l'état actif.
+   ============================================================ */
+
 .skipLink {
   position: absolute;
   top: -100%;
   left: var(--space-16);
   z-index: 10001;
   padding: var(--space-8) var(--space-16);
-  background: var(--accent);
+  background: var(--rst-blue);
   color: #fff;
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 13px;
-  border-radius: var(--r-sm);
-  transition: top var(--transition-fast);
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow-blue);
+  transition: top var(--t-fast);
 }
 .skipLink:focus {
   top: var(--space-8);
@@ -24,10 +34,11 @@
   z-index: 1000;
   height: var(--header-h);
   transition:
-    transform 320ms cubic-bezier(0.4, 0, 0.2, 1),
-    background 260ms ease,
-    border-color 260ms ease,
-    backdrop-filter 260ms ease;
+    transform var(--t-base),
+    background var(--t-base),
+    border-color var(--t-base),
+    backdrop-filter var(--t-base),
+    box-shadow var(--t-base);
 }
 
 /* Auto-hide */
@@ -37,26 +48,36 @@
 
 /* ── Sur fond sombre (zone hero) ─────────────────────────────────── */
 .onDark {
-  background: transparent;
+  background: rgba(11, 15, 25, 0.18);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 0 1px 0 0 rgba(255, 255, 255, 0.06) inset;
+}
+
+/* Variante "protégée" — header plein opaque sur l'intro genese/eglise.
+   Conserve le bleu sombre uni pour s'adosser parfaitement à la bande
+   hero des sous-pages (pas de transition glass nécessaire). */
+.onProtectedDark {
+  background: #06091c;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
   border-bottom: 1px solid rgba(255, 255, 255, 0.10);
 }
 
-.onProtectedDark {
-  background: #06091c;
-}
-
 .onDark .navLink {
-  color: rgba(255, 255, 255, 0.62);
+  color: rgba(255, 255, 255, 0.66);
 }
 .onDark .navLink:hover {
   color: #fff;
+  background: rgba(255, 255, 255, 0.10);
 }
 .onDark .active {
   color: #fff;
-  border-bottom-color: #fff;
+  background: rgba(255, 255, 255, 0.16);
 }
 .onDark .logoName {
-  color: rgba(255, 255, 255, 0.76);
+  color: rgba(255, 255, 255, 0.78);
 }
 .onDark .lang {
   color: rgba(255, 255, 255, 0.5);
@@ -73,25 +94,35 @@
 
 /* ── Sur fond clair (reste du site) ─────────────────────────────── */
 .onLight {
-  background: var(--paper);
-  border-bottom: var(--border-soft);
+  background: var(--glass-regular);
+  -webkit-backdrop-filter: var(--glass-blur-strong);
+  backdrop-filter: var(--glass-blur-strong);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.65) inset,
+    0 1px 12px rgba(11, 15, 25, 0.04);
 }
 
 .scrolled.onLight {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: var(--glass-thick);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.65) inset,
+    0 4px 18px rgba(11, 15, 25, 0.06);
 }
 
 .onLight .navLink {
   color: var(--ink-2);
 }
 .onLight .navLink:hover {
-  color: var(--ink);
+  color: var(--ink-1);
+  background: rgba(255, 255, 255, 0.55);
 }
 .onLight .active {
-  color: var(--ink);
-  border-bottom-color: var(--note);
+  color: var(--ink-1);
+  background: var(--glass-solid);
+  box-shadow:
+    0 1px 2px rgba(11, 15, 25, 0.06),
+    var(--glass-inset-highlight);
 }
 .onLight .logoName {
   color: var(--ink-2);
@@ -100,10 +131,10 @@
   color: var(--ink-3);
 }
 .onLight .lang:hover {
-  color: var(--ink);
+  color: var(--ink-1);
 }
 .onLight .langActive {
-  color: var(--accent);
+  color: var(--rst-blue);
 }
 .onLight .langSep {
   color: var(--line-soft);
@@ -120,7 +151,7 @@
   gap: var(--space-40);
 }
 
-/* Logo — colonne : image au-dessus, nom en dessous */
+/* Logo */
 .logo {
   display: flex;
   flex-direction: column;
@@ -129,6 +160,10 @@
   flex-shrink: 0;
   text-decoration: none;
   transform: translateY(-2px);
+  transition: transform var(--t-fast);
+}
+.logo:hover {
+  transform: translateY(-2px) scale(1.03);
 }
 
 .logoImg {
@@ -147,27 +182,30 @@
   line-height: 1;
   text-align: center;
   white-space: nowrap;
-  transition: color 260ms ease;
+  transition: color var(--t-base);
 }
 
-/* Navigation */
+/* Navigation principale — pill nav */
 .nav {
   display: flex;
   align-items: center;
-  gap: var(--space-32);
+  gap: 4px;
   flex: 1;
   justify-content: center;
 }
 
 .navLink {
-  font-family: var(--f-body);
-  font-size: 13px;
+  font-family: var(--f-text);
+  font-size: 13.5px;
   font-weight: 500;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.01em;
   text-decoration: none;
-  padding-bottom: 3px;
-  border-bottom: 2px solid transparent;
-  transition: color var(--transition-fast), border-color var(--transition-fast);
+  padding: 8px 16px;
+  border-radius: var(--r-pill);
+  transition:
+    background var(--t-fast),
+    color var(--t-fast),
+    box-shadow var(--t-fast);
 }
 
 /* Utilitaires droite */
@@ -185,7 +223,7 @@
 }
 
 .lang {
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -193,7 +231,7 @@
   border: none;
   cursor: pointer;
   padding: 0;
-  transition: color var(--transition-fast);
+  transition: color var(--t-fast);
 }
 
 .langSep {
@@ -202,7 +240,6 @@
 }
 
 /* ── Bouton burger (mobile uniquement, < 600 px) ─────────────────── */
-/* Caché par défaut sur desktop ; révélé sous 600 px en bas du fichier. */
 .burger {
   display: none;
   width: 44px;
@@ -217,6 +254,8 @@
   cursor: pointer;
   margin-left: auto;
   flex-shrink: 0;
+  border-radius: var(--r-pill);
+  transition: background var(--t-fast);
 }
 
 .burgerBar {
@@ -232,23 +271,31 @@
   color: rgba(255, 255, 255, 0.86);
 }
 .onLight .burger {
-  color: var(--ink);
+  color: var(--ink-1);
+}
+.burger:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+.onLight .burger:hover {
+  background: rgba(11, 15, 25, 0.06);
 }
 .burger:hover .burgerBar {
-  background: var(--note);
+  background: var(--rst-red);
 }
 .burger:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--rst-blue);
   outline-offset: 2px;
 }
 
 /* ── Drawer plein écran (mobile) ─────────────────────────────────── */
-/* Rendu via createPortal : isolé du header, z-index très haut. */
 .drawer {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: #06091c;
+  background:
+    radial-gradient(900px 500px at 8% 0%, rgba(30, 71, 161, 0.22), transparent 60%),
+    radial-gradient(700px 400px at 92% 100%, rgba(200, 51, 42, 0.14), transparent 60%),
+    #06091c;
   color: var(--paper);
   display: flex;
   flex-direction: column;
@@ -310,18 +357,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.20);
+  background: rgba(255, 255, 255, 0.10);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 50%;
   color: var(--paper);
   font-size: 28px;
   font-weight: 300;
   line-height: 1;
   cursor: pointer;
-  transition: background 200ms ease, transform 200ms ease;
+  transition: background var(--t-fast), transform var(--t-fast);
 }
 .drawerClose:hover {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.20);
   transform: scale(1.05);
 }
 .drawerClose:focus-visible {
@@ -359,12 +408,12 @@
   outline: none;
 }
 .drawerLinkActive {
-  color: var(--note);
+  color: var(--rst-red);
   padding-left: 8px;
 }
 .drawerLinkActive::before {
   content: '·';
-  color: var(--note);
+  color: var(--rst-red);
   margin-right: 12px;
   font-size: 1.5em;
   line-height: 0;
@@ -393,7 +442,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.14em;
@@ -433,16 +482,30 @@
   }
 
   .nav {
-    gap: var(--space-16);
+    gap: var(--space-4);
   }
 
   .navLink {
-    font-size: 12px;
+    font-size: 12.5px;
+    padding: 6px 12px;
+  }
+
+  /* Sur mobile, on remplace les blurs lourds par des fonds plus
+     opaques pour préserver le frame-rate. */
+  .onLight {
+    background: rgba(255, 255, 255, 0.92);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    backdrop-filter: blur(12px) saturate(150%);
+  }
+
+  .onDark {
+    background: rgba(6, 9, 28, 0.62);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    backdrop-filter: blur(12px) saturate(140%);
   }
 }
 
 @media (max-width: 600px) {
-  /* Cache la nav desktop ET les utilitaires : remplacés par le burger + drawer. */
   .nav,
   .utility {
     display: none;
