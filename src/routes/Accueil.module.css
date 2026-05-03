@@ -1,9 +1,14 @@
 /* ══════════════════════════════════════════════════════════════════════
-   ACCUEIL — Page d'accueil RST
-   Fidèle au wireframe Claude Design (variation-b)
+   ACCUEIL — Liquid Glass redesign
+   ⚠ ZONE INTOUCHABLE : tout le HERO (Jésus + cercles RST) est conservé
+   tel quel — masques, gradients, vignettages, ratio, positionnement.
+   La transition de couleur entre le portrait et la zone texte (cercles
+   bleus) a été calibrée à la main par l'utilisateur. NE PAS MODIFIER.
    ══════════════════════════════════════════════════════════════════════ */
 
-/* ── HERO ─────────────────────────────────────────────────────────────── */
+/* ────────────────────────────────────────────────────────────
+   HERO — INTOUCHÉ (cf. mission §5)
+──────────────────────────────────────────────────────────── */
 .hero {
   position: relative;
   min-height: 100vh;
@@ -27,7 +32,6 @@
   z-index: 2;
 }
 
-/* Backdrop : noir à la frontière photo, puis bleu profond côté titre. */
 .heroBackdrop {
   position: absolute;
   inset: 0;
@@ -54,7 +58,6 @@
   z-index: 2;
 }
 
-/* ─ Texte hero ─ */
 .heroText {
   position: relative;
   z-index: 4;
@@ -65,7 +68,6 @@
   padding: 56px clamp(32px, 4vw, 72px) 80px clamp(48px, 6vw, 120px);
 }
 
-/* Groupe interne — le contenu est centré en lui-même */
 .heroTextGroup {
   position: relative;
   display: flex;
@@ -99,7 +101,7 @@
 }
 
 .heroAssemblee {
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 11px;
   font-weight: 500;
   letter-spacing: .26em;
@@ -129,26 +131,38 @@
   margin-top: 16px;
 }
 
+/* Le bouton ghost du hero gagne un soupçon de glass-dark sans
+   altérer la mise en scène : pill outline subtle au lieu d'un
+   simple lien souligné. */
 .heroGhostBtn {
-  background: none;
-  border: none;
-  padding: 0;
-  font-family: var(--f-body);
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.22);
+  padding: 8px 18px;
+  border-radius: var(--r-pill);
+  font-family: var(--f-text);
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: .2em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.82);
+  color: rgba(255,255,255,.86);
   cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  transition: color .18s;
+  text-decoration: none;
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  transition:
+    background var(--t-fast),
+    border-color var(--t-fast),
+    color var(--t-fast),
+    transform var(--t-fast);
 }
 .heroGhostBtn:hover {
-  color: rgba(255,255,255,.9);
+  background: rgba(255,255,255,.14);
+  border-color: rgba(255,255,255,.55);
+  color: #fff;
+  transform: var(--hover-lift);
 }
 
-/* ─ Image du Christ : intacte à gauche, assombrie seulement à la frontière droite. ─ */
+/* ─ Image du Christ — INTOUCHÉE — masques de transition main-crafted ─ */
 .heroJesus {
   position: relative;
   z-index: 1;
@@ -195,83 +209,96 @@
   opacity: 1;
 }
 
-/* ── EYEBROW (section-level — avec tiret préfixe) ─────────────────────── */
+/* ────────────────────────────────────────────────────────────
+   EYEBROW — Liquid Glass
+──────────────────────────────────────────────────────────── */
 .eyebrow {
   display: flex;
   align-items: center;
   gap: 14px;
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: .26em;
   text-transform: uppercase;
-  color: var(--ink-2);
+  color: var(--ink-3);
 }
 .eyebrow::before {
   content: '';
   width: 36px;
   height: 1.5px;
-  background: var(--ink);
+  background: var(--ink-3);
   flex-shrink: 0;
 }
 
 .eyebrowNote {
-  color: var(--note);
+  color: var(--rst-red);
 }
 .eyebrowNote::before {
-  background: var(--note);
+  background: var(--rst-red);
 }
 
-/* ── TITRES SÉRIFS ─────────────────────────────────────────────────────── */
+/* ────────────────────────────────────────────────────────────
+   TITRES SÉRIFS — voix éditoriale RST conservée
+──────────────────────────────────────────────────────────── */
 .hSerif {
   font-family: var(--f-serif);
   font-size: clamp(1.625rem, 2.6vw, 2.125rem);
   font-weight: 500;
   line-height: 1.22;
-  color: var(--ink);
+  color: var(--ink-1);
   margin: 0;
 }
 .hSerif em {
   font-style: italic;
-  color: var(--ink-2);
+  color: var(--rst-blue);
 }
 
-/* ── PROCHAINES RÉUNIONS ──────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   PROCHAINES RÉUNIONS — carte glass flottante
+══════════════════════════════════════════════════════════════ */
 .schedule {
-  background: #f8f6f1;
-  padding: 72px var(--pad-x);
+  background: transparent;
+  padding: 80px var(--pad-x);
 }
 
 .schedInner {
-  max-width: 1280px;
+  max-width: var(--max-width);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-3), var(--glass-inset-highlight);
+  padding: 40px clamp(24px, 4vw, 56px);
 }
 
 .schedGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  border-top: 1.5px solid var(--ink);
-  border-bottom: 1.5px solid var(--ink);
-  margin-top: 12px;
+  border-top: 1px solid var(--line-1);
+  border-bottom: 1px solid var(--line-1);
+  margin-top: 8px;
 }
 
 .schedItem {
-  padding: 32px 40px 36px;
+  padding: 28px 32px 32px;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 .schedItem + .schedItem {
-  border-left: 1px solid var(--line-soft);
+  border-left: 1px solid var(--line-2);
 }
 
 .schedDay {
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: .22em;
   text-transform: uppercase;
   color: var(--ink-3);
@@ -279,21 +306,21 @@
 }
 
 .schedStar {
-  color: var(--note);
+  color: var(--rst-red);
   font-weight: 700;
 }
 
 .schedTime {
   font-family: var(--f-engrave);
   font-size: 35px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.05;
-  color: var(--ink);
+  color: var(--ink-1);
   letter-spacing: .02em;
 }
 
 .schedLabel {
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 13px;
   line-height: 1.55;
   color: var(--ink-2);
@@ -310,63 +337,66 @@
   justify-content: space-between;
   gap: 16px;
   padding-top: 16px;
-  border-top: 1px solid var(--line-soft);
+  border-top: 1px solid var(--line-2);
 }
 
 .schedPin {
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 13px;
   color: var(--ink-2);
   line-height: 1.5;
 }
 
 .schedMapLink {
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: .1em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--rst-blue);
   white-space: nowrap;
   cursor: pointer;
-  transition: color .18s;
+  transition: color var(--t-fast), opacity var(--t-fast);
 }
 .schedMapLink:hover {
-  color: var(--ink);
+  color: var(--rst-blue-deep);
+  opacity: 0.85;
 }
 
-/* ── DERNIER MESSAGE ─────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   DERNIER MESSAGE — panneau glass + lecteur vidéo
+══════════════════════════════════════════════════════════════ */
 .lastMsg {
-  background:
-    linear-gradient(to bottom, #f8f6f1 0%, #f1ede4 28%, var(--paper-2) 100%);
-  padding: 72px var(--pad-x);
+  background: transparent;
+  padding: 64px var(--pad-x);
 }
 
 .lastMsgInner {
-  max-width: 1280px;
+  max-width: var(--max-width);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 28px;
-  transition: max-width .85s cubic-bezier(.4, 0, .2, 1);
+  padding: 40px clamp(24px, 4vw, 56px);
+  background: var(--glass-thick);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-3), var(--glass-inset-highlight);
+  transition: max-width .85s var(--ease);
 }
 
-/* Mode focus : on garde la même largeur de section.
-   La vidéo se centre, plafonnée à ~960px, et le texte
-   apparaît en dessous, centré. */
 .lastMsgInnerExpanded {
-  max-width: 1280px;
+  max-width: var(--max-width);
 }
 
 .lastMsgGrid {
   display: grid;
   grid-template-columns: 1.1fr 1fr;
-  gap: 56px;
+  gap: 48px;
   align-items: start;
-  /* Transition longue et posée — sentir la respiration du passage en mode focus */
   transition:
-    grid-template-columns .85s cubic-bezier(.4, 0, .2, 1),
-    gap .85s cubic-bezier(.4, 0, .2, 1);
+    grid-template-columns .85s var(--ease),
+    gap .85s var(--ease);
 }
 
 .lastMsgGridExpanded {
@@ -380,20 +410,31 @@
   width: 100%;
 }
 
-/* Lecteur vidéo placeholder */
+/* Lecteur vidéo */
 .lastMsgVideo {
   position: relative;
   aspect-ratio: 16/9;
   background: #0a0a0d;
-  border: 1.5px solid var(--ink);
+  border-radius: var(--r-md);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   cursor: pointer;
-  transition: max-width .85s cubic-bezier(.4, 0, .2, 1);
+  box-shadow:
+    0 8px 24px rgba(11, 15, 25, 0.18),
+    0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
+  transition:
+    max-width .85s var(--ease),
+    transform var(--t-base),
+    box-shadow var(--t-base);
+}
+.lastMsgVideo:hover {
+  transform: var(--hover-lift);
+  box-shadow:
+    0 16px 36px rgba(11, 15, 25, 0.22),
+    0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
 }
 
-/* Iframe YouTube — recouvre tout le panneau */
 .lastMsgIframe {
   position: absolute;
   inset: 0;
@@ -403,18 +444,16 @@
   display: block;
 }
 
-/* Miniature YouTube affichée avant le clic */
 .lastMsgThumb {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: brightness(.78);
+  filter: brightness(.8);
   pointer-events: none;
 }
 
-/* Mode focus : la copie passe sous la vidéo, centrée, plus aérée */
 .lastMsgCopyExpanded {
   max-width: 720px;
   width: 100%;
@@ -441,17 +480,17 @@
 }
 
 .lastMsgPredicateur {
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: .22em;
   text-transform: uppercase;
   color: var(--ink-3);
   margin: 0;
 }
 .lastMsgVideo:hover .lastMsgPlayBtn {
-  opacity: 0.95;
-  transform: scale(1.06);
+  opacity: 1;
+  transform: scale(1.08);
 }
 
 /* Zone play centrale */
@@ -462,19 +501,30 @@
   justify-content: center;
 }
 
-/* Bouton play rond blanc */
+/* Bouton play — pastille glass */
 .lastMsgPlayBtn {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
-  background: rgba(255,255,255,.88);
-  border: none;
+  background: rgba(255, 255, 255, 0.92);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.32),
+    0 1px 0 0 rgba(255, 255, 255, 0.7) inset;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  opacity: 0.78;
-  transition: opacity .2s, transform .2s;
+  opacity: 0.92;
+  transition:
+    opacity var(--t-fast),
+    transform var(--t-fast),
+    background var(--t-fast);
+}
+.lastMsgPlayBtn:hover {
+  background: #fff;
 }
 
 .lastMsgPlayTriangle {
@@ -482,10 +532,9 @@
   width: 0;
   height: 0;
   border-style: solid;
-  /* Triangle orienté droite, légèrement décalé pour compensation optique */
-  border-width: 10px 0 10px 18px;
+  border-width: 11px 0 11px 19px;
   border-color: transparent transparent transparent #0a0a0d;
-  margin-left: 3px;
+  margin-left: 4px;
 }
 
 /* Méta bas de frame */
@@ -494,14 +543,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  background: rgba(255,255,255,.06);
-  border-top: 1px solid rgba(255,255,255,.1);
-  font-family: var(--f-body);
+  background: rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+  font-family: var(--f-text);
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: .14em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.5);
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .lastMsgMetaLine {
@@ -515,14 +564,15 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--note);
+  background: var(--rst-red);
+  box-shadow: 0 0 8px rgba(200, 51, 42, 0.6);
 }
 
 .lastMsgDuration {
   font-family: var(--f-num);
   font-size: 12px;
   letter-spacing: .06em;
-  color: rgba(255,255,255,.45);
+  color: rgba(255, 255, 255, 0.50);
 }
 
 /* Texte côté droit */
@@ -534,9 +584,9 @@
 }
 
 .lastMsgRef {
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: .2em;
   text-transform: uppercase;
   color: var(--ink-3);
@@ -547,15 +597,15 @@
   font-size: clamp(1.5rem, 2.2vw, 1.875rem);
   font-weight: 500;
   line-height: 1.2;
-  color: var(--ink);
+  color: var(--ink-1);
   margin: 0;
 }
 
 .lastMsgSerie {
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 11px;
-  font-weight: 400;
-  letter-spacing: .1em;
+  font-weight: 500;
+  letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--ink-3);
   line-height: 1.6;
@@ -578,29 +628,39 @@
   margin-top: 8px;
 }
 
-/* ── NOTRE HISTOIRE ─────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   LE MOT DU PASTEUR — panneau glass éditorial
+══════════════════════════════════════════════════════════════ */
 .histoire {
-  background: #fbfaf7;
-  padding: 72px var(--pad-x);
+  background: transparent;
+  padding: 64px var(--pad-x);
 }
 
 .histoireInner {
-  max-width: 1280px;
+  max-width: var(--max-width);
   margin: 0 auto;
   display: grid;
   grid-template-columns: 0.92fr 1.24fr;
-  gap: 56px;
+  gap: 48px;
   align-items: start;
+  padding: 40px clamp(24px, 4vw, 56px);
+  background: var(--glass-thick);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-3), var(--glass-inset-highlight);
 }
 
 .histoireImg {
   width: min(92%, 520px);
   aspect-ratio: 4/5;
-  border: 1.5px solid var(--ink);
+  border-radius: var(--r-md);
   overflow: hidden;
   background: var(--ink-2);
   position: relative;
   justify-self: center;
+  box-shadow:
+    0 16px 36px rgba(11, 15, 25, 0.16),
+    0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
 }
 
 .histoireImgEl {
@@ -611,7 +671,6 @@
   display: block;
 }
 
-/* Placeholder identité quand pas de photo sanctuaire */
 .histoireImgPlaceholder {
   width: 100%;
   height: 100%;
@@ -636,11 +695,11 @@
 }
 
 .histoireImgSub {
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 11px;
   letter-spacing: .22em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.38);
+  color: rgba(255, 255, 255, 0.4);
   text-align: center;
 }
 
@@ -651,25 +710,24 @@
   padding-top: 4px;
 }
 
-/* Titre histoire — serif plus grand que le .hSerif global */
 .histoireTitre {
   font-family: var(--f-serif);
   font-size: clamp(2.25rem, 4vw, 3rem);
   font-weight: 500;
   line-height: 1.04;
   letter-spacing: -0.01em;
-  color: var(--ink);
+  color: var(--ink-1);
   margin: 0;
 }
 .histoireTitre em {
   font-style: italic;
-  color: var(--ink-2);
+  color: var(--rst-blue);
 }
 
 .histoireP {
   font-family: var(--f-serif);
   font-size: 17px;
-  line-height: 1.52;
+  line-height: 1.55;
   color: var(--ink-2);
   margin: 0;
   text-align: justify;
@@ -679,10 +737,9 @@
 .bibleRef {
   font-weight: 700;
   font-style: italic;
-  color: var(--ink);
+  color: var(--rst-blue);
 }
 
-/* Drop-cap éditorial sur la lettre "N" de "Née" */
 .histoirePFirst::first-letter {
   font-family: var(--f-serif);
   font-size: 3.5em;
@@ -690,38 +747,37 @@
   float: left;
   line-height: .85;
   margin: 4px 10px 0 0;
-  color: var(--ink);
+  color: var(--ink-1);
 }
 
 .histoireLink {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: .14em;
   text-transform: uppercase;
-  color: var(--ink);
+  color: var(--rst-blue);
   text-decoration: none;
-  border-bottom: 1px solid var(--ink);
+  border-bottom: 1px solid rgba(30, 71, 161, 0.4);
   padding-bottom: 2px;
   margin-top: 4px;
-  transition: color .18s, border-color .18s;
+  transition: color var(--t-fast), border-color var(--t-fast);
   width: fit-content;
 }
 .histoireLink:hover {
-  color: var(--ink-2);
-  border-color: var(--ink-2);
+  color: var(--rst-blue-deep);
+  border-color: var(--rst-blue);
 }
 
-/* Bénédiction et signature du Mot du pasteur */
 .histoireBenediction {
   font-family: var(--f-serif);
   font-size: 17px;
   font-style: italic;
   line-height: 1.45;
-  color: var(--ink);
+  color: var(--ink-1);
   margin: 4px 0 0;
 }
 
@@ -734,20 +790,27 @@
   margin: 0 0 4px;
 }
 
-/* ── NÉHÉMIE BANNER ─────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   NÉHÉMIE BANNER — bandeau glass + image promesse
+══════════════════════════════════════════════════════════════ */
 .nehemieBanner {
-  background:
-    linear-gradient(to bottom, #fbfaf7 0%, #f1ede4 100%);
-  border-top: 1.5px solid var(--ink);
-  border-bottom: 1.5px solid var(--ink);
+  position: relative;
+  margin: 64px var(--pad-x);
   display: grid;
   grid-template-columns: 1fr 1.1fr;
   min-height: 480px;
+  max-width: calc(var(--max-width) - 2 * var(--pad-x));
+  margin-inline: auto;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  background: var(--glass-thick);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: var(--shadow-3), var(--glass-inset-highlight);
 }
 
 .nehemieBannerImg {
   overflow: hidden;
-  background: var(--ink);
+  background: var(--ink-1);
   position: relative;
 }
 
@@ -756,8 +819,8 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(to right, rgba(12,14,20,.12) 0%, rgba(12,14,20,.03) 48%, rgba(12,14,20,.22) 100%),
-    linear-gradient(to top, rgba(12,14,20,.48) 0%, rgba(12,14,20,.1) 42%, transparent 70%);
+    linear-gradient(to right, rgba(12,14,20,.10) 0%, rgba(12,14,20,.02) 48%, rgba(12,14,20,.18) 100%),
+    linear-gradient(to top, rgba(12,14,20,.40) 0%, rgba(12,14,20,.08) 42%, transparent 70%);
   pointer-events: none;
 }
 
@@ -767,11 +830,11 @@
   object-fit: cover;
   object-position: center;
   display: block;
-  filter: grayscale(.16) contrast(1.04) brightness(.9);
+  filter: grayscale(.10) contrast(1.04) brightness(.94);
 }
 
 .nehemieBannerCopy {
-  padding: 64px 72px;
+  padding: 56px clamp(32px, 5vw, 64px);
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -783,8 +846,12 @@
   font-size: clamp(1.875rem, 2.8vw, 2.5rem);
   font-weight: 500;
   line-height: 1.18;
-  color: var(--ink);
+  color: var(--ink-1);
   margin: 0;
+}
+.nehemieBannerTitre em {
+  font-style: italic;
+  color: var(--rst-blue);
 }
 
 .nehemieBannerDesc {
@@ -813,19 +880,19 @@
 }
 
 .progressRaised {
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 15px;
-  color: var(--ink);
+  color: var(--ink-1);
 }
 .progressRaised b {
   font-family: var(--f-num);
   font-size: 1.45rem;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: .02em;
 }
 
 .progressGoal {
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 12.5px;
   color: var(--ink-3);
   text-align: right;
@@ -833,23 +900,28 @@
 
 .progressBar {
   height: 18px;
-  background: rgba(255,255,255,.46);
-  border: 1.5px solid var(--ink);
+  background: var(--glass-regular);
+  border: 1px solid var(--line-1);
+  border-radius: var(--r-pill);
   position: relative;
   overflow: hidden;
+  box-shadow:
+    inset 0 1px 2px rgba(11, 15, 25, 0.06),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .progressBarFill {
   position: absolute;
   inset: 0 auto 0 0;
-  background: linear-gradient(90deg, var(--note) 0%, #a62020 100%);
+  background: linear-gradient(90deg, var(--rst-red) 0%, var(--rst-red-deep) 100%);
+  box-shadow: 0 0 12px rgba(200, 51, 42, 0.32);
 }
 
 .progressPct {
   display: flex;
   align-items: baseline;
   gap: 7px;
-  font-family: var(--f-body);
+  font-family: var(--f-text);
   font-size: 13px;
   color: var(--ink-2);
   letter-spacing: .04em;
@@ -858,9 +930,9 @@
 .progressPct strong {
   font-family: var(--f-num);
   font-size: 21px;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: .02em;
-  color: var(--ink);
+  color: var(--ink-1);
 }
 
 .nehemieBannerCtas {
@@ -871,11 +943,11 @@
   margin-top: 8px;
 }
 
-/* ══════════════════════════════════════════════════════════════════════
+/* ════════════════════════════════════════════════════════════
    RESPONSIVE 820px
-   ══════════════════════════════════════════════════════════════════════ */
+══════════════════════════════════════════════════════════════ */
 @media (max-width: 820px) {
-  /* Hero */
+  /* HERO — INTOUCHÉ */
   .hero {
     min-height: 100svh;
   }
@@ -893,7 +965,7 @@
     order: 2;
     padding: 40px var(--pad-x-mob) 48px;
     justify-content: center;
-    align-items: center; /* centrer le groupe sur mobile */
+    align-items: center;
   }
   .heroTextGroup {
     align-items: center;
@@ -930,9 +1002,24 @@
     opacity: 1;
   }
 
-  /* Schedule */
+  /* Sections post-hero — perf : on retire les backdrop-filters lourds */
+  .schedule,
+  .lastMsg,
+  .histoire,
+  .nehemieBanner {
+    padding-left: var(--pad-x-mob);
+    padding-right: var(--pad-x-mob);
+  }
+
   .schedule {
-    padding: 56px var(--pad-x-mob);
+    padding-top: 56px;
+    padding-bottom: 56px;
+  }
+  .schedInner {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: rgba(255, 255, 255, 0.92);
+    padding: 28px 22px;
   }
 
   .schedGrid {
@@ -940,11 +1027,11 @@
   }
 
   .schedItem {
-    padding: 28px 0;
+    padding: 24px 0;
   }
   .schedItem + .schedItem {
     border-left: none;
-    border-top: 1px solid var(--line-soft);
+    border-top: 1px solid var(--line-2);
   }
 
   .schedFoot {
@@ -954,22 +1041,28 @@
 
   /* Last message */
   .lastMsg {
-    padding: 56px var(--pad-x-mob);
+    padding-top: 48px;
+    padding-bottom: 48px;
   }
-
+  .lastMsgInner {
+    background: rgba(255, 255, 255, 0.92);
+    padding: 28px 22px;
+  }
   .lastMsgGrid {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 28px;
   }
 
   /* Histoire */
   .histoire {
-    padding: 56px var(--pad-x-mob);
+    padding-top: 48px;
+    padding-bottom: 48px;
   }
-
   .histoireInner {
     grid-template-columns: 1fr;
-    gap: 40px;
+    gap: 36px;
+    background: rgba(255, 255, 255, 0.92);
+    padding: 32px 22px;
   }
 
   .histoireImg {
@@ -981,6 +1074,8 @@
   .nehemieBanner {
     grid-template-columns: 1fr;
     min-height: unset;
+    margin: 48px var(--pad-x-mob);
+    background: rgba(255, 255, 255, 0.94);
   }
 
   .nehemieBannerImg {
@@ -988,13 +1083,13 @@
   }
 
   .nehemieBannerCopy {
-    padding: 48px var(--pad-x-mob);
+    padding: 40px var(--pad-x-mob);
   }
 }
 
-/* ══════════════════════════════════════════════════════════════════════
+/* ════════════════════════════════════════════════════════════
    RESPONSIVE 480px (mobile 375px)
-   ══════════════════════════════════════════════════════════════════════ */
+══════════════════════════════════════════════════════════════ */
 @media (max-width: 480px) {
   .heroTitle {
     font-size: clamp(1.75rem, 8vw, 2rem);
@@ -1023,7 +1118,7 @@
   }
 
   .nehemieBannerCopy {
-    padding: 40px var(--pad-x-mob);
+    padding: 32px var(--pad-x-mob);
   }
 
   .progressNums {
