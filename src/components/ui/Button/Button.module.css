@@ -126,3 +126,25 @@
 .more:hover:not(:disabled) {
   color: var(--accent);
 }
+
+/* ----------------------------------------------------------
+   Touch targets : sur mobile (< 480 px), on garantit
+   une hauteur cliquable confortable (~ 44 px WCAG 2.5.5).
+   Aucune modification au-dessus de 480 px.
+---------------------------------------------------------- */
+@media (max-width: 480px) {
+  .video,
+  .blue,
+  .secondary {
+    padding-top: 13px;
+    padding-bottom: 13px;
+    min-height: 44px;
+  }
+
+  .line {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    min-height: 44px;
+    font-size: 12px;
+  }
+}

@@ -574,3 +574,29 @@
     font-size: 12px;
   }
 }
+
+/* ── Responsive 480px (téléphone) ──────────────────────────── */
+@media (max-width: 480px) {
+  .hero { padding: 32px 16px 22px; }
+  .filters { padding: 14px 16px; }
+  .board { padding: 24px 16px 48px; gap: 28px; }
+
+  /* Chips de filtre : touch-friendly + wrap */
+  .chip {
+    min-height: 36px;
+    padding: 8px 14px;
+  }
+  .filterSearch input { min-height: 40px; }
+
+  /* Archive item : empile date au-dessus du titre */
+  .archiveItem {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 12px 0;
+  }
+
+  .sermonTitle {
+    font-size: clamp(1.5rem, 6vw, 2rem);
+    line-height: 1.15;
+  }
+}

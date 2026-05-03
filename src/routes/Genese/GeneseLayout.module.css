@@ -17,6 +17,26 @@
     backdrop-filter 260ms ease;
 }
 
+/* Fade gradient en bord droit — signale le scroll horizontal possible.
+   Caché par défaut sur desktop (8 onglets tiennent largement). Activé en mobile. */
+.subnav::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 1px;
+  width: 36px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.subnavDark::after {
+  background: linear-gradient(to right, rgba(6, 9, 28, 0) 0%, #06091c 100%);
+}
+.subnavLight::after {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.96) 100%);
+}
+
 .subnavDark {
   background: #06091c;
   border-bottom: 1px solid rgba(255,255,255,.10);
@@ -86,9 +106,23 @@
 @media (max-width: 820px) {
   .subnavInner {
     padding: 0 var(--pad-x-mob);
+    /* Sur mobile la sous-nav 8 onglets déborde fortement — on signale le scroll */
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: var(--pad-x-mob);
+    scroll-behavior: smooth;
+  }
+
+  /* Active le fade-out à droite uniquement quand la nav peut déborder */
+  .subnav::after {
+    opacity: 1;
   }
 
   .subnavLink {
+    scroll-snap-align: start;
+    /* Touch target : on garantit 44 px de hauteur cliquable */
+    min-height: 44px;
+    display: flex;
+    align-items: center;
     padding: var(--space-12) var(--space-16);
     font-size: 12px;
   }
