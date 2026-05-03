@@ -149,16 +149,27 @@
 }
 
 /* ── Responsive ──────────────────────────────────────────────────── */
-@media (max-width: 1024px) {
+/* Breakpoints alignés sur le reste du site (820 px / 480 px). */
+@media (max-width: 820px) {
   .inner {
     grid-template-columns: 1fr 1fr;
     gap: var(--space-36);
+    padding: var(--space-40) var(--pad-x-mob);
   }
 }
-@media (max-width: 600px) {
+
+@media (max-width: 480px) {
   .inner {
     grid-template-columns: 1fr;
     gap: var(--space-28);
-    padding: var(--space-40) var(--pad-x-mob);
+  }
+
+  .legal {
+    padding-inline: var(--pad-x-mob);
+  }
+
+  .legal p {
+    font-size: 10.5px;
+    line-height: 1.5;
   }
 }

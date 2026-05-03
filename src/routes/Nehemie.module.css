@@ -902,4 +902,25 @@
   .progressBar {
     height: 30px;
   }
+
+  /* Galerie compacte : main pleine largeur + 2 vignettes côte à côte. */
+  .gallery {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .galleryMain {
+    grid-column: 1 / -1;
+    aspect-ratio: 4 / 3;
+  }
+  .gallerySide {
+    aspect-ratio: 1 / 1;
+  }
+
+  /* Voile « +N » : taille adaptée à la vignette carrée. */
+  .galleryMoreNum {
+    font-size: 2.25rem;
+  }
+  .galleryMoreLbl {
+    font-size: 9px;
+  }
 }

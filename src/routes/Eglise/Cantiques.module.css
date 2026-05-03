@@ -513,3 +513,27 @@
     gap: 28px;
   }
 }
+
+/* ── Responsive 480px (téléphone) ──────────────────────────── */
+@media (max-width: 480px) {
+  .hero { padding: 32px 16px 22px; }
+  .families { padding: 14px 16px; }
+
+  /* Une seule colonne pour les cartes de cantiques sous 480 px */
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 24px 16px 40px;
+  }
+  .cardFeatured {
+    grid-column: span 1;
+  }
+
+  .famTab {
+    min-height: 36px;
+    padding: 8px 12px;
+  }
+  .famSearch input { min-height: 40px; }
+
+  .detail { padding: 32px 16px 48px; }
+}
