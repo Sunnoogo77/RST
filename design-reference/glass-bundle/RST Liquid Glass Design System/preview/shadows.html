@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<style>
+  body { margin:0; font-family: var(--f-text); background: var(--bg-canvas); overflow:hidden; padding: 32px; box-sizing:border-box; width: 700px; }
+  .row { display:grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .item { display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .box { width: 100px; height: 80px; background: #fff; border-radius: 16px; border: 1px solid rgba(255,255,255,.6); }
+  .s1 { box-shadow: 0 1px 2px rgba(11,15,25,.04), 0 2px 6px rgba(11,15,25,.04); }
+  .s2 { box-shadow: 0 2px 4px rgba(11,15,25,.04), 0 8px 16px rgba(11,15,25,.06), inset 0 1px 0 rgba(255,255,255,.6); }
+  .s3 { box-shadow: 0 1px 1px rgba(11,15,25,.03), 0 4px 8px rgba(11,15,25,.04), 0 16px 32px rgba(11,15,25,.08), inset 0 1px 0 rgba(255,255,255,.6); }
+  .s4 { box-shadow: 0 2px 4px rgba(11,15,25,.04), 0 8px 16px rgba(11,15,25,.06), 0 24px 48px rgba(11,15,25,.12), 0 48px 96px rgba(11,15,25,.10), inset 0 1px 0 rgba(255,255,255,.7); }
+  .name { font-size: 12px; font-weight: 600; color: var(--ink-1); }
+  .meta { font-family: var(--f-mono); font-size: 10px; color: var(--ink-3); }
+</style></head>
+<body>
+  <div class="row">
+    <div class="item"><div class="box s1"></div><div class="name">Shadow 1</div><div class="meta">subtle</div></div>
+    <div class="item"><div class="box s2"></div><div class="name">Shadow 2</div><div class="meta">resting</div></div>
+    <div class="item"><div class="box s3"></div><div class="name">Shadow 3</div><div class="meta">card · default</div></div>
+    <div class="item"><div class="box s4"></div><div class="name">Shadow 4</div><div class="meta">modal · float</div></div>
+  </div>
+</body></html>

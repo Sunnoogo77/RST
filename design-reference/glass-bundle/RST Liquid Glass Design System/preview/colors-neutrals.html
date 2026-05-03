@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<style>
+  body { margin:0; font-family: var(--f-text); background: var(--bg-canvas); overflow:hidden; }
+  .wrap { box-sizing:border-box; width:700px; padding:24px; }
+  .row { display:grid; grid-template-columns: repeat(5, 1fr); gap:10px; }
+  .swatch { border-radius:14px; padding:12px; min-height:78px; display:flex; flex-direction:column; justify-content:space-between; border: 1px solid var(--line-1); }
+  .swatch .name { font-size:12px; font-weight:600; }
+  .swatch .hex { font-family: var(--f-mono); font-size:10px; color: var(--ink-3); }
+  .swatch.dark { color:#fff; border-color: rgba(255,255,255,.1); }
+  .swatch.dark .hex { color: rgba(255,255,255,.7); }
+  .label { font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color: var(--ink-3); margin: 0 0 8px; }
+</style></head>
+<body><div class="wrap">
+  <div class="label">Surfaces</div>
+  <div class="row" style="margin-bottom:14px;">
+    <div class="swatch" style="background:#F5F7FB"><div class="name">Canvas</div><div class="hex">#F5F7FB</div></div>
+    <div class="swatch" style="background:#FFFFFF"><div class="name">Elevated</div><div class="hex">#FFFFFF</div></div>
+    <div class="swatch" style="background:#EEF1F7"><div class="name">Tint</div><div class="hex">#EEF1F7</div></div>
+    <div class="swatch" style="background:#E4E9F2"><div class="name">Tint Deep</div><div class="hex">#E4E9F2</div></div>
+    <div class="swatch dark" style="background:#0B0F19"><div class="name">Ink Bg</div><div class="hex">#0B0F19</div></div>
+  </div>
+  <div class="label">Ink scale</div>
+  <div class="row">
+    <div class="swatch dark" style="background:#0B0F19"><div class="name">ink-1</div><div class="hex">#0B0F19</div></div>
+    <div class="swatch dark" style="background:#2A2F3D"><div class="name">ink-2</div><div class="hex">#2A2F3D</div></div>
+    <div class="swatch dark" style="background:#5A6173"><div class="name">ink-3</div><div class="hex">#5A6173</div></div>
+    <div class="swatch" style="background:#8A91A3; color:#fff;"><div class="name">ink-4</div><div class="hex" style="color:rgba(255,255,255,.7)">#8A91A3</div></div>
+    <div class="swatch" style="background:#B8BDCC"><div class="name">ink-5</div><div class="hex">#B8BDCC</div></div>
+  </div>
+</div></body></html>

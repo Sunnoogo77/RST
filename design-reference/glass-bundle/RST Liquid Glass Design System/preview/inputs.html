@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<link rel="stylesheet" href="../components.css" />
+<style>
+  body { margin:0; font-family: var(--f-text); overflow:hidden; padding: 28px; box-sizing:border-box; width: 700px;
+    background: radial-gradient(600px 300px at 0% 0%, rgba(30,71,161,.10), transparent 60%), var(--bg-canvas);
+  }
+  .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
+</style></head>
+<body>
+  <div class="grid">
+    <div class="field">
+      <label class="field__label">Email</label>
+      <input class="input" placeholder="vous@exemple.fr" />
+      <div class="field__hint">Pour recevoir les annonces hebdomadaires.</div>
+    </div>
+    <div class="field">
+      <label class="field__label">Recherche</label>
+      <div class="input-wrap">
+        <span class="input-wrap__icon">⌕</span>
+        <input class="input input--search" placeholder="Rechercher un cantique…" />
+      </div>
+    </div>
+    <div class="field">
+      <label class="field__label">Focus state</label>
+      <input class="input" value="vous@example.fr" style="background:#fff;border-color:var(--rst-blue);box-shadow:0 0 0 3px rgba(30,71,161,.15),inset 0 1px 0 rgba(255,255,255,.6);" />
+      <div class="field__hint">Bordure bleue + halo doux 3px.</div>
+    </div>
+    <div class="field">
+      <label class="field__label">Erreur</label>
+      <input class="input input--error" value="vous@" />
+      <div class="field__error">Adresse e-mail invalide.</div>
+    </div>
+  </div>
+</body></html>

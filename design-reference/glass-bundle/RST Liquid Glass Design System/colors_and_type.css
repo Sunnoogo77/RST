@@ -1,0 +1,327 @@
+/* ============================================================
+   RST Liquid Glass — Foundations
+   Colors + Typography tokens
+   Inspired by iOS 26 / macOS Tahoe Liquid Glass material
+   Adapted for Roc Séculaire Tabernacle (assemblée chrétienne)
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Cinzel:wght@500;600&display=swap");
+
+:root {
+  /* ────────────────────────────────────────────────────────
+     BRAND COLORS — sparingly, as accents only
+     Pipetted from the official RST logo
+  ──────────────────────────────────────────────────────── */
+  --rst-red:        #C8332A;   /* RST red — LIVE pill, warmth */
+  --rst-red-deep:   #A6231A;   /* hover/pressed state */
+  --rst-red-soft:   #E26057;   /* light tint */
+  --rst-red-wash:   rgba(200, 51, 42, 0.08);  /* glass tint */
+
+  --rst-blue:       #1E47A1;   /* RST blue — primary CTA, active states */
+  --rst-blue-deep:  #15366E;   /* hover/pressed */
+  --rst-blue-soft:  #4F73C7;   /* light tint */
+  --rst-blue-wash:  rgba(30, 71, 161, 0.08); /* glass tint */
+
+  /* ────────────────────────────────────────────────────────
+     NEUTRAL FOUNDATION — slightly bluish off-white iOS-style
+     The dominant visual layer is neutral + translucent
+  ──────────────────────────────────────────────────────── */
+  --bg-canvas:      #F5F7FB;   /* page background — bluish off-white */
+  --bg-elevated:    #FFFFFF;   /* solid surface (rare) */
+  --bg-tint:        #EEF1F7;   /* subtle tinted band */
+  --bg-tint-deep:   #E4E9F2;   /* deeper tint */
+
+  /* Ink scale — neutral with slight cool tilt */
+  --ink-1:          #0B0F19;   /* primary text */
+  --ink-2:          #2A2F3D;   /* secondary text */
+  --ink-3:          #5A6173;   /* tertiary, captions */
+  --ink-4:          #8A91A3;   /* muted, hints */
+  --ink-5:          #B8BDCC;   /* disabled */
+
+  /* Lines — very subtle */
+  --line-1:         rgba(11, 15, 25, 0.08);
+  --line-2:         rgba(11, 15, 25, 0.05);
+
+  /* ────────────────────────────────────────────────────────
+     LIQUID GLASS LAYERS
+     Stackable translucent surfaces — the heart of the system.
+     Use bg + border + shadow together for the full effect.
+  ──────────────────────────────────────────────────────── */
+
+  /* Glass fill — semi-opaque white tints (60-70% as spec'd) */
+  --glass-thin:     rgba(255, 255, 255, 0.45);   /* feather-light, only over imagery */
+  --glass-regular:  rgba(255, 255, 255, 0.62);   /* default surface */
+  --glass-thick:    rgba(255, 255, 255, 0.78);   /* readable cards */
+  --glass-solid:    rgba(255, 255, 255, 0.92);   /* almost-opaque */
+
+  /* Tinted glass — slight color wash for variants */
+  --glass-blue:     rgba(229, 235, 248, 0.62);   /* cool white */
+  --glass-warm:     rgba(252, 248, 245, 0.62);   /* warm white */
+
+  /* Dark glass — for hero / dark sections */
+  --glass-dark:     rgba(20, 24, 38, 0.55);
+  --glass-dark-thick: rgba(20, 24, 38, 0.78);
+
+  /* Backdrop filter recipe — apply alongside any glass-fill */
+  --glass-blur:     blur(40px) saturate(180%);
+  --glass-blur-strong: blur(60px) saturate(200%);
+  --glass-blur-light:  blur(20px) saturate(160%);
+
+  /* ────────────────────────────────────────────────────────
+     GLASS BORDERS — gradient that simulates a glass reflection
+     Apply via: border:1px solid transparent + ::before with
+     conic/linear gradient, OR shorthand using border-image.
+     The simpler path: subtle 1px border + inset highlight.
+  ──────────────────────────────────────────────────────── */
+  --glass-border:           1px solid rgba(255, 255, 255, 0.5);
+  --glass-border-bottom:    rgba(0, 0, 0, 0.05);
+  --glass-border-gradient:  linear-gradient(
+                              to bottom,
+                              rgba(255, 255, 255, 0.55) 0%,
+                              rgba(255, 255, 255, 0.18) 40%,
+                              rgba(0, 0, 0, 0.03) 60%,
+                              rgba(0, 0, 0, 0.06) 100%
+                            );
+  /* Inset highlight — paint on top of any glass surface to give it
+     a top-light reflection. Use as a box-shadow (inset). */
+  --glass-inset-highlight:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.7),
+      inset 0 -1px 0 0 rgba(0, 0, 0, 0.04);
+
+  /* ────────────────────────────────────────────────────────
+     SHADOWS — multi-layer, soft, deep, suggesting levitation
+  ──────────────────────────────────────────────────────── */
+  --shadow-1:
+      0 1px 2px rgba(11, 15, 25, 0.04),
+      0 2px 6px rgba(11, 15, 25, 0.04);
+
+  --shadow-2:
+      0 2px 4px rgba(11, 15, 25, 0.04),
+      0 8px 16px rgba(11, 15, 25, 0.06),
+      0 1px 0 0 rgba(255, 255, 255, 0.6) inset;
+
+  --shadow-3: /* default elevated card */
+      0 1px 1px rgba(11, 15, 25, 0.03),
+      0 4px 8px rgba(11, 15, 25, 0.04),
+      0 16px 32px rgba(11, 15, 25, 0.08),
+      0 1px 0 0 rgba(255, 255, 255, 0.6) inset;
+
+  --shadow-4: /* floating modal / popover */
+      0 2px 4px rgba(11, 15, 25, 0.04),
+      0 8px 16px rgba(11, 15, 25, 0.06),
+      0 24px 48px rgba(11, 15, 25, 0.12),
+      0 48px 96px rgba(11, 15, 25, 0.10),
+      0 1px 0 0 rgba(255, 255, 255, 0.7) inset;
+
+  --shadow-hover: /* on hover, lift + soften */
+      0 2px 4px rgba(11, 15, 25, 0.04),
+      0 8px 16px rgba(11, 15, 25, 0.05),
+      0 24px 48px rgba(11, 15, 25, 0.12),
+      0 1px 0 0 rgba(255, 255, 255, 0.7) inset;
+
+  --shadow-blue:
+      0 4px 12px rgba(30, 71, 161, 0.18),
+      0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
+
+  --shadow-red:
+      0 4px 12px rgba(200, 51, 42, 0.22),
+      0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
+
+  /* ────────────────────────────────────────────────────────
+     RADII — generous, iOS-flavored
+  ──────────────────────────────────────────────────────── */
+  --r-xs:    8px;
+  --r-sm:    12px;   /* buttons */
+  --r-md:    16px;   /* default cards */
+  --r-lg:    20px;   /* hero cards */
+  --r-xl:    28px;   /* modals */
+  --r-2xl:   36px;
+  --r-pill:  999px;
+
+  /* ────────────────────────────────────────────────────────
+     SPACING — 4-based scale
+  ──────────────────────────────────────────────────────── */
+  --space-2:   2px;
+  --space-4:   4px;
+  --space-6:   6px;
+  --space-8:   8px;
+  --space-12:  12px;
+  --space-16:  16px;
+  --space-20:  20px;
+  --space-24:  24px;
+  --space-32:  32px;
+  --space-40:  40px;
+  --space-48:  48px;
+  --space-64:  64px;
+  --space-80:  80px;
+  --space-120: 120px;
+
+  /* Layout */
+  --max-width:    1280px;
+  --max-content:  1100px;
+  --max-article:  720px;
+  --pad-x:        32px;
+  --pad-x-mob:    20px;
+  --header-h:     72px;
+
+  /* ────────────────────────────────────────────────────────
+     MOTION — Apple-flavored cubic-bezier
+  ──────────────────────────────────────────────────────── */
+  --ease:       cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --t-fast:     180ms var(--ease);
+  --t-base:     320ms var(--ease);
+  --t-slow:     520ms var(--ease-out);
+
+  /* Hover lift — used by interactive surfaces */
+  --hover-lift: scale(1.02);
+  --press-shrink: scale(0.97);
+
+  /* ────────────────────────────────────────────────────────
+     TYPOGRAPHY
+     Primary stack: SF Pro Display (system Apple) → Inter fallback
+     Editorial: Cormorant Garamond (kept from original RST identity
+       for "ROC SÉCULAIRE TABERNACLE" wordmark and titles)
+     Engrave: Cinzel (small caps, eyebrow labels with church flavor)
+  ──────────────────────────────────────────────────────── */
+  --f-display:   "SF Pro Display", -apple-system, BlinkMacSystemFont, "Inter",
+                 system-ui, sans-serif;
+  --f-text:      "SF Pro Text", -apple-system, BlinkMacSystemFont, "Inter",
+                 system-ui, sans-serif;
+  --f-serif:     "Cormorant Garamond", "EB Garamond", Georgia, serif;
+  --f-engrave:   "Cinzel", "Trajan Pro", serif;
+  --f-mono:      "SF Mono", ui-monospace, "JetBrains Mono", Menlo, monospace;
+
+  /* Type scale — fluid */
+  --t-display:   clamp(48px, 7vw, 88px);
+  --t-h1:        clamp(40px, 5.4vw, 64px);
+  --t-h2:        clamp(30px, 3.8vw, 44px);
+  --t-h3:        clamp(22px, 2.4vw, 28px);
+  --t-h4:        18px;
+  --t-body:      16px;
+  --t-body-sm:   14px;
+  --t-caption:   13px;
+  --t-eyebrow:   11px;
+}
+
+/* ============================================================
+   SEMANTIC TYPE STYLES
+   ============================================================ */
+
+.t-display {
+  font-family: var(--f-display);
+  font-size: var(--t-display);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  color: var(--ink-1);
+}
+
+.t-display-serif {
+  font-family: var(--f-serif);
+  font-size: var(--t-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+  color: var(--ink-1);
+}
+
+.t-h1 {
+  font-family: var(--f-display);
+  font-size: var(--t-h1);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  color: var(--ink-1);
+}
+
+.t-h2 {
+  font-family: var(--f-display);
+  font-size: var(--t-h2);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--ink-1);
+}
+
+.t-h3 {
+  font-family: var(--f-display);
+  font-size: var(--t-h3);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  color: var(--ink-1);
+}
+
+.t-h4 {
+  font-family: var(--f-display);
+  font-size: var(--t-h4);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1.3;
+  color: var(--ink-1);
+}
+
+.t-body {
+  font-family: var(--f-text);
+  font-size: var(--t-body);
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+.t-body-strong {
+  font-family: var(--f-text);
+  font-size: var(--t-body);
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--ink-1);
+}
+
+.t-body-sm {
+  font-family: var(--f-text);
+  font-size: var(--t-body-sm);
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.t-caption {
+  font-family: var(--f-text);
+  font-size: var(--t-caption);
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--ink-3);
+}
+
+.t-eyebrow {
+  font-family: var(--f-text);
+  font-size: var(--t-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.t-engrave {
+  font-family: var(--f-engrave);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+}
+
+.t-serif-h2 {
+  font-family: var(--f-serif);
+  font-size: var(--t-h2);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  line-height: 1.05;
+  color: var(--ink-1);
+}
+
+.t-serif-h2 em {
+  font-style: italic;
+  color: var(--rst-red);
+}

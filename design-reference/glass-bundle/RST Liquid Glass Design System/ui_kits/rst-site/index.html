@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Roc Séculaire Tabernacle — Liquid Glass</title>
+<link rel="icon" href="../../assets/favicon.png" />
+<link rel="stylesheet" href="../../colors_and_type.css" />
+<link rel="stylesheet" href="../../components.css" />
+<style>
+  html, body { margin:0; padding:0; }
+  body {
+    font-family: var(--f-text);
+    color: var(--ink-1);
+    min-height: 100vh;
+    background:
+      radial-gradient(1100px 600px at 8% 0%, rgba(30,71,161,.18), transparent 60%),
+      radial-gradient(900px 500px at 95% 20%, rgba(200,51,42,.10), transparent 65%),
+      radial-gradient(800px 500px at 50% 110%, rgba(30,71,161,.10), transparent 60%),
+      var(--bg-canvas);
+  }
+
+  /* Floating nav, page-scoped overrides */
+  .nav { max-width: var(--max-width); margin: 16px auto; }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    max-width: var(--max-width);
+    margin: 32px auto 60px;
+    padding: 0 var(--pad-x);
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .hero-card {
+    position: relative;
+    aspect-ratio: 4/5;
+    border-radius: 28px;
+    overflow: hidden;
+    background:
+      linear-gradient(160deg, #102043, #1f2c4a 40%, #2a3a5c);
+    box-shadow: var(--shadow-3), var(--glass-inset-highlight);
+  }
+  .hero-card::after {
+    content:""; position:absolute; inset:0; background:
+      radial-gradient(60% 80% at 30% 20%, rgba(255,255,255,.18), transparent 60%);
+    pointer-events:none;
+  }
+  .hero-card .figure {
+    position: absolute;
+    inset: 8% 10%;
+    border-radius: 16px;
+    background:
+      conic-gradient(from 220deg at 50% 50%,
+        #c9a37a 0deg, #6c3e2a 80deg, #2a1d1a 160deg, #1a1f3a 220deg, #6c3e2a 300deg, #c9a37a 360deg);
+    filter: blur(1px) saturate(85%);
+    opacity: .85;
+  }
+  .hero-card .glassQuote {
+    position: absolute; left: 14%; right: 14%; bottom: 8%;
+    background: var(--glass-thick);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid rgba(255,255,255,.55);
+    box-shadow: var(--shadow-3), var(--glass-inset-highlight);
+    border-radius: 18px;
+    padding: 16px 18px;
+  }
+  .hero-card .glassQuote .q {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: 17px;
+    color: var(--ink-1);
+    line-height: 1.4;
+  }
+  .hero-card .glassQuote .src {
+    font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--rst-red); margin-top: 6px;
+  }
+
+  .hero-text .eyebrow {
+    font-family: var(--f-engrave);
+    font-size: 12px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 18px;
+  }
+  .hero-text h1 {
+    font-family: var(--f-display);
+    font-size: clamp(48px, 6vw, 76px);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.02;
+    color: var(--ink-1);
+    margin: 0 0 18px;
+  }
+  .hero-text h1 .em {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-weight: 500;
+    color: var(--rst-blue);
+    letter-spacing: -0.02em;
+  }
+  .hero-text p {
+    font-size: 17px; line-height: 1.55; color: var(--ink-2);
+    max-width: 460px; margin: 0 0 28px;
+  }
+  .hero-cta { display:flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+  /* SECTION SHELL */
+  section.band {
+    max-width: var(--max-width);
+    margin: 60px auto;
+    padding: 0 var(--pad-x);
+  }
+  .band-head {
+    display:flex; align-items:flex-end; justify-content:space-between;
+    margin-bottom: 28px; gap: 24px;
+  }
+  .band-head h2 {
+    font-family: var(--f-display);
+    font-size: clamp(28px, 3vw, 38px);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    margin: 0;
+    color: var(--ink-1);
+  }
+  .band-head .sub {
+    font-size: 14px; color: var(--ink-3); max-width: 380px;
+  }
+
+  /* CARDS GRID */
+  .cards-3 { display:grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .feature-card {
+    position: relative;
+    background: var(--glass-thick);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid rgba(255,255,255,.5);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-3), var(--glass-inset-highlight);
+    padding: 22px;
+    transition: transform var(--t-base), box-shadow var(--t-base);
+    cursor: pointer;
+    min-height: 220px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .feature-card:hover {
+    transform: var(--hover-lift);
+    box-shadow:
+      0 2px 4px rgba(11,15,25,.04),
+      0 12px 24px rgba(11,15,25,.08),
+      0 32px 56px rgba(11,15,25,.12),
+      var(--glass-inset-highlight);
+  }
+  .feature-card .ico {
+    width: 38px; height: 38px;
+    display: grid; place-items: center;
+    background: var(--glass-solid);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.6);
+    box-shadow: 0 1px 2px rgba(11,15,25,.05), inset 0 1px 0 rgba(255,255,255,.7);
+    font-size: 18px;
+  }
+  .feature-card h3 {
+    font-family: var(--f-display);
+    font-size: 19px; font-weight: 700; letter-spacing: -0.02em;
+    color: var(--ink-1); margin: 4px 0 0;
+  }
+  .feature-card p {
+    font-size: 14px; line-height: 1.5; color: var(--ink-3);
+    margin: 0;
+  }
+  .feature-card .more {
+    margin-top: auto; font-size: 13px; font-weight: 600; color: var(--rst-blue);
+  }
+
+  /* PROJECT CARD */
+  .project {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    background: var(--glass-solid);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid rgba(255,255,255,.6);
+    box-shadow: var(--shadow-3), var(--glass-inset-highlight);
+  }
+  .project-img {
+    background:
+      linear-gradient(180deg, rgba(11,15,25,.0), rgba(11,15,25,.45)),
+      radial-gradient(80% 60% at 50% 30%, #c98e57, #6c3a20 60%, #1f1410);
+    min-height: 320px;
+    position: relative;
+  }
+  .project-img::before {
+    content:""; position:absolute; inset: 12% 18%;
+    background: rgba(0,0,0,.18);
+    border-radius: 8px;
+    box-shadow: inset 0 0 60px rgba(0,0,0,.6);
+  }
+  .project-body {
+    padding: 36px;
+    display: flex; flex-direction: column; gap: 14px; justify-content: center;
+  }
+  .project-body .eyebrow {
+    font-family: var(--f-engrave); font-size: 11px;
+    letter-spacing: .22em; text-transform: uppercase;
+    color: var(--rst-red);
+  }
+  .project-body h2 {
+    font-family: var(--f-display);
+    font-size: 36px; font-weight: 700; letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--ink-1); margin: 0;
+  }
+  .project-body h2 .em {
+    font-family: var(--f-serif); font-style: italic; font-weight: 500;
+    color: var(--rst-blue); letter-spacing: -0.015em;
+  }
+  .project-body p {
+    font-size: 15px; color: var(--ink-2); line-height: 1.55; margin: 0; max-width: 420px;
+  }
+  .project-quote {
+    margin-top: 6px;
+    background: var(--glass-thick);
+    -webkit-backdrop-filter: var(--glass-blur-light);
+    backdrop-filter: var(--glass-blur-light);
+    border: 1px solid rgba(255,255,255,.55);
+    box-shadow: 0 1px 2px rgba(11,15,25,.04), inset 0 1px 0 rgba(255,255,255,.6);
+    border-radius: 14px;
+    padding: 12px 14px;
+  }
+  .project-quote .q { font-family: var(--f-serif); font-style: italic; font-size: 15px; color: var(--ink-1); line-height: 1.4; }
+  .project-quote .src { font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--rst-red); margin-top: 6px; }
+
+  /* WEEK SCHEDULE */
+  .week {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+  }
+  .day-card {
+    background: var(--glass-thick);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid rgba(255,255,255,.5);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-2), var(--glass-inset-highlight);
+    padding: 18px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .day-card .day {
+    font-family: var(--f-text); font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-3);
+  }
+  .day-card .time {
+    font-family: var(--f-display); font-size: 28px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink-1);
+  }
+  .day-card .name {
+    font-size: 15px; font-weight: 600; color: var(--ink-1);
+  }
+  .day-card .meta {
+    font-size: 13px; color: var(--ink-3); margin-top: auto;
+  }
+
+  /* FOOTER */
+  footer.foot {
+    max-width: var(--max-width);
+    margin: 80px auto 24px;
+    padding: 28px var(--pad-x);
+    border-top: 1px solid var(--line-1);
+    display: flex; justify-content: space-between; align-items: center; gap: 24px;
+    color: var(--ink-3); font-size: 13px;
+  }
+  footer .brand { display:flex; align-items:center; gap: 10px; }
+  footer .brand img { height: 28px; }
+  footer .brand .name { font-family: var(--f-engrave); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-2); }
+
+  @media (max-width: 880px) {
+    .hero { grid-template-columns: 1fr; }
+    .cards-3 { grid-template-columns: 1fr; }
+    .project { grid-template-columns: 1fr; }
+    .week { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Navigation principale">
+  <a class="nav__brand" href="#">
+    <img class="nav__brand-logo" src="../../assets/rst-logo.png" alt="" />
+    <span class="nav__brand-name">Roc Séculaire Tabernacle</span>
+  </a>
+  <ul class="nav__list">
+    <li><a class="nav__link nav__link--active" href="#">Accueil</a></li>
+    <li><a class="nav__link" href="#">Projet Néhémie</a></li>
+    <li><a class="nav__link" href="#">Genèse</a></li>
+    <li><a class="nav__link" href="#">L'Église</a></li>
+  </ul>
+  <div class="nav__cta">
+    <span class="pill pill--live">Live</span>
+    <button class="btn btn--glass btn--sm btn--pill">FR · EN</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-card">
+    <div class="figure"></div>
+    <div class="glassQuote">
+      <div class="q">« Le peuple se montra courageux dans le travail. »</div>
+      <div class="src">Néhémie 4 · 6</div>
+    </div>
+  </div>
+  <div class="hero-text">
+    <div class="eyebrow">Assemblée chrétienne · Vitry-sur-Seine</div>
+    <h1>Une assemblée fondée sur le <span class="em">Roc</span>.</h1>
+    <p>Découvrez la vie de notre communauté, nos cultes hebdomadaires et le projet d'acquisition d'un lieu permanent pour les générations futures.</p>
+    <div class="hero-cta">
+      <button class="btn btn--primary btn--lg btn--pill">Découvrir l'église</button>
+      <button class="btn btn--glass btn--lg btn--pill">Voir le live ›</button>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="band-head">
+    <h2>Trouver votre place</h2>
+    <div class="sub">Trois portes d'entrée pour rejoindre la communauté, comprendre nos racines et participer à la vie de l'assemblée.</div>
+  </div>
+  <div class="cards-3">
+    <div class="feature-card">
+      <div class="ico">✶</div>
+      <h3>Cette semaine</h3>
+      <p>Cultes, école du dimanche, réunions de prière et études. Tous les rendez-vous de la semaine, sans rien manquer.</p>
+      <div class="more">Voir l'agenda →</div>
+    </div>
+    <div class="feature-card">
+      <div class="ico">✦</div>
+      <h3>Genèse de l'assemblée</h3>
+      <p>De la naissance à aujourd'hui. Mission, offices, services et témoignages de l'œuvre du Saint-Esprit.</p>
+      <div class="more">Lire l'histoire →</div>
+    </div>
+    <div class="feature-card">
+      <div class="ico">♰</div>
+      <h3>Cantiques & sermons</h3>
+      <p>Une bibliothèque de cantiques, sermons enregistrés et témoignages, accessibles librement, en français et en anglais.</p>
+      <div class="more">Parcourir →</div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="project">
+    <div class="project-img"></div>
+    <div class="project-body">
+      <div class="eyebrow">Projet Néhémie</div>
+      <h2>Un lieu pour <span class="em">adorer et édifier</span>.</h2>
+      <p>Ensemble, acquérons un lieu de culte permanent pour la gloire de Dieu et le service des générations futures.</p>
+      <div class="project-quote">
+        <div class="q">« Le peuple se montra courageux dans le travail. »</div>
+        <div class="src">Néhémie 4 · 6</div>
+      </div>
+      <div style="display:flex; gap:10px; margin-top: 8px;">
+        <button class="btn btn--primary btn--pill">Faire un don</button>
+        <button class="btn btn--ghost">Découvrir le projet ›</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="band-head">
+    <h2>Cette semaine au tabernacle</h2>
+    <div class="sub">Tous les cultes sont ouverts à tous. Diffusion en direct le dimanche à 10h.</div>
+  </div>
+  <div class="week">
+    <div class="day-card">
+      <div class="day">Mercredi · Étude</div>
+      <div class="time">19:30</div>
+      <div class="name">Étude biblique</div>
+      <div class="meta">Sanctuaire · 2 h</div>
+    </div>
+    <div class="day-card" style="border-color: rgba(200,51,42,.25);">
+      <div class="day" style="color:var(--rst-red)">Dimanche · Culte</div>
+      <div class="time">10:00</div>
+      <div class="name">Culte du dimanche · live</div>
+      <div class="meta">Diffusion FR/EN</div>
+    </div>
+    <div class="day-card">
+      <div class="day">Vendredi · Prière</div>
+      <div class="time">20:00</div>
+      <div class="name">Réunion de prière</div>
+      <div class="meta">Sanctuaire · 1 h 30</div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="brand">
+    <img src="../../assets/rst-logo.png" alt="" />
+    <div>
+      <div class="name">Roc Séculaire Tabernacle</div>
+      <div style="font-size: 12px; color: var(--ink-3); margin-top: 2px;">Vitry-sur-Seine · Île-de-France</div>
+    </div>
+  </div>
+  <div>© 2026 RST · Tous droits réservés</div>
+</footer>
+
+</body>
+</html>

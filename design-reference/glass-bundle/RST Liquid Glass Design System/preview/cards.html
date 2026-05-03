@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<link rel="stylesheet" href="../components.css" />
+<style>
+  body { margin:0; font-family: var(--f-text); overflow:hidden; padding: 24px; box-sizing:border-box; width: 700px;
+    background:
+      radial-gradient(600px 350px at 0% 0%, rgba(30,71,161,.14), transparent 60%),
+      radial-gradient(500px 250px at 100% 100%, rgba(200,51,42,.10), transparent 60%),
+      var(--bg-canvas);
+  }
+  .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card-body { display:flex; flex-direction:column; gap: 8px; }
+  .eyebrow { font-size: 10px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--rst-blue); }
+  .title { font-family: var(--f-display); font-size: 19px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink-1); }
+  .body  { font-family: var(--f-text); font-size: 13px; color: var(--ink-3); line-height: 1.5; }
+  .meta  { font-family: var(--f-text); font-size: 11px; color: var(--ink-4); display:flex; gap:8px; align-items:center; margin-top: 4px; }
+  .dot { width:3px;height:3px;background:var(--ink-4);border-radius:50%; }
+</style></head>
+<body>
+<div class="grid">
+  <div class="card" style="padding:18px">
+    <div class="card-body">
+      <div class="eyebrow">Projet Néhémie</div>
+      <div class="title">Un lieu pour adorer et édifier.</div>
+      <div class="body">Ensemble, acquérons un lieu de culte permanent pour la gloire de Dieu.</div>
+      <div class="meta">Vitry-sur-Seine<span class="dot"></span>2026</div>
+    </div>
+  </div>
+  <div class="card" style="padding:18px">
+    <div class="card-body">
+      <div class="eyebrow" style="color:var(--rst-red)">Direct</div>
+      <div class="title">Culte du dimanche</div>
+      <div class="body">Rejoignez-nous en direct depuis le sanctuaire ce dimanche à 10h.</div>
+      <div class="meta">Dim 10:00<span class="dot"></span>FR/EN</div>
+    </div>
+  </div>
+</div>
+</body></html>

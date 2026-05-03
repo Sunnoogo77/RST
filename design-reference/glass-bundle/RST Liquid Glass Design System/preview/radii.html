@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<style>
+  body { margin:0; font-family: var(--f-text); background: var(--bg-canvas); overflow:hidden; padding: 28px; box-sizing:border-box; width: 700px; }
+  .row { display:flex; gap: 14px; align-items: flex-end; }
+  .item { display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .box { width: 80px; height: 80px; background: #fff; border:1px solid rgba(11,15,25,.08); box-shadow: 0 2px 8px rgba(11,15,25,.06), inset 0 1px 0 rgba(255,255,255,.7); }
+  .name { font-size: 11px; font-weight: 600; color: var(--ink-1); }
+  .meta { font-family: var(--f-mono); font-size: 10px; color: var(--ink-3); }
+</style></head>
+<body>
+  <div class="row">
+    <div class="item"><div class="box" style="border-radius:8px"></div><div class="name">xs</div><div class="meta">8px</div></div>
+    <div class="item"><div class="box" style="border-radius:12px"></div><div class="name">sm · btn</div><div class="meta">12px</div></div>
+    <div class="item"><div class="box" style="border-radius:16px"></div><div class="name">md · card</div><div class="meta">16px</div></div>
+    <div class="item"><div class="box" style="border-radius:20px"></div><div class="name">lg</div><div class="meta">20px</div></div>
+    <div class="item"><div class="box" style="border-radius:28px"></div><div class="name">xl · modal</div><div class="meta">28px</div></div>
+    <div class="item"><div class="box" style="border-radius:36px"></div><div class="name">2xl</div><div class="meta">36px</div></div>
+    <div class="item"><div class="box" style="border-radius:999px"></div><div class="name">pill</div><div class="meta">∞</div></div>
+  </div>
+</body></html>

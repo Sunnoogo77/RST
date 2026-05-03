@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<link rel="stylesheet" href="../components.css" />
+<style>
+  body { margin:0; font-family: var(--f-text); overflow:hidden;
+    background:
+      url("../assets/rst-logo-photo.jpeg") center/cover no-repeat,
+      var(--bg-canvas);
+  }
+  .wrap { box-sizing:border-box; width:700px; padding:28px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; height: 240px; }
+  .layer { border-radius: 18px; padding:14px; display:flex; flex-direction:column; justify-content:flex-end; gap:4px; box-shadow: var(--shadow-3), var(--glass-inset-highlight); border: 1px solid rgba(255,255,255,.55); }
+  .layer .name { font-size:13px; font-weight:600; color: var(--ink-1); }
+  .layer .meta { font-family: var(--f-mono); font-size:10px; color: var(--ink-3); }
+  .l-thin { background: var(--glass-thin); -webkit-backdrop-filter: var(--glass-blur-light); backdrop-filter: var(--glass-blur-light); }
+  .l-reg  { background: var(--glass-regular); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+  .l-thick{ background: var(--glass-thick); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+</style></head>
+<body><div class="wrap">
+  <div class="layer l-thin"><div class="name">Thin</div><div class="meta">rgba 255·255·255 / 0.45</div><div class="meta">blur 20 sat 160</div></div>
+  <div class="layer l-reg"><div class="name">Regular</div><div class="meta">rgba 255·255·255 / 0.62</div><div class="meta">blur 40 sat 180</div></div>
+  <div class="layer l-thick"><div class="name">Thick</div><div class="meta">rgba 255·255·255 / 0.78</div><div class="meta">blur 40 sat 180</div></div>
+</div></body></html>

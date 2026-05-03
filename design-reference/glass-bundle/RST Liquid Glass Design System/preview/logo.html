@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<style>
+  body { margin:0; font-family: var(--f-text); overflow:hidden; box-sizing:border-box; width: 700px; padding: 28px;
+    background: var(--bg-canvas);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .tile { border-radius: 18px; padding: 20px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap: 10px; min-height: 140px; }
+  .tile.light { background: #fff; border: 1px solid var(--line-1); box-shadow: var(--shadow-2); }
+  .tile.dark  { background: #06091c; }
+  .name { font-family: var(--f-engrave); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; }
+  .light .name { color: var(--ink-2); }
+  .dark .name { color: rgba(255,255,255,.78); }
+  img { height: 56px; }
+</style></head>
+<body>
+  <div class="tile light">
+    <img src="../assets/rst-logo.png" alt="RST logo" />
+    <div class="name">Roc Séculaire Tabernacle</div>
+  </div>
+  <div class="tile dark">
+    <img src="../assets/rst-logo.png" alt="RST logo" style="filter: brightness(1.42) contrast(1.08);" />
+    <div class="name">Roc Séculaire Tabernacle</div>
+  </div>
+</body></html>

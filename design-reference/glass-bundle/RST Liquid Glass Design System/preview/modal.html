@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<link rel="stylesheet" href="../components.css" />
+<style>
+  body { margin:0; font-family: var(--f-text); overflow:hidden; box-sizing:border-box; width: 700px; height: 360px;
+    background:
+      radial-gradient(600px 350px at 20% 20%, rgba(30,71,161,.20), transparent 60%),
+      radial-gradient(500px 250px at 80% 80%, rgba(200,51,42,.14), transparent 60%),
+      var(--bg-canvas);
+  }
+  .modal-scrim { position: absolute; }
+  .modal { animation: none; }
+</style></head>
+<body>
+  <div class="modal-scrim">
+    <div class="modal" style="width: 460px;">
+      <button class="modal__close" aria-label="Fermer">×</button>
+      <div class="t-eyebrow" style="color:var(--rst-blue); margin-bottom: 6px;">Projet Néhémie</div>
+      <div class="modal__title">Soutenir le projet d'acquisition</div>
+      <div class="modal__body">Ensemble, acquérons un lieu de culte permanent pour la gloire de Dieu et le service des générations futures.</div>
+      <div class="modal__actions">
+        <button class="btn btn--ghost">Plus tard</button>
+        <button class="btn btn--primary">Faire un don</button>
+      </div>
+    </div>
+  </div>
+</body></html>

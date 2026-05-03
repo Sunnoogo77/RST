@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8" />
+<link rel="stylesheet" href="../colors_and_type.css" />
+<link rel="stylesheet" href="../components.css" />
+<style>
+  body { margin:0; font-family: var(--f-text); overflow:hidden; padding: 28px; box-sizing:border-box; width: 700px;
+    background:
+      radial-gradient(500px 250px at 0% 0%, rgba(30,71,161,.10), transparent 60%),
+      radial-gradient(500px 250px at 100% 100%, rgba(200,51,42,.08), transparent 60%),
+      var(--bg-canvas);
+  }
+  .stack { display:flex; flex-direction:column; gap: 16px; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .label { font-size: 10px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-4); width: 80px; flex-shrink:0; }
+</style></head>
+<body>
+  <div class="stack">
+    <div class="row"><div class="label">Primary</div>
+      <button class="btn btn--primary">En savoir plus</button>
+      <button class="btn btn--primary btn--pill">Faire un don</button>
+      <button class="btn btn--primary btn--lg">Découvrir le projet</button>
+    </div>
+    <div class="row"><div class="label">Glass</div>
+      <button class="btn btn--glass">Découvrir l'église</button>
+      <button class="btn btn--glass btn--pill">Acheter</button>
+      <button class="btn btn--glass btn--sm">FR · EN</button>
+    </div>
+    <div class="row"><div class="label">Live</div>
+      <button class="btn btn--live btn--pill"><span style="width:6px;height:6px;background:#fff;border-radius:50%;"></span>Live</button>
+      <button class="btn btn--live">Regarder le culte</button>
+    </div>
+    <div class="row"><div class="label">Ghost</div>
+      <button class="btn btn--ghost">Annuler</button>
+      <button class="btn btn--ghost">Voir tout →</button>
+    </div>
+  </div>
+</body></html>
