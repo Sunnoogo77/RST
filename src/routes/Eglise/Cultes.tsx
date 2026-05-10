@@ -2,19 +2,24 @@ import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { sermons } from '../../data/sermons';
 import type { Sermon, TypeCulte } from '../../types';
-import { youtubeEmbedUrl, youtubeThumbnail } from '../../utils/youtube';
+import { youtubeThumbnail } from '../../utils/youtube';
+import YouTubePlayer, {
+  type YouTubePlayerHandle,
+} from '../../components/ui/YouTubePlayer/YouTubePlayer';
 import styles from './Cultes.module.css';
 
 /* ============================================================
    CULTES — Bibliothèque + lecture INLINE · branche main (Glass)
-   Itération P1a''' :
-     - Sidebar tri-state : full | rail (icônes seulement)
-     - Mode lecture IMMERSIF : hero + barre de recherche masqués,
-       on revient via "Retour aux prédications" uniquement
-     - Layout élargi (1640px max), capsules plus grandes
+   Itération P1b :
+     - Custom YouTubePlayer (IFrame API + overlay controls)
+     - Filtres actifs : Année, Prédicateur, Type, Série, Tri
+     - Recherche full-text (titre + prédicateur + série + desc + passages)
+     - Bouton Réinitialiser actif quand au moins un filtre est posé
+     - Mini-player PiP (depuis P1a''') : conserve la lecture, l'iframe
+       n'est jamais démontée car YT.Player vit dans le même DOM node
    ============================================================ */
 
-/* ── Helpers données ─────────────────────────────────────── */
+/* ── Constantes ──────────────────────────────────────────── */
 
 const TYPE_LABELS: Record<TypeCulte, string> = {
   'culte-dimanche':    'Culte dominical',
@@ -38,6 +43,8 @@ const TYPE_LIST: TypeCulte[] = [
   'q-et-r',
   'reunion-priere',
 ];
+
+type SortOrder = 'desc' | 'asc';
 
 interface MonthGroup {
   key: string;
@@ -65,7 +72,7 @@ function formatShortDate(dateStr: string): string {
   return `${wdCap} ${dd}.${mm}`;
 }
 
-function groupByMonth(items: Sermon[]): MonthGroup[] {
+function groupByMonth(items: Sermon[], order: SortOrder): MonthGroup[] {
   const map = new Map<string, MonthGroup>();
   for (const s of items) {
     const key = monthKey(s.date);
@@ -74,7 +81,16 @@ function groupByMonth(items: Sermon[]): MonthGroup[] {
     }
     map.get(key)!.items.push(s);
   }
-  return [...map.values()].sort((a, b) => b.key.localeCompare(a.key));
+  const groups = [...map.values()].sort((a, b) =>
+    order === 'desc' ? b.key.localeCompare(a.key) : a.key.localeCompare(b.key),
+  );
+  // Trie aussi à l'intérieur de chaque groupe.
+  for (const g of groups) {
+    g.items.sort((a, b) =>
+      order === 'desc' ? b.date.localeCompare(a.date) : a.date.localeCompare(b.date),
+    );
+  }
+  return groups;
 }
 
 function countBy<K extends string>(items: Sermon[], pick: (s: Sermon) => K | undefined): Map<K, number> {
@@ -87,7 +103,13 @@ function countBy<K extends string>(items: Sermon[], pick: (s: Sermon) => K | und
   return out;
 }
 
-/* ── Icônes des sections de filtres pour le mode rail ────── */
+function toggleInSet<T>(set: Set<T>, item: T): Set<T> {
+  const next = new Set(set);
+  if (next.has(item)) next.delete(item); else next.add(item);
+  return next;
+}
+
+/* ── Icônes ──────────────────────────────────────────────── */
 
 interface IconProps { size?: number }
 
@@ -159,34 +181,37 @@ type SidebarMode = 'full' | 'rail';
 export default function Cultes() {
   const { t } = useTranslation();
 
+  /* ── État UI ────────────────────────────────────────────── */
   const [query, setQuery] = useState('');
   const [sidebarMode, setSidebarMode] = useState<SidebarMode>('full');
   const [activePlayer, setActivePlayer] = useState<Sermon | null>(null);
   const [suggestionsOpen, setSuggestionsOpen] = useState(true);
 
+  /* ── État filtres ───────────────────────────────────────── */
+  const [selectedYears, setSelectedYears] = useState<Set<string>>(new Set());
+  const [selectedPredicateurs, setSelectedPredicateurs] = useState<Set<string>>(new Set());
+  const [selectedTypes, setSelectedTypes] = useState<Set<TypeCulte>>(new Set());
+  const [selectedSeries, setSelectedSeries] = useState<Set<string>>(new Set());
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+
   const watchAnchorRef = useRef<HTMLDivElement>(null);
 
-  const sortedSermons = useMemo(
-    () => [...sermons].sort((a, b) => b.date.localeCompare(a.date)),
+  /* ── Indices comptés sur le dataset complet ─────────────── */
+  const yearsCount = useMemo(
+    () => countBy(sermons, (s) => s.date.slice(0, 4)),
     [],
   );
-  const groups = useMemo(() => groupByMonth(sortedSermons), [sortedSermons]);
-
-  const yearsCount = useMemo(
-    () => countBy(sortedSermons, (s) => s.date.slice(0, 4)),
-    [sortedSermons],
-  );
   const predicateursCount = useMemo(
-    () => countBy(sortedSermons, (s) => s.predicateur),
-    [sortedSermons],
+    () => countBy(sermons, (s) => s.predicateur),
+    [],
   );
   const typesCount = useMemo(
-    () => countBy(sortedSermons, (s) => s.typeCulte),
-    [sortedSermons],
+    () => countBy(sermons, (s) => s.typeCulte),
+    [],
   );
   const seriesCount = useMemo(
-    () => countBy(sortedSermons, (s) => s.serie),
-    [sortedSermons],
+    () => countBy(sermons, (s) => s.serie),
+    [],
   );
 
   const years = useMemo(
@@ -202,10 +227,58 @@ export default function Cultes() {
     [seriesCount],
   );
 
+  /* ── Pipeline filtres + recherche + tri ─────────────────── */
+  const filteredSermons = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return sermons.filter((s) => {
+      if (selectedYears.size > 0 && !selectedYears.has(s.date.slice(0, 4))) return false;
+      if (selectedPredicateurs.size > 0 && !selectedPredicateurs.has(s.predicateur)) return false;
+      if (selectedTypes.size > 0 && (!s.typeCulte || !selectedTypes.has(s.typeCulte))) return false;
+      if (selectedSeries.size > 0 && !selectedSeries.has(s.serie)) return false;
+      if (q.length > 0) {
+        const haystack = [
+          s.titre,
+          s.serie,
+          s.predicateur,
+          s.description ?? '',
+          ...s.passages.map((p) => `${p.reference} ${p.texte}`),
+          ...s.citationsBranham.map((c) => `${c.source} ${c.texte}`),
+        ].join(' ').toLowerCase();
+        if (!haystack.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [query, selectedYears, selectedPredicateurs, selectedTypes, selectedSeries]);
+
+  const groups = useMemo(
+    () => groupByMonth(filteredSermons, sortOrder),
+    [filteredSermons, sortOrder],
+  );
+
+  const hasActiveFilters =
+    query.length > 0 ||
+    selectedYears.size > 0 ||
+    selectedPredicateurs.size > 0 ||
+    selectedTypes.size > 0 ||
+    selectedSeries.size > 0 ||
+    sortOrder !== 'desc';
+
+  const resetAll = useCallback(() => {
+    setQuery('');
+    setSelectedYears(new Set());
+    setSelectedPredicateurs(new Set());
+    setSelectedTypes(new Set());
+    setSelectedSeries(new Set());
+    setSortOrder('desc');
+  }, []);
+
+  /* ── Suggestions du lecteur ─────────────────────────────── */
   const relatedSermons = useMemo(() => {
     if (!activePlayer) return [];
-    return sortedSermons.filter((s) => s.id !== activePlayer.id);
-  }, [activePlayer, sortedSermons]);
+    return [...sermons]
+      .sort((a, b) => b.date.localeCompare(a.date))
+      .filter((s) => s.id !== activePlayer.id);
+  }, [activePlayer]);
 
   const openPlayer = useCallback((sermon: Sermon) => {
     setActivePlayer(sermon);
@@ -213,13 +286,9 @@ export default function Cultes() {
   }, []);
   const closePlayer = useCallback(() => {
     setActivePlayer(null);
-    /* On revient en haut quand on quitte le mode lecture. */
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
-  /* Scroll vers la zone watch quand on entre en mode lecture, ou
-     quand on change de vidéo. Pas trop bas pour laisser voir le
-     player sans être recouvert par la subnav. */
   useEffect(() => {
     if (!activePlayer) return;
     const id = window.setTimeout(() => {
@@ -231,7 +300,6 @@ export default function Cultes() {
     return () => window.clearTimeout(id);
   }, [activePlayer]);
 
-  /* Escape ferme la lecture. */
   useEffect(() => {
     if (!activePlayer) return;
     const onKey = (e: KeyboardEvent) => {
@@ -241,7 +309,6 @@ export default function Cultes() {
     return () => document.removeEventListener('keydown', onKey);
   }, [activePlayer, closePlayer]);
 
-  /* Indicateur scroll : disparait au premier scroll utilisateur. */
   const [hasScrolled, setHasScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => {
@@ -254,10 +321,7 @@ export default function Cultes() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  /* Au clic sur une icône en mode rail, on bascule en full. */
-  const onRailIconClick = useCallback(() => {
-    setSidebarMode('full');
-  }, []);
+  const onRailIconClick = useCallback(() => setSidebarMode('full'), []);
 
   const isWatching = activePlayer !== null;
   const sidebarIsRail = sidebarMode === 'rail';
@@ -322,7 +386,11 @@ export default function Cultes() {
       <section className={styles.searchBand} aria-label="Rechercher dans la bibliothèque">
         <div className={styles.searchBandInner}>
           <p className={styles.searchCount}>
-            {sortedSermons.length} prédications · depuis {sortedSermons[sortedSermons.length - 1]?.date.slice(0, 4) ?? '2021'}
+            {filteredSermons.length === sermons.length
+              ? `${sermons.length} prédications · depuis ${
+                  [...sermons].sort((a, b) => a.date.localeCompare(b.date))[0]?.date.slice(0, 4) ?? '2021'
+                }`
+              : `${filteredSermons.length} sur ${sermons.length} prédications`}
           </p>
           <div className={styles.searchBar} role="search">
             <span className={styles.searchIcon} aria-hidden="true">
@@ -367,7 +435,6 @@ export default function Cultes() {
         >
           <div className={styles.sidebarInner}>
 
-            {/* Bouton retour : visible uniquement en mode lecture */}
             {isWatching && !sidebarIsRail && (
               <button
                 type="button"
@@ -424,7 +491,6 @@ export default function Cultes() {
             </div>
 
             {sidebarIsRail ? (
-              /* Rail : icônes verticales, clic → repasse en full */
               <div className={styles.sidebarRailIcons}>
                 {FILTER_SECTIONS.map((section) => (
                   <button
@@ -442,15 +508,27 @@ export default function Cultes() {
             ) : (
               <>
                 <div className={styles.sidebarScroll}>
-                  <FilterGroup title="Année" icon={<IconCalendar />}>
+                  <FilterGroup title="Année" icon={<IconCalendar />} defaultOpen>
                     {years.map((yr) => (
-                      <FilterRow key={yr} label={yr} count={yearsCount.get(yr) ?? 0} />
+                      <FilterRow
+                        key={yr}
+                        label={yr}
+                        count={yearsCount.get(yr) ?? 0}
+                        checked={selectedYears.has(yr)}
+                        onToggle={() => setSelectedYears((prev) => toggleInSet(prev, yr))}
+                      />
                     ))}
                   </FilterGroup>
 
                   <FilterGroup title="Prédicateur" icon={<IconUser />}>
                     {predicateurs.map((p) => (
-                      <FilterRow key={p} label={p} count={predicateursCount.get(p) ?? 0} />
+                      <FilterRow
+                        key={p}
+                        label={p}
+                        count={predicateursCount.get(p) ?? 0}
+                        checked={selectedPredicateurs.has(p)}
+                        onToggle={() => setSelectedPredicateurs((prev) => toggleInSet(prev, p))}
+                      />
                     ))}
                   </FilterGroup>
 
@@ -460,29 +538,51 @@ export default function Cultes() {
                         key={tp}
                         label={TYPE_LABELS[tp]}
                         count={typesCount.get(tp) ?? 0}
+                        checked={selectedTypes.has(tp)}
+                        onToggle={() => setSelectedTypes((prev) => toggleInSet(prev, tp))}
                       />
                     ))}
                   </FilterGroup>
 
                   <FilterGroup title="Série" icon={<IconLayers />}>
                     {series.map((s) => (
-                      <FilterRow key={s} label={s} count={seriesCount.get(s) ?? 0} />
+                      <FilterRow
+                        key={s}
+                        label={s}
+                        count={seriesCount.get(s) ?? 0}
+                        checked={selectedSeries.has(s)}
+                        onToggle={() => setSelectedSeries((prev) => toggleInSet(prev, s))}
+                      />
                     ))}
                   </FilterGroup>
 
-                  <FilterGroup title="Tri" icon={<IconSort />}>
-                    <FilterRow label="Plus récent au plus ancien" count={null} checked />
-                    <FilterRow label="Plus ancien au plus récent" count={null} />
+                  <FilterGroup title="Tri" icon={<IconSort />} defaultOpen>
+                    <FilterRow
+                      label="Plus récent au plus ancien"
+                      count={null}
+                      checked={sortOrder === 'desc'}
+                      onToggle={() => setSortOrder('desc')}
+                      radio
+                    />
+                    <FilterRow
+                      label="Plus ancien au plus récent"
+                      count={null}
+                      checked={sortOrder === 'asc'}
+                      onToggle={() => setSortOrder('asc')}
+                      radio
+                    />
                   </FilterGroup>
                 </div>
 
                 <div className={styles.sidebarFoot}>
-                  <button type="button" className={styles.sidebarReset} disabled>
-                    Réinitialiser
+                  <button
+                    type="button"
+                    className={styles.sidebarReset}
+                    disabled={!hasActiveFilters}
+                    onClick={resetAll}
+                  >
+                    Réinitialiser les filtres
                   </button>
-                  <p className={styles.sidebarHint}>
-                    Filtres actifs dans la prochaine itération.
-                  </p>
                 </div>
               </>
             )}
@@ -500,22 +600,26 @@ export default function Cultes() {
             />
           ) : (
             <div className={styles.content}>
-              {groups.map((group) => (
-                <section key={group.key} className={styles.monthBlock} aria-label={group.label}>
-                  <header className={styles.monthHeader}>
-                    <h2 className={styles.monthTitle}>{group.label}</h2>
-                    <span className={styles.monthCount}>
-                      {group.items.length} prédication{group.items.length > 1 ? 's' : ''}
-                    </span>
-                    <span className={styles.monthRule} aria-hidden="true" />
-                  </header>
-                  <div className={styles.grid}>
-                    {group.items.map((s) => (
-                      <Capsule key={s.id} sermon={s} onOpen={openPlayer} />
-                    ))}
-                  </div>
-                </section>
-              ))}
+              {groups.length === 0 ? (
+                <EmptyResults onReset={resetAll} active={hasActiveFilters} />
+              ) : (
+                groups.map((group) => (
+                  <section key={group.key} className={styles.monthBlock} aria-label={group.label}>
+                    <header className={styles.monthHeader}>
+                      <h2 className={styles.monthTitle}>{group.label}</h2>
+                      <span className={styles.monthCount}>
+                        {group.items.length} prédication{group.items.length > 1 ? 's' : ''}
+                      </span>
+                      <span className={styles.monthRule} aria-hidden="true" />
+                    </header>
+                    <div className={styles.grid}>
+                      {group.items.map((s) => (
+                        <Capsule key={s.id} sermon={s} onOpen={openPlayer} />
+                      ))}
+                    </div>
+                  </section>
+                ))
+              )}
             </div>
           )}
         </div>
@@ -646,11 +750,12 @@ interface FilterGroupProps {
   title: string;
   icon?: React.ReactNode;
   children: React.ReactNode;
+  defaultOpen?: boolean;
 }
 
-function FilterGroup({ title, icon, children }: FilterGroupProps) {
+function FilterGroup({ title, icon, children, defaultOpen = false }: FilterGroupProps) {
   return (
-    <details className={styles.filterGroup}>
+    <details className={styles.filterGroup} open={defaultOpen}>
       <summary className={styles.filterGroupTitle}>
         <span className={styles.filterGroupTitleLeft}>
           {icon && <span className={styles.filterGroupIcon}>{icon}</span>}
@@ -671,17 +776,20 @@ function FilterGroup({ title, icon, children }: FilterGroupProps) {
 interface FilterRowProps {
   label: string;
   count: number | null;
-  checked?: boolean;
+  checked: boolean;
+  onToggle: () => void;
+  radio?: boolean;
 }
 
-function FilterRow({ label, count, checked = false }: FilterRowProps) {
+function FilterRow({ label, count, checked, onToggle, radio = false }: FilterRowProps) {
   return (
     <label className={styles.filterRow}>
       <input
-        type="checkbox"
+        type={radio ? 'radio' : 'checkbox'}
         className={styles.filterCheckbox}
-        defaultChecked={checked}
-        disabled
+        checked={checked}
+        onChange={onToggle}
+        name={radio ? 'sort-order' : undefined}
       />
       <span className={styles.filterRowLabel}>{label}</span>
       {count !== null && <span className={styles.filterRowCount}>{count}</span>}
@@ -690,7 +798,34 @@ function FilterRow({ label, count, checked = false }: FilterRowProps) {
 }
 
 /* ══════════════════════════════════════════════════════════
-   WATCH INLINE
+   EMPTY STATE — quand les filtres ne renvoient rien
+   ══════════════════════════════════════════════════════════ */
+
+function EmptyResults({ active, onReset }: { active: boolean; onReset: () => void }) {
+  return (
+    <div className={styles.emptyResults}>
+      <div className={styles.emptyResultsIcon} aria-hidden="true">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="11" cy="11" r="7" />
+          <line x1="21" y1="21" x2="16.5" y2="16.5" />
+        </svg>
+      </div>
+      <h3 className={styles.emptyResultsTitle}>Aucune prédication ne correspond.</h3>
+      <p className={styles.emptyResultsDesc}>
+        Ajustez vos filtres ou la recherche pour élargir les résultats.
+      </p>
+      {active && (
+        <button type="button" className={styles.emptyResultsBtn} onClick={onReset}>
+          Réinitialiser les filtres
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════
+   WATCH INLINE — slot + wrap PiP + custom YouTubePlayer
    ══════════════════════════════════════════════════════════ */
 
 interface WatchInlineProps {
@@ -701,28 +836,23 @@ interface WatchInlineProps {
 }
 
 function WatchInline({ sermon, moreVideos, onSwitchSermon, onClose }: WatchInlineProps) {
-  const embed = youtubeEmbedUrl(sermon.videoUrl, { autoplay: true });
   const titleClean = sermon.titre.replace(/\.$/, '');
 
-  /* Picture-in-Picture : quand le slot du player sort du viewport (scroll
-     vers le bas pour explorer infos / passages / autres vidéos), l'iframe
-     passe en position:fixed dans le coin. L'iframe N'est PAS démontée :
-     même instance dans le DOM → la vidéo continue de jouer sans interruption.
-     Le slot reste dans le flow et garde l'espace ; un placeholder informe. */
+  /* PiP : IntersectionObserver sur le slot, l'iframe (créée par YT.Player
+     dans iframeHost) reste dans le même DOM node → lecture ininterrompue. */
   const slotRef = useRef<HTMLDivElement>(null);
+  const playerRef = useRef<YouTubePlayerHandle>(null);
   const [isPip, setIsPip] = useState(false);
+  const [pipPlaying, setPipPlaying] = useState(false);
 
   useEffect(() => {
     if (!slotRef.current) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        /* On déclenche le PiP dès que moins de 30 % du slot est visible. */
         setIsPip(!entry.isIntersecting || entry.intersectionRatio < 0.3);
       },
       {
         threshold: [0, 0.3, 1],
-        /* Marge du haut négative pour tenir compte du header sticky : on
-           considère le slot "sorti" un peu avant qu'il soit recouvert. */
         rootMargin: '-120px 0px 0px 0px',
       },
     );
@@ -730,14 +860,12 @@ function WatchInline({ sermon, moreVideos, onSwitchSermon, onClose }: WatchInlin
     return () => observer.disconnect();
   }, [sermon.id]);
 
-  /* Si on change de sermon pendant qu'on est en PiP, on revient en haut
-     pour que le user voie le nouveau titre/infos. */
-  useEffect(() => {
-    if (isPip) return;
-  }, [isPip]);
-
   const expandFromPip = () => {
     slotRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const togglePipPlay = () => {
+    playerRef.current?.toggle();
   };
 
   return (
@@ -747,23 +875,35 @@ function WatchInline({ sermon, moreVideos, onSwitchSermon, onClose }: WatchInlin
           styles.watchPlayerWrap,
           isPip ? styles.watchPlayerWrapMini : '',
         ].join(' ')}>
-          {embed ? (
-            <iframe
-              key={sermon.id}
-              className={styles.watchIframe}
-              src={embed}
-              title={`Replay — ${sermon.titre}`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          ) : (
-            <div className={styles.watchEmpty}>Vidéo indisponible.</div>
-          )}
+          <YouTubePlayer
+            ref={playerRef}
+            videoUrl={sermon.videoUrl}
+            videoKey={sermon.id}
+            autoplay
+            onPlayingChange={setPipPlaying}
+          />
 
-          {/* Barre du mini-player : titre + agrandir + fermer */}
           {isPip && (
             <div className={styles.miniBar}>
               <span className={styles.miniTitle}>{titleClean}</span>
+              <button
+                type="button"
+                className={styles.miniBtn}
+                onClick={togglePipPlay}
+                aria-label={pipPlaying ? 'Pause' : 'Lire'}
+                title={pipPlaying ? 'Pause' : 'Lire'}
+              >
+                {pipPlaying ? (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <rect x="6" y="5" width="4" height="14" rx="1" />
+                    <rect x="14" y="5" width="4" height="14" rx="1" />
+                  </svg>
+                ) : (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                )}
+              </button>
               <button
                 type="button"
                 className={styles.miniBtn}
@@ -796,8 +936,6 @@ function WatchInline({ sermon, moreVideos, onSwitchSermon, onClose }: WatchInlin
           )}
         </div>
 
-        {/* Placeholder discret quand le player est passé en PiP : occupe
-            l'espace du slot et invite à réafficher. */}
         {isPip && (
           <button
             type="button"
