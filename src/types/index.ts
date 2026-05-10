@@ -37,6 +37,23 @@ export interface PlanItem {
   description: string;
 }
 
+/**
+ * Catégorisation éditoriale d'un sermon. Sert aux filtres de la
+ * bibliothèque des cultes. La liste est stable mais peut être
+ * étendue plus tard sans casser : un sermon non typé tombe en
+ * "culte-dimanche" par défaut côté UI.
+ */
+export type TypeCulte =
+  | 'culte-dimanche'
+  | 'culte-mercredi'
+  | 'reunion-priere'
+  | 'etude-doctrinale'
+  | 'convention'
+  | 'evenement-special'
+  | 'bapteme'
+  | 'sainte-cene'
+  | 'q-et-r';
+
 export interface Sermon {
   id: string;
   titre: string;
@@ -47,6 +64,8 @@ export interface Sermon {
   heure: string;       // "09H00"
   predicateur: string; // "Rev. Robert Ndaye M."
   duree?: string;      // "1H 28MIN"
+  typeCulte?: TypeCulte; // catégorie éditoriale pour les filtres
+  thumbnail?: string;    // override miniature, sinon dérivée auto de videoUrl
   description?: string;
   videoUrl?: string;
   audioUrl?: string;

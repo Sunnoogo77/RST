@@ -6,6 +6,9 @@ import type { Sermon } from '../types';
    Les passages bibliques sont conservés comme propositions
    éditoriales — les citations Branham et plans sont laissés
    vides volontairement (à renseigner par l'équipe pastorale).
+
+   `typeCulte` catégorise chaque sermon pour les filtres de la
+   bibliothèque. Voir TypeCulte dans src/types/index.ts.
    ============================================================ */
 
 export const sermons: Sermon[] = [
@@ -19,6 +22,7 @@ export const sermons: Sermon[] = [
     date: '2026-04-29',
     heure: '19H30',
     predicateur: 'Fr. Michel Orodapo',
+    typeCulte: 'culte-mercredi',
     description:
       "Service du mercredi à l'assemblée Roc Séculaire Tabernacle, Vitry-sur-Seine.",
     videoUrl: 'https://www.youtube.com/watch?v=WmhljxW5zUU',
@@ -38,6 +42,7 @@ export const sermons: Sermon[] = [
     heure: '09H00',
     predicateur: 'Rév. Robert Ndaye M.',
     duree: '1H 32MIN',
+    typeCulte: 'culte-dimanche',
     description:
       "Service dominical en direct depuis l'assemblée Roc Séculaire Tabernacle, Vitry-sur-Seine.",
     videoUrl: 'https://www.youtube.com/watch?v=BIek0FhvbuE',
@@ -71,6 +76,7 @@ export const sermons: Sermon[] = [
     date: '2024-10-23',
     heure: '19H30',
     predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'culte-mercredi',
     description: 'Service en direct, mercredi soir.',
     videoUrl: 'https://www.youtube.com/watch?v=oStj4xjdXzs',
     audioUrl: undefined,
@@ -88,6 +94,7 @@ export const sermons: Sermon[] = [
     date: '2024-08-15',
     heure: '10H00',
     predicateur: 'Fr. Jules Kayembe',
+    typeCulte: 'convention',
     description: 'Message de la Convention internationale.',
     videoUrl: 'https://www.youtube.com/watch?v=0T3fd4EN9PM',
     audioUrl: undefined,
@@ -105,6 +112,7 @@ export const sermons: Sermon[] = [
     date: '2022-11-13',
     heure: '09H00',
     predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'culte-dimanche',
     description: 'Service dominical du 13 novembre 2022.',
     videoUrl: 'https://www.youtube.com/watch?v=BVIswVRY-EQ',
     audioUrl: undefined,
@@ -122,6 +130,7 @@ export const sermons: Sermon[] = [
     date: '2022-04-13',
     heure: '19H30',
     predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'culte-mercredi',
     description: 'Service du mercredi 13 avril 2022.',
     videoUrl: 'https://www.youtube.com/watch?v=dzvVBbZlVoM',
     audioUrl: undefined,
@@ -139,6 +148,7 @@ export const sermons: Sermon[] = [
     date: '2022-04-17',
     heure: '09H00',
     predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'evenement-special',
     description: 'Méditation pascale.',
     videoUrl: 'https://www.youtube.com/watch?v=Xw3toA100_4',
     audioUrl: undefined,
@@ -156,6 +166,7 @@ export const sermons: Sermon[] = [
     date: '2022-01-16',
     heure: '09H00',
     predicateur: 'Past. Robert Ndaye M.',
+    typeCulte: 'culte-dimanche',
     description: 'Dixième volet de la série doctrinale sur l\'Église.',
     videoUrl: 'https://www.youtube.com/watch?v=WNwUFO-C9Dk',
     audioUrl: undefined,
@@ -173,6 +184,7 @@ export const sermons: Sermon[] = [
     date: '2021-11-07',
     heure: '09H00',
     predicateur: 'Past. Robert Ndaye M.',
+    typeCulte: 'culte-dimanche',
     description: 'Méditation sur la fidélité de Dieu à Sa Parole.',
     videoUrl: 'https://www.youtube.com/watch?v=NumCPxov-aw',
     audioUrl: undefined,
@@ -190,6 +202,7 @@ export const sermons: Sermon[] = [
     date: '2021-01-30',
     heure: '09H00',
     predicateur: 'Rév. Robert Ndaye M.',
+    typeCulte: 'culte-dimanche',
     description: "Méditation sur l'espérance chrétienne.",
     videoUrl: 'https://www.youtube.com/watch?v=QeGaWZ4BGcE',
     audioUrl: undefined,
