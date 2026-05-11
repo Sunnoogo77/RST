@@ -290,13 +290,14 @@ export default function Cultes() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
+  /* Au lancement d'une vidéo (ou changement), on remonte tout en haut
+     pour mettre la vidéo en focus immédiatement. Comme le hero et la
+     barre de recherche sont masqués en .pageWatching, le board commence
+     juste sous la subnav et la vidéo est plein cadre. */
   useEffect(() => {
     if (!activePlayer) return;
     const id = window.setTimeout(() => {
-      watchAnchorRef.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }, 60);
     return () => window.clearTimeout(id);
   }, [activePlayer]);
