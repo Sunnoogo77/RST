@@ -197,6 +197,27 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
   const [pipPos, setPipPos] = useState<{ top: number; left: number } | null>(null);
   const dragOffset = useRef<{ dx: number; dy: number } | null>(null);
 
+  /* Détection scroll-out-of-view : observe le slot du player ; quand il
+     sort du viewport (l'utilisateur scrolle vers le bas pour voir les
+     infos / les autres prédications), on déclenche le mode PiP même si
+     aucun filtre n'est posé. */
+  const slotRef = useRef<HTMLDivElement>(null);
+  const [scrolledOut, setScrolledOut] = useState(false);
+  useEffect(() => {
+    if (!slotRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setScrolledOut(!entry.isIntersecting || entry.intersectionRatio < 0.3);
+      },
+      {
+        threshold: [0, 0.3, 1],
+        rootMargin: '-80px 0px 0px 0px',
+      },
+    );
+    observer.observe(slotRef.current);
+    return () => observer.disconnect();
+  }, [sermon.id]);
+
   /* Indices comptés sur le dataset complet — sert aux badges des filtres. */
   const yearsCount = useMemo(() => countBy(sermons, (s) => s.date.slice(0, 4)), []);
   const predicateursCount = useMemo(() => countBy(sermons, (s) => s.predicateur), []);
@@ -331,13 +352,34 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
     };
   }, []);
 
-  /* Style inline du wrap PiP : fixed avec position. Si pas encore
-     déplacé, on utilise bottom/right pour rester ancré au coin
-     même si la fenêtre est redimensionnée. */
-  const pipStyle: React.CSSProperties = isFiltered
+  /* Mode PiP global : déclenché par le mode filtré OU par le scroll
+     du player hors viewport (l'utilisateur explore les infos en bas). */
+  const isPip = isFiltered || scrolledOut;
+
+  /* Style inline du wrap PiP : fixed avec position.
+     ATTENTION : on doit explicitement annuler les top/left/inset hérités
+     du CSS de base (.playerWrap a position:absolute; inset:0) sinon le
+     wrapper s'ancre en haut-gauche au lieu d'utiliser bottom/right. */
+  const pipStyle: React.CSSProperties = isPip
     ? (pipPos
-        ? { position: 'fixed', top: pipPos.top, left: pipPos.left, width: PIP_WIDTH, height: PIP_HEIGHT }
-        : { position: 'fixed', bottom: PIP_MARGIN, right: PIP_MARGIN, width: PIP_WIDTH, height: PIP_HEIGHT })
+        ? {
+            position: 'fixed',
+            top: pipPos.top,
+            left: pipPos.left,
+            right: 'auto',
+            bottom: 'auto',
+            width: PIP_WIDTH,
+            height: PIP_HEIGHT,
+          }
+        : {
+            position: 'fixed',
+            top: 'auto',
+            left: 'auto',
+            bottom: PIP_MARGIN,
+            right: PIP_MARGIN,
+            width: PIP_WIDTH,
+            height: PIP_HEIGHT,
+          })
     : {};
 
   const titleClean = sermon.titre.replace(/\.$/, '');
@@ -549,12 +591,25 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
         <section className={styles.center} ref={centerRef}>
 
           {/* Slot du player : reste TOUJOURS dans le DOM pour préserver
-              la lecture ; passe en mini-fenêtre fixed quand isFiltered. */}
-          <div className={[
-            styles.playerSlot,
-            isFiltered ? styles.playerSlotHidden : '',
-          ].join(' ')}>
-            <div className={styles.playerWrap} style={pipStyle}>
+              la lecture. Le slot ne se contracte (height:0) qu'en mode
+              FILTRÉ pour libérer la place à la grille. En mode PiP scroll,
+              le slot reste visible (16:9) — il sera sous la fenêtre puisque
+              l'utilisateur a scrollé en bas, mais quand il remontera l'IO
+              détectera et le wrapper reviendra dedans. */}
+          <div
+            ref={slotRef}
+            className={[
+              styles.playerSlot,
+              isFiltered ? styles.playerSlotHidden : '',
+            ].join(' ')}
+          >
+            <div
+              className={[
+                styles.playerWrap,
+                isPip ? styles.playerWrapPip : '',
+              ].join(' ')}
+              style={pipStyle}
+            >
               <YouTubePlayer
                 videoUrl={sermon.videoUrl}
                 videoKey={sermon.id}
@@ -562,8 +617,8 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
                 onEnded={onVideoEnded}
               />
 
-              {/* Mini-bar visible uniquement en mode PiP. */}
-              {isFiltered && (
+              {/* Mini-bar visible en mode PiP (filtré OU scroll out). */}
+              {isPip && (
                 <div
                   className={styles.miniBar}
                   onMouseDown={onPipDragStart}
@@ -584,8 +639,20 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
                   <button
                     type="button"
                     className={styles.miniBtn}
-                    onClick={(e) => { e.stopPropagation(); resetAll(); }}
-                    aria-label="Quitter la recherche et réafficher le lecteur"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      /* Si filtré : on quitte d'abord la recherche pour
+                         ramener le slot, puis on scroll vers lui.
+                         Si juste scrolled-out : on remonte au slot. */
+                      if (isFiltered) resetAll();
+                      window.setTimeout(() => {
+                        slotRef.current?.scrollIntoView({
+                          behavior: 'smooth',
+                          block: 'start',
+                        });
+                      }, 80);
+                    }}
+                    aria-label="Réafficher le lecteur en place"
                     title="Réafficher le lecteur"
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none"

@@ -156,31 +156,27 @@
 }
 
 /* ══════════════════════════════════════════════════════════
-   BODY — grid dynamique sidebar | center | suggestions
-   - défaut    : sidebar full + suggestions ouvertes
-   - rail      : sidebar 60px
-   - closed    : suggestions cachées
-   La transition de grid-template-columns donne un effet « courant ».
+   BODY — grid 2 colonnes : sidebar (sombre) | reste (blanc)
+   Les suggestions sont en position: absolute par-dessus le centre
+   blanc, comme une carte flottante. La masse sombre se limite donc
+   à la topbar + sidebar (forme en L) ; tout le reste est blanc.
    ══════════════════════════════════════════════════════════ */
 .body {
   flex: 1;
   position: relative;
   display: grid;
-  grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--sugg-w);
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
   gap: 0;
   min-height: 0;
   overflow: hidden;
   transition: grid-template-columns 460ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 .bodySidebarRail {
-  grid-template-columns: var(--sidebar-rail-w) minmax(0, 1fr) var(--sugg-w);
-}
-.bodySuggestionsClosed {
-  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
-}
-.bodySidebarRail.bodySuggestionsClosed {
   grid-template-columns: var(--sidebar-rail-w) minmax(0, 1fr);
 }
+/* La classe .bodySuggestionsClosed ne change plus la grille (elles sont
+   en absolute), mais elle déclenche la suppression du padding-right
+   réservé sur .center (voir plus bas). */
 
 /* ══════════════════════════════════════════════════════════
    SIDEBAR FILTRES — fixe, scroll interne, mode full / rail
@@ -421,15 +417,21 @@
 }
 
 /* ══════════════════════════════════════════════════════════
-   CENTRE — fond clair qui se glisse SOUS la masse sombre
-   topbar/sidebars, avec coins arrondis en haut → effet
-   "découpe" arrondie qui remplace les angles à 90°.
+   CENTRE — fond blanc qui s'étend de la sidebar jusqu'au bord
+   droit du viewport. Coin arrondi haut-gauche pour la transition
+   avec le sidebar/topbar sombre. Coin haut-droit également arrondi
+   pour la transition avec la topbar (le bord-droit touche le bord
+   du viewport, donc on voit juste un quart de cercle au plafond).
+   Padding-right réservé pour les suggestions flottantes par-dessus.
    ══════════════════════════════════════════════════════════ */
 .center {
   position: relative;
   overflow-y: auto;
   min-height: 0;
-  padding: 32px 32px 60px;
+  /* Padding-right large pour que le contenu ne passe pas sous les
+     suggestions flottantes. Quand suggestions fermées, on remet à
+     une valeur normale via .bodySuggestionsClosed. */
+  padding: 32px calc(var(--sugg-w) + 36px) 60px 32px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -439,6 +441,13 @@
     var(--bg-canvas);
   border-radius: var(--center-radius) var(--center-radius) 0 0;
   box-shadow: 0 -1px 0 0 rgba(255, 255, 255, 0.04) inset;
+  transition: padding-right 460ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Quand les suggestions sont rangées, le centre récupère la pleine
+   largeur sans la zone réservée pour la carte flottante. */
+.bodySuggestionsClosed .center {
+  padding-right: 32px;
 }
 
 /* ── Slot du player ───────────────────────────────────── */
@@ -484,10 +493,10 @@
     border-radius 320ms var(--ease-out);
 }
 
-/* Quand le slot est en mode hidden + wrap en position fixed, on lui
-   ajoute des bords visibles + une ombre marquée pour qu'il existe
-   en flottant au-dessus du contenu. */
-.playerSlotHidden .playerWrap {
+/* Styles PiP appliqués DÈS QUE le wrapper passe en position:fixed,
+   peu importe que ce soit en mode filtré ou en mode scroll-out-of-view.
+   z-index 200 pour passer au-dessus de toute capsule du centre. */
+.playerWrapPip {
   border-radius: var(--r-md);
   box-shadow:
     0 18px 60px rgba(0, 0, 0, 0.42),
@@ -895,26 +904,31 @@
    SUGGESTIONS — colonne droite, fixe
    ══════════════════════════════════════════════════════════ */
 .suggestions {
+  /* Carte flottante POSÉE sur le centre blanc — pas dans le grid.
+     Coins arrondis sur les 4 angles, marges égales pour qu'on voie
+     bien le centre blanc autour.
+     Teinte légèrement bleuâtre (rgba(229, 235, 248, 0.92)) pour se
+     démarquer du canvas blanc-bleuté du centre — sinon les deux
+     surfaces sont indiscernables. */
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  bottom: 16px;
+  width: var(--sugg-w);
   display: flex;
   flex-direction: column;
   min-height: 0;
-  /* Carte flottante : couleur très claire (presque blanc cassé) qui
-     contraste fort avec la topbar/sidebar sombres. Légèrement décollée
-     du haut, droite et bas pour qu'on perçoive bien les 4 contours. */
-  margin: 12px 12px 12px 0;
-  background: var(--glass-thick);
+  background: rgba(229, 235, 248, 0.92);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
   color: var(--ink-1);
-  /* Arrondi sur les TROIS coins visibles (haut-gauche, haut-droite,
-     bas-droite) — le bas-gauche reste droit car aligné avec le centre.
-     Ordre CSS : top-left top-right bottom-right bottom-left. */
-  border-radius: var(--center-radius) var(--center-radius) var(--center-radius) 0;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--center-radius);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   box-shadow:
-    0 12px 32px rgba(0, 0, 0, 0.22),
-    0 1px 0 0 rgba(255, 255, 255, 0.6) inset;
+    0 12px 32px rgba(30, 71, 161, 0.10),
+    0 1px 0 0 rgba(255, 255, 255, 0.7) inset;
   overflow: hidden;
+  z-index: 30;
 }
 
 .suggestionsHead {
