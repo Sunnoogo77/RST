@@ -898,12 +898,23 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-  /* Bleu ciel translucide — volontairement plus clair que la topbar
-     et la sidebar pour ne pas saturer l'œil de bleu nuit. La transition
-     vers la topbar (sombre) se fait via le coin haut-gauche arrondi. */
-  background: var(--glass-blue);
+  /* Carte flottante : couleur très claire (presque blanc cassé) qui
+     contraste fort avec la topbar/sidebar sombres. Légèrement décollée
+     du haut, droite et bas pour qu'on perçoive bien les 4 contours. */
+  margin: 12px 12px 12px 0;
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   color: var(--ink-1);
-  border-top-left-radius: var(--center-radius);
+  /* Arrondi sur les TROIS coins visibles (haut-gauche, haut-droite,
+     bas-droite) — le bas-gauche reste droit car aligné avec le centre.
+     Ordre CSS : top-left top-right bottom-right bottom-left. */
+  border-radius: var(--center-radius) var(--center-radius) var(--center-radius) 0;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.22),
+    0 1px 0 0 rgba(255, 255, 255, 0.6) inset;
+  overflow: hidden;
 }
 
 .suggestionsHead {
