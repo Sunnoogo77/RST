@@ -9,7 +9,13 @@
 .watchPage {
   --topbar-h: 56px;
   --sidebar-w: 260px;
+  --sidebar-rail-w: 60px;
   --sugg-w: 320px;
+  /* Couleur unifiée bleu foncé pour la topbar et les sidebars,
+     identique à la sidebar de Cultes pour conserver l'atmosphère
+     d'un seul espace cohérent quand on navigue entre les deux pages. */
+  --rst-dark-glass:
+    linear-gradient(180deg, rgba(20, 32, 64, 0.82) 0%, rgba(8, 14, 32, 0.86) 100%);
   position: fixed;
   inset: 0;
   display: flex;
@@ -24,7 +30,7 @@
 }
 
 /* ══════════════════════════════════════════════════════════
-   TOPBAR fixe
+   TOPBAR fixe — bleu foncé glass dark, atmosphère unifiée
    ══════════════════════════════════════════════════════════ */
 .topbar {
   height: var(--topbar-h);
@@ -34,13 +40,14 @@
   align-items: center;
   gap: 24px;
   padding: 0 20px;
-  background: var(--glass-thick);
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-  border-bottom: 1px solid var(--line-1);
+  background: var(--rst-dark-glass);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  backdrop-filter: blur(28px) saturate(160%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  color: rgba(255, 255, 255, 0.92);
   box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.65) inset,
-    0 4px 18px rgba(11, 15, 25, 0.05);
+    0 1px 0 0 rgba(255, 255, 255, 0.08) inset,
+    0 4px 18px rgba(0, 0, 0, 0.18);
   z-index: 100;
 }
 
@@ -50,20 +57,20 @@
   gap: 8px;
   padding: 8px 14px 8px 12px;
   border-radius: var(--r-pill);
-  border: 1px solid var(--line-soft);
-  background: var(--glass-regular);
-  color: var(--ink-1);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.92);
   font-family: var(--f-text);
   font-size: 13px;
   font-weight: 500;
   letter-spacing: 0.02em;
   cursor: pointer;
-  transition: background var(--t-fast), transform var(--t-fast), border-color var(--t-fast);
+  transition: background var(--t-fast), transform var(--t-fast), border-color var(--t-fast), color var(--t-fast);
 }
 .backBtn:hover {
-  background: var(--glass-solid);
-  border-color: var(--rst-blue);
-  color: var(--rst-blue);
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.24);
+  color: #fff;
   transform: translateX(-2px);
 }
 
@@ -85,7 +92,7 @@
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: rgba(255, 255, 255, 0.62);
 }
 
 .topbarSearch {
@@ -97,20 +104,21 @@
   gap: 10px;
   padding: 8px 16px;
   border-radius: var(--r-pill);
-  background: var(--glass-regular);
-  -webkit-backdrop-filter: var(--glass-blur-light);
-  backdrop-filter: var(--glass-blur-light);
-  border: 1px solid var(--line-1);
-  transition: box-shadow var(--t-fast), border-color var(--t-fast);
+  background: rgba(255, 255, 255, 0.06);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  transition: box-shadow var(--t-fast), border-color var(--t-fast), background var(--t-fast);
 }
 .topbarSearch:focus-within {
-  border-color: var(--rst-blue);
-  box-shadow: 0 0 0 3px rgba(30, 71, 161, 0.18);
+  background: rgba(255, 255, 255, 0.10);
+  border-color: var(--rst-blue-soft);
+  box-shadow: 0 0 0 3px rgba(79, 115, 199, 0.24);
 }
 
 .searchIcon {
   display: inline-flex;
-  color: var(--ink-3);
+  color: rgba(255, 255, 255, 0.6);
   flex-shrink: 0;
 }
 
@@ -121,17 +129,17 @@
   outline: none;
   font-family: var(--f-text);
   font-size: 13px;
-  color: var(--ink-1);
+  color: #fff;
   min-width: 0;
 }
-.topbarSearch input::placeholder { color: var(--ink-4); }
+.topbarSearch input::placeholder { color: rgba(255, 255, 255, 0.46); }
 
 .searchClear {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: var(--ink-5);
-  color: var(--bg-elevated);
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
   font-size: 16px;
   line-height: 1;
   display: inline-flex;
@@ -142,46 +150,117 @@
   transition: background var(--t-fast), transform var(--t-fast);
 }
 .searchClear:hover {
-  background: var(--ink-3);
+  background: rgba(255, 255, 255, 0.32);
   transform: scale(1.08);
 }
 
 /* ══════════════════════════════════════════════════════════
-   BODY — sidebar | center | suggestions
+   BODY — grid dynamique sidebar | center | suggestions
+   - défaut    : sidebar full + suggestions ouvertes
+   - rail      : sidebar 60px
+   - closed    : suggestions cachées
+   La transition de grid-template-columns donne un effet « courant ».
    ══════════════════════════════════════════════════════════ */
 .body {
   flex: 1;
+  position: relative;
   display: grid;
   grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--sugg-w);
   gap: 0;
   min-height: 0;
   overflow: hidden;
+  transition: grid-template-columns 460ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.bodySidebarRail {
+  grid-template-columns: var(--sidebar-rail-w) minmax(0, 1fr) var(--sugg-w);
+}
+.bodySuggestionsClosed {
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+}
+.bodySidebarRail.bodySuggestionsClosed {
+  grid-template-columns: var(--sidebar-rail-w) minmax(0, 1fr);
 }
 
-/* Quand pas de suggestions (mode filtré) on collapse la 3e colonne. */
-.body:has(.suggestions:nth-child(3):not(:nth-child(3))) { /* dummy */ }
-
 /* ══════════════════════════════════════════════════════════
-   SIDEBAR FILTRES — fixe, scroll interne
+   SIDEBAR FILTRES — fixe, scroll interne, mode full / rail
    ══════════════════════════════════════════════════════════ */
 .sidebar {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  background:
-    linear-gradient(180deg, rgba(20, 32, 64, 0.85) 0%, rgba(8, 14, 32, 0.90) 100%);
+  background: var(--rst-dark-glass);
   -webkit-backdrop-filter: blur(28px) saturate(160%);
   backdrop-filter: blur(28px) saturate(160%);
   border-right: 1px solid rgba(255, 255, 255, 0.10);
   color: rgba(255, 255, 255, 0.88);
+  overflow: hidden;
 }
 
 .sidebarHead {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   padding: 16px 20px 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Mode rail : padding centré, header compact */
+.sidebarRail .sidebarHead {
+  padding: 14px 8px;
+  justify-content: center;
+  border-bottom: 0;
+}
+
+.sidebarToggle {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-xs);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.78);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.sidebarToggle:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+/* Mode rail : 5 icônes verticales */
+.sidebarRailIcons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.railIcon {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-xs);
+  background: transparent;
+  border: 1px solid transparent;
+  color: rgba(255, 255, 255, 0.78);
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast),
+              border-color var(--t-fast), transform var(--t-fast);
+}
+.railIcon:hover {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  transform: scale(1.05);
 }
 
 .sidebarLbl {
@@ -793,6 +872,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   padding: 16px 20px 14px;
   border-bottom: 1px solid var(--line-1);
 }
@@ -804,6 +884,53 @@
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--ink-1);
+}
+
+.suggestionsToggle {
+  display: inline-flex;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--r-xs);
+  background: rgba(11, 15, 25, 0.06);
+  border: 1px solid var(--line-1);
+  color: var(--ink-2);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.suggestionsToggle:hover {
+  background: rgba(11, 15, 25, 0.12);
+  color: var(--ink-1);
+}
+
+/* Onglet vertical pour rouvrir les suggestions, ancré bord droit */
+.suggestionsReopen {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 64px;
+  border-radius: var(--r-md) 0 0 var(--r-md);
+  background: var(--rst-dark-glass);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  color: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-right: 0;
+  cursor: pointer;
+  z-index: 50;
+  box-shadow: -2px 0 12px rgba(0, 0, 0, 0.18);
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.suggestionsReopen:hover {
+  color: #fff;
+  background:
+    linear-gradient(180deg, rgba(20, 32, 64, 0.90) 0%, rgba(8, 14, 32, 0.92) 100%);
 }
 
 .suggestionsList {

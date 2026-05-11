@@ -163,11 +163,29 @@ interface InnerProps {
   onBack: () => void;
 }
 
+interface FilterSectionMeta {
+  key: string;
+  title: string;
+  icon: React.ReactNode;
+}
+
+const FILTER_SECTIONS: FilterSectionMeta[] = [
+  { key: 'annee',       title: 'Année',       icon: <IconCalendar /> },
+  { key: 'predicateur', title: 'Prédicateur', icon: <IconUser /> },
+  { key: 'type',        title: 'Type',        icon: <IconTag /> },
+  { key: 'serie',       title: 'Série',       icon: <IconLayers /> },
+  { key: 'tri',         title: 'Tri',         icon: <IconSort /> },
+];
+
+type SidebarMode = 'full' | 'rail';
+
 function CultesWatchInner({ sermon, onBack }: InnerProps) {
   const navigate = useNavigate();
 
   /* État UI */
   const [query, setQuery] = useState('');
+  const [sidebarMode, setSidebarMode] = useState<SidebarMode>('full');
+  const [suggestionsOpen, setSuggestionsOpen] = useState(true);
   const [selectedYears, setSelectedYears] = useState<Set<string>>(new Set());
   const [selectedPredicateurs, setSelectedPredicateurs] = useState<Set<string>>(new Set());
   const [selectedTypes, setSelectedTypes] = useState<Set<TypeCulte>>(new Set());
@@ -324,6 +342,16 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
 
   const titleClean = sermon.titre.replace(/\.$/, '');
 
+  const sidebarIsRail = sidebarMode === 'rail';
+
+  /* Layout dynamique : permet à la grille des capsules de respirer
+     (jusqu'à 4 colonnes) quand sidebar et suggestions sont rétractés. */
+  const bodyClass = [
+    styles.body,
+    sidebarIsRail ? styles.bodySidebarRail : '',
+    !suggestionsOpen ? styles.bodySuggestionsClosed : '',
+  ].filter(Boolean).join(' ');
+
   return (
     <div className={styles.watchPage}>
 
@@ -384,21 +412,64 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
       {/* ══════════════════════════════════════════════════════════
           BODY — sidebar | center | suggestions
           ══════════════════════════════════════════════════════════ */}
-      <div className={styles.body}>
+      <div className={bodyClass}>
 
         {/* ── Sidebar filtres (fixe, scroll interne) ─────────── */}
-        <aside className={styles.sidebar} aria-label="Filtres">
+        <aside
+          className={[styles.sidebar, sidebarIsRail ? styles.sidebarRail : ''].join(' ')}
+          aria-label="Filtres"
+        >
           <div className={styles.sidebarHead}>
-            <span className={styles.sidebarLbl}>Filtres</span>
+            {!sidebarIsRail && <span className={styles.sidebarLbl}>Filtres</span>}
             <button
               type="button"
-              className={styles.sidebarReset}
-              disabled={!hasActiveFilters}
-              onClick={resetAll}
+              className={styles.sidebarToggle}
+              onClick={() => setSidebarMode((m) => (m === 'full' ? 'rail' : 'full'))}
+              aria-label={sidebarIsRail ? 'Déplier les filtres' : 'Réduire les filtres'}
+              title={sidebarIsRail ? 'Déplier' : 'Réduire'}
             >
-              Réinitialiser
+              {sidebarIsRail ? (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="13 17 18 12 13 7" />
+                  <polyline points="6 17 11 12 6 7" />
+                </svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="11 17 6 12 11 7" />
+                  <polyline points="18 17 13 12 18 7" />
+                </svg>
+              )}
             </button>
+            {!sidebarIsRail && (
+              <button
+                type="button"
+                className={styles.sidebarReset}
+                disabled={!hasActiveFilters}
+                onClick={resetAll}
+              >
+                Réinitialiser
+              </button>
+            )}
           </div>
+
+          {sidebarIsRail ? (
+            <div className={styles.sidebarRailIcons}>
+              {FILTER_SECTIONS.map((section) => (
+                <button
+                  key={section.key}
+                  type="button"
+                  className={styles.railIcon}
+                  onClick={() => setSidebarMode('full')}
+                  aria-label={section.title}
+                  title={section.title}
+                >
+                  {section.icon}
+                </button>
+              ))}
+            </div>
+          ) : (
           <div className={styles.sidebarScroll}>
             <FilterGroup title="Année" icon={<IconCalendar />} defaultOpen>
               {years.map((yr) => (
@@ -465,6 +536,7 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
               />
             </FilterGroup>
           </div>
+          )}
         </aside>
 
         {/* ── Centre : contient toujours le slot du player + soit
@@ -608,11 +680,24 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
         </section>
 
         {/* ── Sidebar suggestions (cachée en mode filtré pour laisser
-              place à la grille) ─────────────────────────────────── */}
-        {!isFiltered && (
+              place à la grille, ou rétractée par l'utilisateur) ──── */}
+        {!isFiltered && suggestionsOpen && (
           <aside className={styles.suggestions} aria-label="À regarder ensuite">
             <div className={styles.suggestionsHead}>
               <span className={styles.suggestionsLbl}>À regarder ensuite</span>
+              <button
+                type="button"
+                className={styles.suggestionsToggle}
+                onClick={() => setSuggestionsOpen(false)}
+                aria-label="Ranger les suggestions"
+                title="Ranger"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="13 17 18 12 13 7" />
+                  <polyline points="6 17 11 12 6 7" />
+                </svg>
+              </button>
             </div>
             <div className={styles.suggestionsList}>
               {relatedSermons.slice(0, 12).map((s) => (
@@ -620,6 +705,23 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
               ))}
             </div>
           </aside>
+        )}
+
+        {/* Onglet vertical pour rouvrir les suggestions quand fermées */}
+        {!isFiltered && !suggestionsOpen && (
+          <button
+            type="button"
+            className={styles.suggestionsReopen}
+            onClick={() => setSuggestionsOpen(true)}
+            aria-label="Afficher les suggestions"
+            title="Afficher les suggestions"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="11 17 6 12 11 7" />
+              <polyline points="18 17 13 12 18 7" />
+            </svg>
+          </button>
         )}
 
       </div>
