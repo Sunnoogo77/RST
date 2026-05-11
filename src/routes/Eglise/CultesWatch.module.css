@@ -442,9 +442,15 @@
 }
 
 /* ── Slot du player ───────────────────────────────────── */
+/* La largeur du slot est bornée par la hauteur disponible × 16/9
+   pour que la vidéo (aspect 16:9) tienne TOUJOURS dans le viewport
+   sans qu'on ait à scroller pour la voir entièrement, même quand
+   sidebar et suggestions sont rétractés et libèrent l'espace. */
 .playerSlot {
   position: relative;
   width: 100%;
+  max-width: calc((100vh - var(--topbar-h) - 100px) * 16 / 9);
+  margin: 0 auto;
   aspect-ratio: 16 / 9;
   border-radius: var(--r-md);
   overflow: hidden;
@@ -892,11 +898,12 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-  background: var(--rst-dark-solid);
-  color: rgba(255, 255, 255, 0.88);
-  /* Pas de border-left — fusion visuelle avec topbar et sidebar.
-     Le centre arrive avec son border-top-right-radius pour faire
-     la transition douce. */
+  /* Bleu ciel translucide — volontairement plus clair que la topbar
+     et la sidebar pour ne pas saturer l'œil de bleu nuit. La transition
+     vers la topbar (sombre) se fait via le coin haut-gauche arrondi. */
+  background: var(--glass-blue);
+  color: var(--ink-1);
+  border-top-left-radius: var(--center-radius);
 }
 
 .suggestionsHead {
@@ -905,7 +912,7 @@
   align-items: center;
   gap: 8px;
   padding: 16px 20px 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--line-1);
 }
 
 .suggestionsLbl {
@@ -914,7 +921,7 @@
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--ink-1);
 }
 
 .suggestionsToggle {
@@ -922,17 +929,17 @@
   width: 28px;
   height: 28px;
   border-radius: var(--r-xs);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: rgba(255, 255, 255, 0.78);
+  background: rgba(11, 15, 25, 0.06);
+  border: 1px solid var(--line-1);
+  color: var(--ink-2);
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: background var(--t-fast), color var(--t-fast);
 }
 .suggestionsToggle:hover {
-  background: rgba(255, 255, 255, 0.14);
-  color: #fff;
+  background: rgba(11, 15, 25, 0.12);
+  color: var(--ink-1);
 }
 
 /* Onglet vertical pour rouvrir les suggestions, ancré bord droit.
@@ -989,7 +996,7 @@
   text-align: left;
   transition: background var(--t-fast);
 }
-.suggRow:hover { background: rgba(255, 255, 255, 0.06); }
+.suggRow:hover { background: rgba(255, 255, 255, 0.55); }
 
 .suggThumb {
   position: relative;
@@ -1031,7 +1038,7 @@
   font-weight: 500;
   font-size: 13.5px;
   line-height: 1.3;
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--ink-1);
   margin: 0;
   letter-spacing: -0.005em;
   display: -webkit-box;
@@ -1044,7 +1051,7 @@
 .suggMeta {
   font-family: var(--f-text);
   font-size: 11.5px;
-  color: rgba(255, 255, 255, 0.56);
+  color: var(--ink-3);
   margin: 0;
   letter-spacing: 0.01em;
 }
