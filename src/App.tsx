@@ -20,6 +20,7 @@ import CetteSemaine from './routes/Eglise/CetteSemaine';
 import Cultes from './routes/Eglise/Cultes';
 import CultesWatch from './routes/Eglise/CultesWatch';
 import Cantiques from './routes/Eglise/Cantiques';
+import CantiquesWatch from './routes/Eglise/CantiquesWatch';
 import Annonces from './routes/Eglise/Annonces';
 import AnnonceDetail from './routes/Eglise/AnnonceDetail';
 import Temoignages from './routes/Eglise/Temoignages';
@@ -52,7 +53,12 @@ function ScrollToTop() {
  */
 function Shell() {
   const { pathname } = useLocation();
-  const isWatchPage = pathname.startsWith('/eglise/cultes/watch/');
+  /* Pages "watch" dédiées (lecteur immersif sans header/footer global) :
+     - /eglise/cultes/watch/:id
+     - /eglise/cantiques/watch/:slug (mode cantique OU mode session) */
+  const isWatchPage =
+    pathname.startsWith('/eglise/cultes/watch/') ||
+    pathname.startsWith('/eglise/cantiques/watch/');
 
   return (
     <>
@@ -92,6 +98,11 @@ function Shell() {
             pour ne pas hériter de la subnav. Header global est masqué via
             Shell. Topbar custom et footer absent : focus total sur la vidéo. */}
         <Route path="/eglise/cultes/watch/:id" element={<CultesWatch />} />
+
+        {/* Page DÉDIÉE de lecture des cantiques, hors EgliseLayout
+            (vidéo + paroles côte à côte ; ou vidéo + index pour les
+            sessions d'adoration). */}
+        <Route path="/eglise/cantiques/watch/:slug" element={<CantiquesWatch />} />
 
         <Route path="/design-system" element={<DesignSystem />} />
         <Route path="*" element={<NotFound />} />

@@ -71,6 +71,13 @@ interface YouTubePlayerProps {
   onEnded?: () => void;
   /** Désactive les raccourcis clavier (utile si concurrent avec d'autres handlers) */
   disableKeyboard?: boolean;
+  /** Démarre la lecture à cette seconde (deep-link YouTube). Utile
+   *  pour pointer un cantique précis dans une longue session. */
+  startSec?: number;
+  /** Arrête la lecture à cette seconde. La vidéo n'est pas tronquée
+   *  côté YouTube — c'est le player qui appelle pause() une fois
+   *  l'instant atteint. */
+  endSec?: number;
 }
 
 function formatTime(seconds: number): string {
@@ -87,7 +94,16 @@ function formatTime(seconds: number): string {
 
 const YouTubePlayer = forwardRef<YouTubePlayerHandle, YouTubePlayerProps>(
   function YouTubePlayer(
-    { videoUrl, videoKey, autoplay = true, onPlayingChange, onEnded, disableKeyboard = false },
+    {
+      videoUrl,
+      videoKey,
+      autoplay = true,
+      onPlayingChange,
+      onEnded,
+      disableKeyboard = false,
+      startSec,
+      endSec,
+    },
     ref,
   ) {
     const id = youtubeId(videoUrl);
@@ -157,6 +173,10 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, YouTubePlayerProps>(
             fs: 0,
             disablekb: 1,
             autoplay: autoplay ? 1 : 0,
+            /* Deep-link YouTube : start = secondes depuis le début ;
+               end = stop natif YouTube (en plus du watcher JS). */
+            ...(typeof startSec === 'number' ? { start: Math.max(0, Math.floor(startSec)) } : {}),
+            ...(typeof endSec === 'number'   ? { end:   Math.max(0, Math.floor(endSec))   } : {}),
           },
           events: {
             onReady: (e: any) => {
@@ -201,10 +221,17 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, YouTubePlayerProps>(
         const p = playerRef.current;
         if (!p || !p.getCurrentTime) return;
         const t = p.getCurrentTime();
-        if (typeof t === 'number') setCurrentTime(t);
+        if (typeof t === 'number') {
+          setCurrentTime(t);
+          /* Pause automatique quand on atteint endSec (en plus du
+             paramètre `end` de l'IFrame API qui est parfois imprécis). */
+          if (typeof endSec === 'number' && t >= endSec) {
+            try { p.pauseVideo(); } catch { /* noop */ }
+          }
+        }
       }, 250);
       return () => window.clearInterval(interval);
-    }, [ready]);
+    }, [ready, endSec]);
 
     /* ── Auto-hide des contrôles après inactivité ───────── */
     const showControlsTemporarily = useCallback(() => {
