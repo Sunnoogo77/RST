@@ -18,6 +18,7 @@ import ReunionJeunes2005 from './routes/Genese/ReunionJeunes2005';
 import EgliseLayout from './routes/Eglise/EgliseLayout';
 import CetteSemaine from './routes/Eglise/CetteSemaine';
 import Cultes from './routes/Eglise/Cultes';
+import CultesWatch from './routes/Eglise/CultesWatch';
 import Cantiques from './routes/Eglise/Cantiques';
 import Annonces from './routes/Eglise/Annonces';
 import AnnonceDetail from './routes/Eglise/AnnonceDetail';
@@ -43,11 +44,20 @@ function ScrollToTop() {
   return null;
 }
 
-export default function App() {
+/**
+ * Conteneur racine — useLocation impossible directement dans App car
+ * BrowserRouter doit être un parent. Cette indirection nous laisse
+ * masquer Header/Footer pour la page dédiée de visualisation des
+ * prédications (route /eglise/cultes/watch/:id).
+ */
+function Shell() {
+  const { pathname } = useLocation();
+  const isWatchPage = pathname.startsWith('/eglise/cultes/watch/');
+
   return (
-    <BrowserRouter basename={ROUTER_BASENAME}>
+    <>
       <ScrollToTop />
-      <Header />
+      {!isWatchPage && <Header />}
       <Routes>
         <Route path="/" element={<Accueil />} />
         <Route path="/nehemie" element={<Nehemie />} />
@@ -77,10 +87,24 @@ export default function App() {
           <Route path="annonces/:id" element={<AnnonceDetail />} />
           <Route path="temoignages" element={<Temoignages />} />
         </Route>
+
+        {/* Page DÉDIÉE de visualisation des prédications, hors EgliseLayout
+            pour ne pas hériter de la subnav. Header global est masqué via
+            Shell. Topbar custom et footer absent : focus total sur la vidéo. */}
+        <Route path="/eglise/cultes/watch/:id" element={<CultesWatch />} />
+
         <Route path="/design-system" element={<DesignSystem />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      <Footer />
+      {!isWatchPage && <Footer />}
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter basename={ROUTER_BASENAME}>
+      <Shell />
     </BrowserRouter>
   );
 }
