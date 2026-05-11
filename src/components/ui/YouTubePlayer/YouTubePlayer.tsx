@@ -67,6 +67,8 @@ interface YouTubePlayerProps {
   autoplay?: boolean;
   /** Notifie le parent de tout changement d'état lecture/pause */
   onPlayingChange?: (playing: boolean) => void;
+  /** Appelé quand la vidéo arrive à son terme — utile pour enchainer */
+  onEnded?: () => void;
   /** Désactive les raccourcis clavier (utile si concurrent avec d'autres handlers) */
   disableKeyboard?: boolean;
 }
@@ -85,7 +87,7 @@ function formatTime(seconds: number): string {
 
 const YouTubePlayer = forwardRef<YouTubePlayerHandle, YouTubePlayerProps>(
   function YouTubePlayer(
-    { videoUrl, videoKey, autoplay = true, onPlayingChange, disableKeyboard = false },
+    { videoUrl, videoKey, autoplay = true, onPlayingChange, onEnded, disableKeyboard = false },
     ref,
   ) {
     const id = youtubeId(videoUrl);
@@ -105,13 +107,19 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, YouTubePlayerProps>(
     const hideTimerRef = useRef<number | null>(null);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
-    const setPlayingState = useCallback(
-      (next: boolean) => {
-        setPlaying(next);
-        onPlayingChange?.(next);
-      },
-      [onPlayingChange],
-    );
+    /* Refs vers les callbacks pour garantir qu'on lit toujours la dernière
+       version dans les events YT.Player (le useEffect d'init n'a en deps
+       que [id, videoKey] pour ne pas réinstancier le player à chaque
+       changement de prop). */
+    const onPlayingChangeRef = useRef(onPlayingChange);
+    const onEndedRef = useRef(onEnded);
+    useEffect(() => { onPlayingChangeRef.current = onPlayingChange; }, [onPlayingChange]);
+    useEffect(() => { onEndedRef.current = onEnded; }, [onEnded]);
+
+    const setPlayingState = useCallback((next: boolean) => {
+      setPlaying(next);
+      onPlayingChangeRef.current?.(next);
+    }, []);
 
     /* ── Init / re-init player quand l'id vidéo change ───── */
     useEffect(() => {
@@ -166,6 +174,7 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, YouTubePlayerProps>(
               const PS = window.YT.PlayerState;
               if (e.data === PS.PLAYING) setPlayingState(true);
               else if (e.data === PS.PAUSED || e.data === PS.ENDED) setPlayingState(false);
+              if (e.data === PS.ENDED) onEndedRef.current?.();
 
               // La durée n'est connue qu'une fois la lecture engagée parfois.
               const d = e.target.getDuration?.();

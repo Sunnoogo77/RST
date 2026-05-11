@@ -13,6 +13,13 @@
   --rst-sidebar-w: 260px;
   --rst-sidebar-rail-w: 66px;
   --rst-sugg-w: 360px;
+  /* Décalage dynamique injecté en JS depuis Cultes.tsx :
+       - 120px quand les topbars (header + subnav) sont visibles
+       - 0px   quand on scrolle vers le bas et qu'ils s'effacent
+     Pilote la position et la hauteur des sidebars (filtres + suggestions)
+     pour qu'ils suivent l'effet "courant" et n'aient jamais d'espace vide
+     en haut quand les topbars disparaissent. */
+  --rst-topbar-offset: 120px;
   min-height: 100vh;
 }
 
@@ -320,18 +327,38 @@
    ══════════════════════════════════════════════════════════ */
 .sidebar {
   position: sticky;
-  top: calc(var(--rst-header-stack) + 24px);
+  /* top et max-height suivent l'état dynamique des topbars : quand
+     elles s'effacent, --rst-topbar-offset passe de 120px à 0px. */
+  top: calc(var(--rst-topbar-offset) + 16px);
   align-self: start;
-  max-height: calc(100vh - var(--rst-header-stack) - 32px);
+  /* Le sidebar occupe toute la hauteur restante du viewport pour
+     éviter tout espace mort entre lui et le footer. */
+  height: calc(100vh - var(--rst-topbar-offset) - 24px);
+  max-height: calc(100vh - var(--rst-topbar-offset) - 24px);
   z-index: 10;
-  transition: max-width 320ms var(--ease-out);
+  transition:
+    top 320ms var(--ease-out),
+    height 320ms var(--ease-out),
+    max-height 320ms var(--ease-out),
+    max-width 320ms var(--ease-out);
+}
+
+/* Mode rail : on relâche la hauteur pour rester compact sur le
+   contenu (5 icônes), pas de bandeau vide. */
+.sidebarRail {
+  height: auto;
 }
 
 .sidebarInner {
   display: flex;
   flex-direction: column;
-  height: auto;
-  max-height: calc(100vh - var(--rst-header-stack) - 32px);
+  /* Remplit la sidebar (qui a une hauteur fixée par le viewport) en
+     mode full ; en mode rail on relâche pour rester compact. */
+  height: 100%;
+  max-height: calc(100vh - var(--rst-topbar-offset) - 24px);
+  transition:
+    padding 280ms var(--ease-out),
+    max-height 320ms var(--ease-out);
   background:
     linear-gradient(180deg, rgba(20, 32, 64, 0.82) 0%, rgba(8, 14, 32, 0.86) 100%);
   -webkit-backdrop-filter: blur(28px) saturate(160%);
@@ -350,6 +377,7 @@
 .sidebarRail .sidebarInner {
   padding: 14px 8px;
   align-items: center;
+  height: auto;
 }
 
 /* ── Bouton retour (mode full + mode rail) ─────────────── */
@@ -1227,11 +1255,17 @@
    ══════════════════════════════════════════════════════════ */
 .suggestions {
   position: sticky;
-  top: calc(var(--rst-header-stack) + 24px);
+  top: calc(var(--rst-topbar-offset) + 16px);
   align-self: start;
-  max-height: calc(100vh - var(--rst-header-stack) - 32px);
+  /* Hauteur dynamique : occupe tout le viewport restant. */
+  height: calc(100vh - var(--rst-topbar-offset) - 24px);
+  max-height: calc(100vh - var(--rst-topbar-offset) - 24px);
   z-index: 10;
   animation: suggIn 360ms var(--ease-out);
+  transition:
+    top 320ms var(--ease-out),
+    height 320ms var(--ease-out),
+    max-height 320ms var(--ease-out);
 }
 
 @keyframes suggIn {
@@ -1242,7 +1276,9 @@
 .suggestionsInner {
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh - var(--rst-header-stack) - 32px);
+  height: 100%;
+  max-height: calc(100vh - var(--rst-topbar-offset) - 24px);
+  transition: max-height 320ms var(--ease-out);
   background: var(--glass-blue);
   -webkit-backdrop-filter: var(--glass-blur-light);
   backdrop-filter: var(--glass-blur-light);
@@ -1298,7 +1334,7 @@
 
 .suggestionsReopen {
   position: sticky;
-  top: calc(var(--rst-header-stack) + 24px);
+  top: calc(var(--rst-topbar-offset) + 16px);
   align-self: start;
   display: inline-flex;
   align-items: center;
@@ -1316,7 +1352,10 @@
   letter-spacing: 0.06em;
   cursor: pointer;
   box-shadow: var(--shadow-2);
-  transition: transform var(--t-fast), background var(--t-fast);
+  transition:
+    top 320ms var(--ease-out),
+    transform var(--t-fast),
+    background var(--t-fast);
   width: fit-content;
 }
 .suggestionsReopen:hover {
@@ -1435,9 +1474,10 @@
   .suggestions {
     grid-column: 1 / -1;
     position: static;
+    height: auto;
     max-height: 480px;
   }
-  .suggestionsInner { max-height: 480px; }
+  .suggestionsInner { height: auto; max-height: 480px; }
 
   .searchBandInner {
     grid-template-columns: 1fr;
@@ -1481,10 +1521,11 @@
   /* Sidebar passe en bandeau plein-largeur en haut. */
   .sidebar {
     position: static;
+    height: auto;
     max-height: none;
     z-index: auto;
   }
-  .sidebarInner { max-height: none; }
+  .sidebarInner { height: auto; max-height: none; }
   /* Sur mobile, la rail n'a pas de sens : on force le mode full. */
   .sidebarRail .sidebarInner {
     padding: 18px 16px;
@@ -1498,9 +1539,10 @@
 
   .suggestions {
     position: static;
+    height: auto;
     max-height: 420px;
   }
-  .suggestionsInner { max-height: 420px; }
+  .suggestionsInner { height: auto; max-height: 420px; }
   .suggestionsReopen { position: static; }
 
   .grid {

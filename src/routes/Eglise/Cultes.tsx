@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { sermons } from '../../data/sermons';
 import type { Sermon, TypeCulte } from '../../types';
 import { youtubeThumbnail } from '../../utils/youtube';
+import { useScrollDirection } from '../../hooks/useScrollDirection';
 import YouTubePlayer, {
   type YouTubePlayerHandle,
 } from '../../components/ui/YouTubePlayer/YouTubePlayer';
@@ -321,6 +322,26 @@ export default function Cultes() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  /* Détection des topbars (header + subnav) pour adapter la hauteur
+     des sidebars : quand on scrolle vers le bas et qu'ils se masquent,
+     les sidebars s'étendent vers le haut pour récupérer l'espace.
+     Quand on remonte et qu'ils réapparaissent, les sidebars se
+     poussent doucement vers le bas — effet « courant ».
+     On s'aligne sur la même logique que Header/EgliseLayout pour
+     éviter tout désalignement visuel. */
+  const { direction, scrollY } = useScrollDirection(80);
+  const topbarsHidden = direction === 'down' && scrollY > 80;
+  const topbarOffset = topbarsHidden ? '0px' : '120px';
+
+  /* Autoplay « À regarder ensuite » : quand la vidéo finit, on passe
+     automatiquement au premier sermon des suggestions. */
+  const onVideoEnded = useCallback(() => {
+    if (relatedSermons.length > 0) {
+      setActivePlayer(relatedSermons[0]);
+      setSuggestionsOpen(true);
+    }
+  }, [relatedSermons]);
+
   const onRailIconClick = useCallback(() => setSidebarMode('full'), []);
 
   const isWatching = activePlayer !== null;
@@ -339,7 +360,11 @@ export default function Cultes() {
   ].filter(Boolean).join(' ');
 
   return (
-    <main id="main-content" className={pageClass}>
+    <main
+      id="main-content"
+      className={pageClass}
+      style={{ ['--rst-topbar-offset' as never]: topbarOffset }}
+    >
 
       {/* ══════════════════════════════════════════════════════════
           HERO + BARRE DE RECHERCHE — masqués en mode lecture
@@ -597,6 +622,7 @@ export default function Cultes() {
               moreVideos={relatedSermons.slice(0, 9)}
               onSwitchSermon={openPlayer}
               onClose={closePlayer}
+              onEnded={onVideoEnded}
             />
           ) : (
             <div className={styles.content}>
@@ -833,9 +859,10 @@ interface WatchInlineProps {
   moreVideos: Sermon[];
   onSwitchSermon: (s: Sermon) => void;
   onClose: () => void;
+  onEnded?: () => void;
 }
 
-function WatchInline({ sermon, moreVideos, onSwitchSermon, onClose }: WatchInlineProps) {
+function WatchInline({ sermon, moreVideos, onSwitchSermon, onClose, onEnded }: WatchInlineProps) {
   const titleClean = sermon.titre.replace(/\.$/, '');
 
   /* PiP : IntersectionObserver sur le slot, l'iframe (créée par YT.Player
@@ -881,6 +908,7 @@ function WatchInline({ sermon, moreVideos, onSwitchSermon, onClose }: WatchInlin
             videoKey={sermon.id}
             autoplay
             onPlayingChange={setPipPlaying}
+            onEnded={onEnded}
           />
 
           {isPip && (
