@@ -77,31 +77,108 @@ export interface Sermon {
 /* ----------------------------------------------------------
    Cantiques / Hymnaire
 ---------------------------------------------------------- */
-export type CantiqueFamille = 'recueil' | 'message' | 'compose';
+
+/**
+ * Trois grandes familles de cantiques :
+ * - recueil   : cantiques du livre traditionnel de l'assemblée,
+ *               numérotés, paroles complètes saisies à la main.
+ * - special   : cantiques particuliers (solo, featured, composés
+ *               ici), enregistrés en studio ou live.
+ * - adoration : cantiques chantés DANS une session d'adoration et
+ *               de louange (objet SessionAdoration ci-dessous).
+ *               Le cantique est référencé via l'occurrence qui
+ *               porte le startSec dans la session.
+ */
+export type CantiqueFamille = 'recueil' | 'special' | 'adoration';
 
 export interface VerseBlock {
-  type: 'verse' | 'refrain';
-  label: string;   // '1', '2', '3', '℟'
+  type: 'verse' | 'refrain' | 'pont';
+  label: string;   // '1', '2', '3', '℟', 'Pont'
   lines: string[];
+}
+
+/**
+ * Une occurrence est UN passage où le cantique a été chanté dans
+ * UNE vidéo donnée. Un même cantique peut avoir plusieurs occurrences
+ * (chanté plusieurs fois, dans des cultes différents, par des
+ * conducteurs différents). Le startSec permet à la page lecteur de
+ * démarrer la vidéo YouTube pile au moment où le cantique commence.
+ */
+export interface CantiqueOccurrence {
+  id: string;
+  videoUrl: string;          // URL YouTube
+  /** Démarrage du cantique dans la vidéo, en secondes. Si absent,
+   *  on lance la vidéo depuis le début. */
+  startSec?: number;
+  /** Fin du cantique. Indicatif (le player s'arrête à endSec si
+   *  défini). */
+  endSec?: number;
+  interpretes: string[];     // ["Fr. Jules Kayembe", "Past. Robert Ndaye"]
+  contexte?: string;         // "Live au culte du 24 . 07 . 2022"
+  dateEvenement?: string;    // ISO "2022-07-24"
+  /** Si le cantique apparait dans une SessionAdoration, on référence
+   *  son slug ici pour proposer la session complète à l'utilisateur. */
+  sessionId?: string;
 }
 
 export interface Cantique {
   id: string;
-  numero: string;              // "47", "309" — sans préfixe
+  slug?: string;               // pour URL /eglise/cantiques/watch/{slug}
+  numero: string;              // "47", "309" — sans préfixe (recueil) ou ID interne
+  /** Numéro dans le recueil traditionnel. Permet le tri et la
+   *  recherche par numéro de page. Uniquement pour famille=recueil. */
+  numeroRecueil?: number;
   titre: string;
   titleEm?: string;            // partie italique du titre en detail h2
   famille: CantiqueFamille;
-  solisteOuChoeur: string;     // affiché dans la carte de grille
+  /** Libellé d'auteur principal pour les cartes (override possible
+   *  via detailBy). Conservé pour rétrocompatibilité. */
+  solisteOuChoeur: string;
   detailBy?: string;           // surcharge du sous-titre en fiche détail
   dateEnregistrement?: string; // "2024" (année)
   recordedAt?: string;         // "13 . 04 . 2026" (date affichage)
   duration?: string;           // "5MIN 42"
   recordingType?: 'studio' | 'culte' | 'live';
+  /** URL "officielle" du cantique. Conservée pour rétrocompatibilité
+   *  avec la page Cantiques.tsx existante. La nouvelle page lecteur
+   *  utilisera plutôt occurrences[0]. */
   videoUrl?: string;
   audioUrl?: string;
   pdfUrl?: string;
   estVedette?: boolean;        // carte 2×2 dans la grille
   lyrics?: VerseBlock[];
+  /** Liste des vidéos où ce cantique a été chanté. Vide pour les
+   *  cantiques du recueil dont on n'a pas encore de captation.
+   *  Plusieurs entrées si chanté dans plusieurs cultes ou sessions. */
+  occurrences?: CantiqueOccurrence[];
+}
+
+/**
+ * Une session d'Adoration & Louange : longue vidéo (30-40 min) qui
+ * contient une suite de cantiques chantés. L'index cantiquesContenus
+ * permet à l'utilisateur de cliquer un cantique et de partir au bon
+ * moment dans la vidéo.
+ */
+export interface SessionAdoration {
+  id: string;
+  slug: string;
+  titre: string;               // "Une heure dans Sa présence"
+  date: string;                // ISO "2024-08-15"
+  videoUrl: string;
+  dureeMinutes?: number;
+  evenement?: string;          // "Convention internationale 2024"
+  thumbnail?: string;
+  interpretes: string[];       // conducteurs / solistes principaux
+  /** Index chronologique des cantiques contenus dans la session,
+   *  avec leur start/end en secondes. Le cantiqueId pointe vers un
+   *  Cantique de famille=recueil ou famille=special. Permet la
+   *  navigation directe vers un cantique précis dans la session. */
+  cantiquesContenus?: Array<{
+    cantiqueId: string;
+    titre: string;             // dénormalisé pour affichage rapide
+    startSec: number;
+    endSec?: number;
+  }>;
 }
 
 /* ----------------------------------------------------------

@@ -11,16 +11,16 @@ type FamilyFilter = 'tous' | CantiqueFamille;
 type LyricSize = 'sm' | 'md' | 'lg';
 
 const FAMILY_TABS: { id: FamilyFilter; label: string }[] = [
-  { id: 'tous',     label: `Tous · ${cantiqueCounts.tous}` },
-  { id: 'recueil',  label: `Du recueil · ${cantiqueCounts.recueil}` },
-  { id: 'message',  label: `Du Message · ${cantiqueCounts.message}` },
-  { id: 'compose',  label: `Composés ici · ${cantiqueCounts.compose}` },
+  { id: 'tous',      label: `Tous · ${cantiqueCounts.tous}` },
+  { id: 'recueil',   label: `Du recueil · ${cantiqueCounts.recueil}` },
+  { id: 'special',   label: `Cantiques spéciaux · ${cantiqueCounts.special}` },
+  { id: 'adoration', label: `Adoration & Louange · ${cantiqueCounts.adoration}` },
 ];
 
 const FAMILLE_OVERLAY: Record<CantiqueFamille, string> = {
-  recueil: 'Du recueil',
-  message: 'Du Message',
-  compose: 'Composé ici',
+  recueil:   'Du recueil',
+  special:   'Cantique spécial',
+  adoration: 'Adoration & Louange',
 };
 
 const LYRIC_SIZE_CLASSES: Record<LyricSize, string> = {
