@@ -360,13 +360,12 @@
      mode full ; en mode rail on relâche pour rester compact. */
   height: 100%;
   max-height: calc(100vh - var(--rst-topbar-offset) - 24px);
-  transition:
-    padding 280ms var(--ease-out),
-    max-height 600ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* Bleu nuit IDENTIQUE au hero glass dark (#06091c -> #030617) + halo
+     bleu radial — exactement la même couleur que la topbar/sidebar de
+     CultesWatch, pour une atmosphère unifiée d'une page à l'autre. */
   background:
-    linear-gradient(180deg, rgba(20, 32, 64, 0.82) 0%, rgba(8, 14, 32, 0.86) 100%);
-  -webkit-backdrop-filter: blur(28px) saturate(160%);
-  backdrop-filter: blur(28px) saturate(160%);
+    radial-gradient(ellipse 60% 90% at 0% 0%, rgba(30, 71, 161, 0.18) 0%, transparent 70%),
+    linear-gradient(to bottom, #06091c 0%, #030617 100%);
   border: 1px solid rgba(255, 255, 255, 0.10);
   border-radius: var(--r-lg);
   padding: 18px 16px;
@@ -374,7 +373,9 @@
     var(--shadow-3),
     0 1px 0 0 rgba(255, 255, 255, 0.10) inset;
   color: rgba(255, 255, 255, 0.88);
-  transition: padding 280ms var(--ease-out);
+  transition:
+    padding 280ms var(--ease-out),
+    max-height 600ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Mode rail : padding réduit, contenu vertical centré */

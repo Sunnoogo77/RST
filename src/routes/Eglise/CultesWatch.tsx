@@ -426,32 +426,22 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
               className={styles.sidebarToggle}
               onClick={() => setSidebarMode((m) => (m === 'full' ? 'rail' : 'full'))}
               aria-label={sidebarIsRail ? 'Déplier les filtres' : 'Réduire les filtres'}
-              title={sidebarIsRail ? 'Déplier' : 'Réduire'}
+              title={sidebarIsRail ? 'Déplier les filtres' : 'Réduire les filtres'}
             >
               {sidebarIsRail ? (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="13 17 18 12 13 7" />
                   <polyline points="6 17 11 12 6 7" />
                 </svg>
               ) : (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="11 17 6 12 11 7" />
                   <polyline points="18 17 13 12 18 7" />
                 </svg>
               )}
             </button>
-            {!sidebarIsRail && (
-              <button
-                type="button"
-                className={styles.sidebarReset}
-                disabled={!hasActiveFilters}
-                onClick={resetAll}
-              >
-                Réinitialiser
-              </button>
-            )}
           </div>
 
           {sidebarIsRail ? (
@@ -536,6 +526,21 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
               />
             </FilterGroup>
           </div>
+          )}
+
+          {/* Footer du sidebar : action Réinitialiser, séparée du
+              header pour éviter la confusion avec le bouton réduire. */}
+          {!sidebarIsRail && (
+            <div className={styles.sidebarFoot}>
+              <button
+                type="button"
+                className={styles.sidebarReset}
+                disabled={!hasActiveFilters}
+                onClick={resetAll}
+              >
+                Réinitialiser les filtres
+              </button>
+            </div>
           )}
         </aside>
 

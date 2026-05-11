@@ -11,20 +11,24 @@
   --sidebar-w: 260px;
   --sidebar-rail-w: 60px;
   --sugg-w: 320px;
-  /* Couleur unifiée bleu foncé pour la topbar et les sidebars,
-     identique à la sidebar de Cultes pour conserver l'atmosphère
-     d'un seul espace cohérent quand on navigue entre les deux pages. */
+  --center-radius: 28px;
+  /* Bleu nuit IDENTIQUE au hero glass dark de la bibliothèque
+     (Cultes hero : linear-gradient #06091c -> #030617 + halo bleu).
+     Topbar et sidebars partagent ce fond pour qu'ils se confondent
+     visuellement et donnent une seule masse sombre cohérente avec
+     le reste du site. */
   --rst-dark-glass:
-    linear-gradient(180deg, rgba(20, 32, 64, 0.82) 0%, rgba(8, 14, 32, 0.86) 100%);
+    radial-gradient(ellipse 60% 90% at 0% 0%, rgba(30, 71, 161, 0.18) 0%, transparent 70%),
+    linear-gradient(to bottom, #06091c 0%, #030617 100%);
+  --rst-dark-solid: #06091c;
   position: fixed;
   inset: 0;
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background:
-    radial-gradient(900px 500px at 8% 0%, rgba(30, 71, 161, 0.10), transparent 60%),
-    radial-gradient(700px 400px at 95% 22%, rgba(200, 51, 42, 0.06), transparent 65%),
-    var(--bg-canvas);
+  /* Le fond global est sombre — la zone centrale viendra par-dessus
+     en clair, avec ses coins arrondis qui créent la transition douce. */
+  background: var(--rst-dark-solid);
   color: var(--ink-1);
   overflow: hidden;
 }
@@ -39,15 +43,12 @@
   grid-template-columns: auto auto 1fr;
   align-items: center;
   gap: 24px;
-  padding: 0 20px;
+  padding: 0 24px;
   background: var(--rst-dark-glass);
-  -webkit-backdrop-filter: blur(28px) saturate(160%);
-  backdrop-filter: blur(28px) saturate(160%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  /* PAS de border-bottom : fusion visuelle avec la sidebar en dessous,
+     la transition vers le centre clair est faite par les coins arrondis
+     du .center, pas par une ligne ici. */
   color: rgba(255, 255, 255, 0.92);
-  box-shadow:
-    0 1px 0 0 rgba(255, 255, 255, 0.08) inset,
-    0 4px 18px rgba(0, 0, 0, 0.18);
   z-index: 100;
 }
 
@@ -188,10 +189,9 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-  background: var(--rst-dark-glass);
-  -webkit-backdrop-filter: blur(28px) saturate(160%);
-  backdrop-filter: blur(28px) saturate(160%);
-  border-right: 1px solid rgba(255, 255, 255, 0.10);
+  background: var(--rst-dark-solid);
+  /* PAS de border-right : fusion visuelle avec topbar et centre.
+     Le centre arrive avec son border-radius pour faire la transition. */
   color: rgba(255, 255, 255, 0.88);
   overflow: hidden;
 }
@@ -212,23 +212,26 @@
   border-bottom: 0;
 }
 
+/* Bouton toggle bien identifiable : pastille distincte avec
+   contraste clair sur le fond bleu nuit. */
 .sidebarToggle {
   display: inline-flex;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--r-xs);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: rgba(255, 255, 255, 0.78);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.92);
   align-items: center;
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-  transition: background var(--t-fast), color var(--t-fast);
+  transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast);
 }
 .sidebarToggle:hover {
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.18);
   color: #fff;
+  transform: scale(1.05);
 }
 
 /* Mode rail : 5 icônes verticales */
@@ -272,20 +275,38 @@
   color: rgba(255, 255, 255, 0.92);
 }
 
-.sidebarReset {
-  font-family: var(--f-text);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  color: var(--rst-blue-soft);
-  background: transparent;
-  border: 0;
-  cursor: pointer;
-  padding: 0;
-  transition: color var(--t-fast);
+/* Footer du sidebar : isole le bouton "Réinitialiser" pour qu'il
+   ne soit plus confondu avec le bouton réduire la barre. */
+.sidebarFoot {
+  flex-shrink: 0;
+  padding: 14px 18px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
-.sidebarReset:hover:not(:disabled) { color: #fff; }
+
+.sidebarReset {
+  display: block;
+  width: 100%;
+  font-family: var(--f-text);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  padding: 9px 16px;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+}
+.sidebarReset:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
 .sidebarReset:disabled {
-  color: rgba(255, 255, 255, 0.32);
+  color: rgba(255, 255, 255, 0.28);
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.06);
   cursor: not-allowed;
 }
 
@@ -400,15 +421,24 @@
 }
 
 /* ══════════════════════════════════════════════════════════
-   CENTRE — seule zone scrollable
+   CENTRE — fond clair qui se glisse SOUS la masse sombre
+   topbar/sidebars, avec coins arrondis en haut → effet
+   "découpe" arrondie qui remplace les angles à 90°.
    ══════════════════════════════════════════════════════════ */
 .center {
+  position: relative;
   overflow-y: auto;
   min-height: 0;
-  padding: 24px 28px 60px;
+  padding: 32px 32px 60px;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  background:
+    radial-gradient(900px 500px at 8% 0%, rgba(30, 71, 161, 0.10), transparent 60%),
+    radial-gradient(700px 400px at 95% 22%, rgba(200, 51, 42, 0.05), transparent 65%),
+    var(--bg-canvas);
+  border-radius: var(--center-radius) var(--center-radius) 0 0;
+  box-shadow: 0 -1px 0 0 rgba(255, 255, 255, 0.04) inset;
 }
 
 /* ── Slot du player ───────────────────────────────────── */
@@ -862,10 +892,11 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-  background: var(--glass-blue);
-  -webkit-backdrop-filter: var(--glass-blur-light);
-  backdrop-filter: var(--glass-blur-light);
-  border-left: 1px solid var(--line-1);
+  background: var(--rst-dark-solid);
+  color: rgba(255, 255, 255, 0.88);
+  /* Pas de border-left — fusion visuelle avec topbar et sidebar.
+     Le centre arrive avec son border-top-right-radius pour faire
+     la transition douce. */
 }
 
 .suggestionsHead {
@@ -874,7 +905,7 @@
   align-items: center;
   gap: 8px;
   padding: 16px 20px 14px;
-  border-bottom: 1px solid var(--line-1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .suggestionsLbl {
@@ -883,28 +914,30 @@
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--ink-1);
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .suggestionsToggle {
   display: inline-flex;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: var(--r-xs);
-  background: rgba(11, 15, 25, 0.06);
-  border: 1px solid var(--line-1);
-  color: var(--ink-2);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.78);
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: background var(--t-fast), color var(--t-fast);
 }
 .suggestionsToggle:hover {
-  background: rgba(11, 15, 25, 0.12);
-  color: var(--ink-1);
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
 }
 
-/* Onglet vertical pour rouvrir les suggestions, ancré bord droit */
+/* Onglet vertical pour rouvrir les suggestions, ancré bord droit.
+   Plus visible : largeur 36px, ombre marquée, indicateur "Suggestions"
+   visible au hover. */
 .suggestionsReopen {
   position: absolute;
   top: 50%;
@@ -913,24 +946,24 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 64px;
+  width: 36px;
+  height: 96px;
   border-radius: var(--r-md) 0 0 var(--r-md);
-  background: var(--rst-dark-glass);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
-  color: rgba(255, 255, 255, 0.88);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: var(--rst-dark-solid);
+  color: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-right: 0;
   cursor: pointer;
   z-index: 50;
-  box-shadow: -2px 0 12px rgba(0, 0, 0, 0.18);
-  transition: background var(--t-fast), color var(--t-fast);
+  box-shadow:
+    -4px 0 18px rgba(0, 0, 0, 0.32),
+    0 1px 0 0 rgba(255, 255, 255, 0.08) inset;
+  transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast);
 }
 .suggestionsReopen:hover {
   color: #fff;
-  background:
-    linear-gradient(180deg, rgba(20, 32, 64, 0.90) 0%, rgba(8, 14, 32, 0.92) 100%);
+  background: #0c1130;
+  transform: translateY(-50%) translateX(-2px);
 }
 
 .suggestionsList {
@@ -956,7 +989,7 @@
   text-align: left;
   transition: background var(--t-fast);
 }
-.suggRow:hover { background: rgba(255, 255, 255, 0.55); }
+.suggRow:hover { background: rgba(255, 255, 255, 0.06); }
 
 .suggThumb {
   position: relative;
@@ -998,7 +1031,7 @@
   font-weight: 500;
   font-size: 13.5px;
   line-height: 1.3;
-  color: var(--ink-1);
+  color: rgba(255, 255, 255, 0.92);
   margin: 0;
   letter-spacing: -0.005em;
   display: -webkit-box;
@@ -1011,7 +1044,7 @@
 .suggMeta {
   font-family: var(--f-text);
   font-size: 11.5px;
-  color: var(--ink-3);
+  color: rgba(255, 255, 255, 0.56);
   margin: 0;
   letter-spacing: 0.01em;
 }
