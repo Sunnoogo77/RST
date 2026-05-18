@@ -889,32 +889,33 @@
     transform: none;
   }
 
-  /* Mobile : quote-box compacte en HAUT à DROITE de l'image. Petite,
-     lisible, ne bloque ni le visage ni le centre de la photo. */
+  /* Mobile : quote-box MINI en HAUT à DROITE de l'image. Très compacte,
+     ne mange qu'un coin de la photo. */
   .heroQuoteBox {
     position: absolute;
-    top: 14px;
-    right: 12px;
+    top: 10px;
+    right: 10px;
     left: auto;
     bottom: auto;
-    max-width: 58vw;
-    padding: 12px 16px 14px;
+    max-width: 46vw;
+    padding: 8px 12px 10px;
     background: rgba(6, 9, 28, 0.82);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
-    border-radius: var(--r-sm);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
+    border-radius: var(--r-xs);
   }
   .heroQuoteGlyph {
-    font-size: 24px;
-    margin-bottom: 6px;
+    font-size: 18px;
+    margin-bottom: 2px;
+    line-height: 0.6;
   }
   .heroQuoteBox p {
-    font-size: 12.5px;
-    line-height: 1.4;
-    margin: 0 0 6px;
+    font-size: 11px;
+    line-height: 1.35;
+    margin: 0 0 4px;
   }
   .heroQuoteBox cite {
-    font-size: 8.5px;
-    letter-spacing: .18em;
+    font-size: 7.5px;
+    letter-spacing: .16em;
   }
 
   /* Sections post-hero — perf */

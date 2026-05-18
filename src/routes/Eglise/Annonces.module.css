@@ -1,8 +1,12 @@
 /* ── HERO ──────────────────────────────────────────────────────── */
+/* Pattern Cultes/Cantiques : hero extended sous le header pour que
+   la sticky subnav reste sur fond sombre généreux. */
 .hero {
+  position: relative;
   max-width: none;
   margin: 0;
-  padding: 60px 32px 40px;
+  margin-top: -120px;
+  padding: 180px 32px 64px;
   border-bottom: 1px solid rgba(255, 255, 255, .10);
   background:
     radial-gradient(ellipse 48% 64% at 50% 45%, rgba(30, 71, 161, .26) 0%, rgba(6, 9, 28, .04) 58%, transparent 76%),
@@ -502,7 +506,10 @@
 
 /* ── MOBILE ≤ 820px ───────────────────────────────────────────── */
 @media (max-width: 820px) {
-  .hero    { padding: 40px 22px 28px; }
+  .hero {
+    margin-top: -110px;
+    padding: 142px 22px 56px;
+  }
   .filters { padding: 18px 22px; }
   .filterGroup { flex-wrap: wrap; }
 
@@ -533,7 +540,10 @@
 
 /* ── MOBILE ≤ 480px (téléphone) ───────────────────────────────── */
 @media (max-width: 480px) {
-  .hero    { padding: 32px 16px 22px; }
+  .hero {
+    margin-top: -110px;
+    padding: 134px 16px 40px;
+  }
   .filters { padding: 14px 16px; }
 
   .featured    { padding: 24px 16px 18px; }
