@@ -1168,6 +1168,10 @@
 @media (max-width: 820px) {
   .watchPage {
     --topbar-h: 52px;
+    /* Fond global bascule canvas : aucun dark ne peut transparaître
+       en bas du scroll quand le contenu est court. La topbar a son
+       propre fond dark via background, donc reste sombre. */
+    background: var(--bg-canvas);
   }
   /* Mobile : back · search · filterBtn (brand masqué). 3 colonnes. */
   .topbar {
