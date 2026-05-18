@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useScrollDirection } from '../../hooks/useScrollDirection';
+import { useSubnavOnDark } from '../../hooks/useSubnavOnDark';
 import styles from './EgliseLayout.module.css';
 
 const NAV_ITEMS = [
@@ -15,12 +16,17 @@ export default function EgliseLayout() {
   const { t } = useTranslation();
   const { direction, scrollY } = useScrollDirection(80);
   const subnavHidden = direction === 'down' && scrollY > 80;
-  const subnavOnDark = scrollY < 420;
+  /* Détection dynamique : la subnav est "dark" tant que son bord
+     inférieur se trouve au-dessus d'un élément `[data-page-hero]`.
+     Cela s'adapte automatiquement à la hauteur du hero de chaque
+     page (Annonces, Témoignages, Cultes, Cantiques, etc.). */
+  const subnavOnDark = useSubnavOnDark();
 
   return (
     <>
       <div className={styles.headerSpacer} aria-hidden="true" />
       <nav
+        data-sticky-subnav
         className={[
           styles.subnav,
           subnavOnDark ? styles.subnavDark : styles.subnavLight,

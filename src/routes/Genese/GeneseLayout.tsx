@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useScrollDirection } from '../../hooks/useScrollDirection';
+import { useSubnavOnDark } from '../../hooks/useSubnavOnDark';
 import styles from './GeneseLayout.module.css';
 
 const NAV_ITEMS = [
@@ -18,12 +19,17 @@ export default function GeneseLayout() {
   const { t } = useTranslation();
   const { direction, scrollY } = useScrollDirection(80);
   const subnavHidden = direction === 'down' && scrollY > 80;
-  const subnavOnDark = scrollY < 420;
+  /* Détection dynamique : la subnav est "dark" tant qu'elle survole
+     un `[data-page-hero]` (le hero sombre de chaque page Genèse).
+     Plus de seuil arbitraire de 420px qui était inadapté à plusieurs
+     pages où le hero a une hauteur différente. */
+  const subnavOnDark = useSubnavOnDark();
 
   return (
     <>
       <div className={styles.headerSpacer} aria-hidden="true" />
       <nav
+        data-sticky-subnav
         className={[
           styles.subnav,
           subnavOnDark ? styles.subnavDark : styles.subnavLight,

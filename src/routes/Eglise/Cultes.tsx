@@ -355,7 +355,7 @@ export default function Cultes() {
     <main id="main-content" className={styles.page}>
 
       {/* HERO glass dark */}
-      <section className={styles.hero} aria-label={t('eglise.cultes.eyebrow')}>
+      <section data-page-hero className={styles.hero} aria-label={t('eglise.cultes.eyebrow')}>
         <div className={styles.heroInner}>
           <div className={styles.heroEyebrow}>{t('eglise.cultes.eyebrow')}</div>
           <h1 className={styles.heroTitle}>

@@ -50,7 +50,7 @@ export default function Cantiques() {
       {/* ══════════════════════════════════════════════════════════
           HERO glass dark — inchangé
           ══════════════════════════════════════════════════════════ */}
-      <section className={styles.hero} aria-label={t('eglise.cantiques.eyebrow')}>
+      <section data-page-hero className={styles.hero} aria-label={t('eglise.cantiques.eyebrow')}>
         <div className={styles.heroInner}>
           <div className={styles.heroEyebrow}>{t('eglise.cantiques.eyebrow')}</div>
           <h1 className={styles.heroTitle}>

@@ -53,7 +53,7 @@ export default function AnnonceDetail() {
     <article className={styles.detail}>
 
       {/* ── Bandeau supérieur ──────────────────────────────────── */}
-      <header className={styles.head}>
+      <header data-page-hero className={styles.head}>
         <Link to="/eglise/annonces" className={styles.backLink}>
           ← Retour aux annonces
         </Link>

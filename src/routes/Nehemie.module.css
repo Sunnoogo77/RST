@@ -885,11 +885,25 @@
     transform: none;
   }
 
+  /* Mobile : la quote-box SORT du recouvrement de l'image (qu'elle
+     bloquait totalement) et se pose en bandeau sous la photo, dans
+     le flux normal — l'image reste pleinement visible. */
   .heroQuoteBox {
-    bottom: 8%;
-    right: 4%;
-    left: 4%;
+    position: relative;
+    inset: auto;
+    margin: -28px var(--pad-x-mob) 0;
     max-width: unset;
+    padding: 18px 22px;
+    background: rgba(6, 9, 28, 0.90);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32);
+  }
+  .heroQuoteGlyph {
+    font-size: 36px;
+    margin-bottom: 8px;
+  }
+  .heroQuoteBox p {
+    font-size: 15px;
+    line-height: 1.45;
   }
 
   /* Sections post-hero — perf */
@@ -934,6 +948,27 @@
 
   .stat {
     min-height: auto;
+  }
+
+  /* Bande "Ensemble allons plus loin" sur mobile :
+     - L'image landscape large rendue en background-cover sur viewport
+       portrait étroit produit un cadrage horrible (visage centré coupé).
+     - On déplace background-position vers le haut pour cadrer la zone
+       intéressante (la silhouette + le ciel), on renforce le voile
+       pour mieux assurer la lisibilité du texte par-dessus, et on
+       réduit les marges full-bleed pour éviter le scroll horizontal. */
+  .participationBand {
+    margin-top: 24px;
+    margin-bottom: 40px;
+    background-position: 40% 28%;
+  }
+  .participationOverlay {
+    background:
+      linear-gradient(180deg, rgba(6,9,28,.88) 0%, rgba(6,9,28,.82) 100%);
+  }
+  .participationInner {
+    padding: 40px var(--pad-x-mob);
+    gap: 22px;
   }
 
   .infoCard {

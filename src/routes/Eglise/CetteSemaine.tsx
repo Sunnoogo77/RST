@@ -51,7 +51,7 @@ export default function CetteSemaine() {
       {/* ══════════════════════════════════════════════════════════
           HERO — vidéo gauche · infos sermon droite
           ══════════════════════════════════════════════════════════ */}
-      <section className={styles.hero} aria-label="Culte de cette semaine">
+      <section data-page-hero className={styles.hero} aria-label="Culte de cette semaine">
         <div className={`${styles.heroInner} ${heroPlaying ? styles.heroInnerExpanded : ''}`}>
 
         {/* Gauche : vidéo / vignette */}

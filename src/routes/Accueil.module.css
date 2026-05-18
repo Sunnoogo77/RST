@@ -983,9 +983,13 @@
     margin-top: 0;
   }
 
+  /* Image hero du Christ sur mobile : plus haute (présence + force
+     éditoriale), cadrage descendu vers le visage, fondu inférieur plus
+     long pour une transition douce vers le texte sombre dessous. */
   .heroJesus {
     order: 1;
-    height: 52vw;
+    height: 68vw;
+    max-height: 60svh;
     overflow: hidden;
   }
 
@@ -995,9 +999,18 @@
     width: 100%;
     max-width: 100%;
     height: 100%;
-    object-position: center 12%;
-    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 78%, rgba(0,0,0,.5) 91%, transparent 100%);
-    mask-image: linear-gradient(180deg, #000 0%, #000 78%, rgba(0,0,0,.5) 91%, transparent 100%);
+    object-fit: cover;
+    object-position: center 22%;
+    -webkit-mask-image: linear-gradient(180deg,
+      #000 0%, #000 62%,
+      rgba(0,0,0,.85) 80%,
+      rgba(0,0,0,.4) 94%,
+      transparent 100%);
+    mask-image: linear-gradient(180deg,
+      #000 0%, #000 62%,
+      rgba(0,0,0,.85) 80%,
+      rgba(0,0,0,.4) 94%,
+      transparent 100%);
   }
 
   .heroJesus::before {

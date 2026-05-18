@@ -117,7 +117,7 @@ export default function Annonces() {
     <div>
 
       {/* ── HERO ───────────────────────────────────────────────── */}
-      <section className={styles.hero}>
+      <section data-page-hero className={styles.hero}>
         <div className={styles.heroInner}>
           <div className={styles.eyebrow}>{t('eglise.annonces.eyebrow')}</div>
           <h1 className={styles.heroTitle}>

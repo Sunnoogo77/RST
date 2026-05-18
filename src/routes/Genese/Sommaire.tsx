@@ -25,7 +25,7 @@ export default function Sommaire() {
   return (
     <main id="main-content">
       {/* HERO */}
-      <header className={styles.hero} aria-label="Genèse de l'Église">
+      <header data-page-hero className={styles.hero} aria-label="Genèse de l'Église">
         <div className={styles.heroInner}>
           <Eyebrow>Mémoire · Archives 2005-2006</Eyebrow>
           <h1 className={styles.heroTitre}>

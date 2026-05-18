@@ -118,7 +118,7 @@ export default function PageGenese({ page }: PageGeneseProps) {
   return (
     <main id="main-content">
       {/* HERO */}
-      <header className={styles.hero} aria-label={page.titre}>
+      <header data-page-hero className={styles.hero} aria-label={page.titre}>
         <div className={styles.heroInner}>
           <Eyebrow>{page.eyebrow}</Eyebrow>
           <h1 className={styles.heroTitre}>

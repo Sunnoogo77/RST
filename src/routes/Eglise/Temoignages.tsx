@@ -11,7 +11,7 @@ export default function Temoignages() {
     <div>
 
       {/* ── HERO ───────────────────────────────────────────────── */}
-      <section className={styles.hero}>
+      <section data-page-hero className={styles.hero}>
         <div className={styles.heroInner}>
           <div className={styles.eyebrow}>{t('eglise.temoignages.eyebrow')}</div>
           <h1 className={styles.heroTitle}>
