@@ -101,11 +101,11 @@ function Shell() {
 
         {/* Pages DÉDIÉES de lecture/navigation des cantiques, hors
             EgliseLayout. Trois modes pris en charge par CantiquesWatch :
-            - /famille/:famille → mini-bibliothèque scopée (recueil,
+            - /hymnaire/:famille → mini-bibliothèque scopée (recueil,
               spéciaux ou service de chant) avec search + grille.
             - /:slug             → cantique seul (vidéo + paroles).
             - /:slug = "session-…" → session (vidéo + index + paroles). */}
-        <Route path="/eglise/cantiques/watch/famille/:famille" element={<CantiquesWatch />} />
+        <Route path="/eglise/cantiques/watch/hymnaire/:famille" element={<CantiquesWatch />} />
         <Route path="/eglise/cantiques/watch/:slug" element={<CantiquesWatch />} />
 
         <Route path="/design-system" element={<DesignSystem />} />

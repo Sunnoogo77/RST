@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams, Navigate } from 'react-router-dom';
 import { cantiques } from '../../data/cantiques';
 import { sessionsAdoration } from '../../data/sessions-adoration';
 import type { Cantique, CantiqueOccurrence, CantiqueFamille, SessionAdoration } from '../../types';
 import { youtubeThumbnail } from '../../utils/youtube';
 import YouTubePlayer from '../../components/ui/YouTubePlayer/YouTubePlayer';
+import HymnaireBrowser from '../../components/ui/HymnaireBrowser/HymnaireBrowser';
 import { asset } from '../../utils/asset';
 import styles from './CantiquesWatch.module.css';
 
@@ -14,7 +15,7 @@ import styles from './CantiquesWatch.module.css';
    Trois modes pris en charge par le même Shell (topbar dark
    + corps blanc + sidebar droite bleutée continue) :
 
-     1) BROWSE   /eglise/cantiques/watch/famille/:famille
+     1) BROWSE   /eglise/cantiques/watch/hymnaire/:famille
         Mini-bibliothèque scopée à une famille (recueil, spéciaux
         ou service de chant). Search + grille. Sidebar masquée.
         Clic carte → ouvre le watch correspondant.
@@ -142,7 +143,7 @@ function Topbar({ activeFamille, onPrev, onNext, onClose }: TopbarProps) {
                 styles.familyPill,
                 isActive ? styles.familyPillActive : '',
               ].join(' ')}
-              onClick={() => navigate(`/eglise/cantiques/watch/famille/${p.key}`)}
+              onClick={() => navigate(`/eglise/cantiques/watch/hymnaire/${p.key}`)}
               aria-current={isActive ? 'page' : undefined}
             >
               {p.label}
@@ -212,8 +213,10 @@ function Topbar({ activeFamille, onPrev, onNext, onClose }: TopbarProps) {
 
 /* ══════════════════════════════════════════════════════════
    MODE BROWSE — mini-bibliothèque scopée à une famille
-   Plein la zone centrale (sidebar paroles masquée). Search +
-   grille de cartes ; clic → ouvre le watch correspondant.
+   Wrapper du watch shell autour de <HymnaireBrowser/>. Toute la
+   logique de browsing (search + filtres + grid/list) vit dans le
+   composant partagé HymnaireBrowser, lui-même réutilisé en mode
+   embarqué dans /eglise/cantiques.
    ══════════════════════════════════════════════════════════ */
 
 interface FamilleBrowseViewProps {
@@ -221,453 +224,17 @@ interface FamilleBrowseViewProps {
   onClose: () => void;
 }
 
-interface BrowseItem {
-  key: string;
-  slug: string;
-  title: string;
-  meta: string;
-  subMeta?: string;
-  thumb: string | null;
-  year?: string;   // pour les chips de filtrage "par année"
-  numero?: number; // pour la liste-recueil (badge n°)
-  isSession: boolean;
-}
-
 function FamilleBrowseView({ famille, onClose }: FamilleBrowseViewProps) {
-  const navigate = useNavigate();
-  const [q, setQ] = useState('');
-  const [selectedYear, setSelectedYear] = useState<string | null>(null);
-
-  // Reset les filtres quand on change de famille (URL change).
-  useEffect(() => {
-    setQ('');
-    setSelectedYear(null);
-  }, [famille]);
-
-  const items: BrowseItem[] = useMemo(() => {
-    if (famille === 'adoration') {
-      return [...sessionsAdoration]
-        .sort((a, b) => b.date.localeCompare(a.date))
-        .map((s) => ({
-          key: s.id,
-          slug: s.slug,
-          title: s.titre,
-          meta: s.interpretes.join(' · '),
-          subMeta: `${formatLongDate(s.date)}${s.evenement ? ` · ${s.evenement}` : ''}`,
-          thumb: youtubeThumbnail(s.videoUrl),
-          year: s.date.slice(0, 4),
-          isSession: true,
-        }));
-    }
-    const list = cantiques.filter((c) => c.famille === famille);
-    if (famille === 'recueil') {
-      list.sort((a, b) => (a.numeroRecueil ?? 0) - (b.numeroRecueil ?? 0));
-      return list.map((c) => {
-        const occ = c.occurrences?.[0];
-        return {
-          key: c.id,
-          slug: c.slug ?? c.id,
-          title: c.titre.replace(/\.$/, ''),
-          meta: c.numeroRecueil
-            ? `n° ${String(c.numeroRecueil).padStart(3, '0')}`
-            : c.solisteOuChoeur,
-          subMeta: c.numeroRecueil ? c.solisteOuChoeur : undefined,
-          thumb: youtubeThumbnail(occ?.videoUrl ?? c.videoUrl),
-          numero: c.numeroRecueil ?? undefined,
-          isSession: false,
-        };
-      });
-    }
-    // special — tri par date d'événement la plus récente
-    list.sort((a, b) => {
-      const dateA = a.occurrences?.[0]?.dateEvenement ?? '';
-      const dateB = b.occurrences?.[0]?.dateEvenement ?? '';
-      return dateB.localeCompare(dateA);
-    });
-    return list.map((c) => {
-      const occ = c.occurrences?.[0];
-      return {
-        key: c.id,
-        slug: c.slug ?? c.id,
-        title: c.titre.replace(/\.$/, ''),
-        meta: occ?.interpretes.join(' · ') ?? c.solisteOuChoeur,
-        subMeta: occ?.dateEvenement ? formatLongDate(occ.dateEvenement) : occ?.contexte,
-        thumb: youtubeThumbnail(occ?.videoUrl ?? c.videoUrl),
-        year: occ?.dateEvenement?.slice(0, 4),
-        isSession: false,
-      };
-    });
-  }, [famille]);
-
-  /* Années disponibles dans le set courant — décroissant. Affiché en
-     chips au-dessus de la grille pour les familles datées (pas recueil). */
-  const availableYears = useMemo(() => {
-    if (famille === 'recueil') return [];
-    const set = new Set<string>();
-    items.forEach((it) => { if (it.year) set.add(it.year); });
-    return [...set].sort((a, b) => b.localeCompare(a));
-  }, [items, famille]);
-
-  const filtered = useMemo(() => {
-    const needle = q.trim().toLowerCase();
-    return items.filter((it) => {
-      if (selectedYear && it.year !== selectedYear) return false;
-      if (!needle) return true;
-      const hay = `${it.title} ${it.meta} ${it.subMeta ?? ''}`.toLowerCase();
-      return hay.includes(needle);
-    });
-  }, [items, q, selectedYear]);
-
-  const goTo = (it: BrowseItem) => {
-    navigate(
-      it.isSession
-        ? `/eglise/cantiques/watch/session-${it.slug}`
-        : `/eglise/cantiques/watch/${it.slug}`,
-    );
-  };
-
-  const eyebrow =
-    famille === 'recueil' ? 'Recueil' :
-    famille === 'special' ? 'Cantiques spéciaux' :
-                            'Service de chant';
-  const title =
-    famille === 'recueil' ? 'Le recueil de l\'assemblée' :
-    famille === 'special' ? 'Cantiques spéciaux' :
-                            'Services de chant';
-  const hint =
-    famille === 'recueil'
-      ? 'Tous les cantiques du recueil. Choisis-en un pour découvrir les vidéos dans lesquelles il a été interprété.'
-      : famille === 'special'
-      ? 'Solos, duos et interprétations spéciales captés au sanctuaire ou en studio.'
-      : 'Sessions complètes d\'adoration & louange — vidéo intégrale et index des cantiques contenus.';
-  const placeholder =
-    famille === 'recueil'  ? 'Rechercher par numéro, titre, soliste…' :
-    famille === 'special'  ? 'Rechercher par titre, interprète, contexte…' :
-                             'Rechercher une session par titre, événement, date…';
-
   return (
     <div className={[styles.watchPage, styles.watchPageBrowse].join(' ')}>
       <Topbar activeFamille={famille} onClose={onClose} />
 
       <div className={[styles.body, styles.bodyBrowse].join(' ')}>
         <section className={[styles.videoColumn, styles.videoColumnBrowse].join(' ')}>
-          <div className={styles.browseInner}>
-            <header className={styles.browseHead}>
-              <p className={styles.browseEyebrow}>{eyebrow}</p>
-              <h1 className={styles.browseTitle}>{title}</h1>
-              <p className={styles.browseHint}>{hint}</p>
-            </header>
-
-            <div className={styles.browseSearchBar}>
-              <svg
-                className={styles.browseSearchIcon}
-                width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-              <input
-                type="search"
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder={placeholder}
-                className={styles.browseSearchInput}
-                aria-label="Rechercher"
-              />
-              {q && (
-                <button
-                  type="button"
-                  className={styles.browseSearchClear}
-                  onClick={() => setQ('')}
-                  aria-label="Effacer la recherche"
-                >
-                  ×
-                </button>
-              )}
-            </div>
-
-            {availableYears.length > 0 && (
-              <div className={styles.browseFilters} role="group" aria-label="Filtrer par année">
-                <span className={styles.browseFiltersLbl}>Année</span>
-                <div className={styles.browseChips}>
-                  <button
-                    type="button"
-                    className={[
-                      styles.browseChip,
-                      !selectedYear ? styles.browseChipActive : '',
-                    ].join(' ')}
-                    onClick={() => setSelectedYear(null)}
-                    aria-pressed={!selectedYear}
-                  >
-                    Toutes
-                  </button>
-                  {availableYears.map((y) => (
-                    <button
-                      key={y}
-                      type="button"
-                      className={[
-                        styles.browseChip,
-                        selectedYear === y ? styles.browseChipActive : '',
-                      ].join(' ')}
-                      onClick={() => setSelectedYear(y === selectedYear ? null : y)}
-                      aria-pressed={selectedYear === y}
-                    >
-                      {y}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <p className={styles.browseCount}>
-              {filtered.length} {filtered.length > 1 ? 'résultats' : 'résultat'}
-              {q && ` pour « ${q} »`}
-              {selectedYear && ` · ${selectedYear}`}
-            </p>
-
-            {filtered.length > 0 ? (
-              famille === 'recueil' ? (
-                <RecueilLayout items={filtered} onSelect={goTo} />
-              ) : (
-                <div className={styles.browseGrid}>
-                  {filtered.map((it) => (
-                    <button
-                      key={it.key}
-                      type="button"
-                      className={styles.browseCard}
-                      onClick={() => goTo(it)}
-                    >
-                      <div className={styles.browseThumb}>
-                        {it.thumb ? (
-                          <img src={it.thumb} alt="" loading="lazy" />
-                        ) : (
-                          <div className={styles.browseThumbEmpty}>
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M9 18V5l12-2v13" />
-                              <circle cx="6" cy="18" r="3" />
-                              <circle cx="18" cy="16" r="3" />
-                            </svg>
-                          </div>
-                        )}
-                      </div>
-                      <div className={styles.browseCardBody}>
-                        <p className={styles.browseCardTitle}>{it.title}</p>
-                        <p className={styles.browseCardMeta}>{it.meta}</p>
-                        {it.subMeta && (
-                          <p className={styles.browseCardSubMeta}>{it.subMeta}</p>
-                        )}
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )
-            ) : (
-              <div className={styles.browseEmpty}>
-                <p>Aucun résultat ne correspond à ta recherche.</p>
-                {(q || selectedYear) && (
-                  <button
-                    type="button"
-                    className={styles.browseEmptyReset}
-                    onClick={() => { setQ(''); setSelectedYear(null); }}
-                  >
-                    Effacer les filtres
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
+          <HymnaireBrowser famille={famille} />
         </section>
       </div>
     </div>
-  );
-}
-
-/* ══════════════════════════════════════════════════════════
-   RECUEIL LAYOUT — vraie table des matières hymnaire
-   Pensée pour scaler à 500+ entrées :
-     1) Sélection (haut)  → cantiques qui ont une vidéo dispo
-                             (proxy "les plus consultés" en attendant
-                             les analytics).
-     2) Toolbar tri       → Numéro (défaut) / Alphabétique.
-     3) Jumper alpha      → A B C … Z cliquables (mode A→Z uniquement).
-     4) Grille 2 colonnes → rows compactes sur 2 cols dès ≥ 768px,
-                             1 col en dessous.
-   ══════════════════════════════════════════════════════════ */
-
-type RecueilSort = 'numero' | 'alpha';
-
-function RecueilLayout({ items, onSelect }: {
-  items: BrowseItem[];
-  onSelect: (it: BrowseItem) => void;
-}) {
-  const [sort, setSort] = useState<RecueilSort>('numero');
-
-  const featured = useMemo(
-    () => items.filter((it) => it.thumb).slice(0, 6),
-    [items],
-  );
-
-  const sorted = useMemo(() => {
-    if (sort === 'alpha') {
-      return [...items].sort((a, b) =>
-        a.title.localeCompare(b.title, 'fr', { sensitivity: 'base' }),
-      );
-    }
-    return items; // déjà trié par numéro à l'amont
-  }, [items, sort]);
-
-  /* Mode alpha : groupes par première lettre. */
-  const alphaGroups = useMemo(() => {
-    if (sort !== 'alpha') return null;
-    const map = new Map<string, BrowseItem[]>();
-    sorted.forEach((it) => {
-      const letter = (it.title.charAt(0) || '?').toUpperCase();
-      if (!map.has(letter)) map.set(letter, []);
-      map.get(letter)!.push(it);
-    });
-    return [...map.entries()].sort(([a], [b]) => a.localeCompare(b, 'fr'));
-  }, [sorted, sort]);
-
-  return (
-    <div className={styles.recueilLayout}>
-      {/* ── Sélection : cards horizontales (cantiques avec vidéo) ── */}
-      {featured.length > 0 && (
-        <section className={styles.recueilFeatured} aria-label="Cantiques avec vidéo">
-          <h2 className={styles.recueilSectionLbl}>Avec vidéo disponible</h2>
-          <div className={styles.recueilFeaturedGrid}>
-            {featured.map((it) => (
-              <button
-                key={it.key}
-                type="button"
-                className={styles.recueilFeaturedCard}
-                onClick={() => onSelect(it)}
-              >
-                <div className={styles.recueilFeaturedThumb}>
-                  <img src={it.thumb!} alt="" loading="lazy" />
-                  {it.numero && (
-                    <span className={styles.recueilFeaturedNum}>
-                      n° {String(it.numero).padStart(3, '0')}
-                    </span>
-                  )}
-                </div>
-                <p className={styles.recueilFeaturedTitle}>{it.title}</p>
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* ── Toolbar tri + jumper alpha ── */}
-      <div className={styles.recueilToolbar}>
-        <div className={styles.recueilSortGroup} role="group" aria-label="Trier le recueil">
-          <span className={styles.recueilSortLbl}>Tri</span>
-          <div className={styles.recueilSortBtns}>
-            <button
-              type="button"
-              className={[
-                styles.recueilSortBtn,
-                sort === 'numero' ? styles.recueilSortBtnActive : '',
-              ].join(' ')}
-              onClick={() => setSort('numero')}
-              aria-pressed={sort === 'numero'}
-            >
-              Numéro
-            </button>
-            <button
-              type="button"
-              className={[
-                styles.recueilSortBtn,
-                sort === 'alpha' ? styles.recueilSortBtnActive : '',
-              ].join(' ')}
-              onClick={() => setSort('alpha')}
-              aria-pressed={sort === 'alpha'}
-            >
-              A → Z
-            </button>
-          </div>
-        </div>
-
-        {sort === 'alpha' && alphaGroups && alphaGroups.length > 0 && (
-          <nav className={styles.recueilLetters} aria-label="Aller à une lettre">
-            {alphaGroups.map(([letter]) => (
-              <a
-                key={letter}
-                href={`#recueil-letter-${letter}`}
-                className={styles.recueilLetter}
-              >
-                {letter}
-              </a>
-            ))}
-          </nav>
-        )}
-      </div>
-
-      {/* ── Liste principale ── */}
-      {sort === 'numero' ? (
-        <ol className={styles.recueilGrid} aria-label="Cantiques par numéro">
-          {sorted.map((it) => (
-            <RecueilRow key={it.key} item={it} onClick={() => onSelect(it)} />
-          ))}
-        </ol>
-      ) : (
-        <div className={styles.recueilAlphaGroups}>
-          {alphaGroups!.map(([letter, group]) => (
-            <section
-              key={letter}
-              id={`recueil-letter-${letter}`}
-              className={styles.recueilAlphaSection}
-            >
-              <h3 className={styles.recueilAlphaHead}>{letter}</h3>
-              <ol className={styles.recueilGrid}>
-                {group.map((it) => (
-                  <RecueilRow key={it.key} item={it} onClick={() => onSelect(it)} />
-                ))}
-              </ol>
-            </section>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function RecueilRow({ item, onClick }: { item: BrowseItem; onClick: () => void }) {
-  return (
-    <li>
-      <button type="button" className={styles.recueilRow} onClick={onClick}>
-        <span className={styles.recueilNum}>
-          {item.numero ? String(item.numero).padStart(3, '0') : '—'}
-        </span>
-        <span className={styles.recueilBody}>
-          <span className={styles.recueilTitle}>{item.title}</span>
-          {item.subMeta && (
-            <span className={styles.recueilSoliste}>{item.subMeta}</span>
-          )}
-        </span>
-        {item.thumb && (
-          <span
-            className={styles.recueilVideoBadge}
-            title="Vidéo disponible"
-            aria-label="Vidéo disponible"
-          >
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          </span>
-        )}
-        <svg
-          className={styles.recueilArrow}
-          width="14" height="14" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <polyline points="9 18 15 12 9 6" />
-        </svg>
-      </button>
-    </li>
   );
 }
 
