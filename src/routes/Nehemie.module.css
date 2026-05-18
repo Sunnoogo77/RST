@@ -889,25 +889,32 @@
     transform: none;
   }
 
-  /* Mobile : la quote-box SORT du recouvrement de l'image (qu'elle
-     bloquait totalement) et se pose en bandeau sous la photo, dans
-     le flux normal — l'image reste pleinement visible. */
+  /* Mobile : quote-box compacte en HAUT à DROITE de l'image. Petite,
+     lisible, ne bloque ni le visage ni le centre de la photo. */
   .heroQuoteBox {
-    position: relative;
-    inset: auto;
-    margin: -28px var(--pad-x-mob) 0;
-    max-width: unset;
-    padding: 18px 22px;
-    background: rgba(6, 9, 28, 0.90);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.32);
+    position: absolute;
+    top: 14px;
+    right: 12px;
+    left: auto;
+    bottom: auto;
+    max-width: 58vw;
+    padding: 12px 16px 14px;
+    background: rgba(6, 9, 28, 0.82);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
+    border-radius: var(--r-sm);
   }
   .heroQuoteGlyph {
-    font-size: 36px;
-    margin-bottom: 8px;
+    font-size: 24px;
+    margin-bottom: 6px;
   }
   .heroQuoteBox p {
-    font-size: 15px;
-    line-height: 1.45;
+    font-size: 12.5px;
+    line-height: 1.4;
+    margin: 0 0 6px;
+  }
+  .heroQuoteBox cite {
+    font-size: 8.5px;
+    letter-spacing: .18em;
   }
 
   /* Sections post-hero — perf */
@@ -955,26 +962,59 @@
   }
 
   /* Bande "Ensemble allons plus loin" sur mobile :
-     L'image landscape rendue en background-cover sur viewport portrait
-     produit un cadrage horrible (visages coupés, scène illisible). On
-     SUPPRIME tout simplement l'image de fond sur mobile et on garde
-     un fond solide bleu nuit + un léger accent gold qui rappelle
-     l'esprit "chantier sacré" — beaucoup plus propre et lisible. */
+     - On RESTAURE l'image de fond (Néhémie au chantier) que le user
+       veut voir. Cadrage ajusté pour viewport portrait (focus sur la
+       silhouette à droite, ciel coupé proprement).
+     - Voile sombre dégradé pour la lisibilité du texte par-dessus,
+       sans pour autant tuer l'image (elle reste perceptible).
+     - Les 3 blocs (Ensemble allons plus loin / Suivez l'avancement /
+       Moyens de participation) sont empilés VERTICALEMENT avec de
+       l'espace entre eux + séparateurs horizontaux dorés. */
   .participationBand {
     margin-top: 24px;
     margin-bottom: 40px;
-    background-image: none !important;
-    background-color: #06091c;
+    background-position: 65% center;
+    background-size: cover;
   }
   .participationOverlay {
     background:
-      radial-gradient(ellipse 100% 60% at 50% 0%,
-        rgba(213, 154, 34, 0.10) 0%, transparent 60%),
-      linear-gradient(180deg, #06091c 0%, #030617 100%);
+      linear-gradient(180deg,
+        rgba(6, 9, 28, 0.78) 0%,
+        rgba(6, 9, 28, 0.72) 50%,
+        rgba(6, 9, 28, 0.82) 100%);
   }
   .participationInner {
-    padding: 40px var(--pad-x-mob);
+    padding: 48px var(--pad-x-mob) 52px;
+    gap: 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  /* Séparateur horizontal doré entre les 3 blocs (à la place de la
+     barre verticale qu'on avait sur desktop). */
+  .bandBlock {
+    padding: 0;
+    border: 0;
+    text-align: left;
+  }
+  .bandBlock + .bandBlock {
+    padding-top: 32px;
+    border-top: 1px solid rgba(213, 154, 34, 0.42);
+    border-left: 0 !important;
+  }
+  /* Plus d'air entre les éléments internes d'un même bloc */
+  .bandBlock h3 {
+    margin-bottom: 14px;
+  }
+  .bandBlock p {
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+  /* Liste des moyens de participation : empilée verticalement aussi,
+     avec un peu plus d'espace entre les options. */
+  .payList {
     gap: 22px;
+    margin-top: 6px;
   }
 
   .infoCard {
