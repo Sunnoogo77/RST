@@ -6,6 +6,7 @@ import type { Cantique, CantiqueOccurrence, CantiqueFamille, SessionAdoration } 
 import { youtubeThumbnail } from '../../utils/youtube';
 import YouTubePlayer from '../../components/ui/YouTubePlayer/YouTubePlayer';
 import HymnaireBrowser from '../../components/ui/HymnaireBrowser/HymnaireBrowser';
+import FilterSheet from '../../components/ui/FilterSheet/FilterSheet';
 import { asset } from '../../utils/asset';
 import styles from './CantiquesWatch.module.css';
 
@@ -398,6 +399,12 @@ function CantiqueView({ cantique, onBack }: CantiqueViewProps) {
      vidéo plein centre, paroles dans la sidebar (layout d'origine). */
   const isRecueil = cantique.famille === 'recueil';
 
+  /* Sheet bottom mobile pour les paroles : sur petit écran, on n'affiche
+     plus la sidebar/inline. Un bouton "Paroles" déclenche l'ouverture
+     d'une sheet qui glisse depuis le bas. Tout le contenu en-dessous
+     reste librement accessible (plus de couche blanchâtre qui bloque). */
+  const [lyricsSheetOpen, setLyricsSheetOpen] = useState(false);
+
   return (
     <div className={styles.watchPage}>
       <Topbar
@@ -471,6 +478,30 @@ function CantiqueView({ cantique, onBack }: CantiqueViewProps) {
                 onSizeChange={setLyricSize}
                 inline
               />
+            )}
+
+            {/* Bouton MOBILE "Paroles" — visible uniquement ≤ 980px.
+                Ouvre une sheet bottom qui glisse depuis le bas. Permet
+                de cacher la sidebar lyrics inline (qui prenait toute la
+                largeur sur mobile et bloquait l'accès au contenu en bas). */}
+            {!isRecueil && (
+              <button
+                type="button"
+                className={styles.mobileLyricsBtn}
+                onClick={() => setLyricsSheetOpen(true)}
+                aria-label="Voir les paroles"
+              >
+                <span className={styles.mobileLyricsBtnIcon} aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 18V5l12-2v13" />
+                    <circle cx="6" cy="18" r="3" />
+                    <circle cx="18" cy="16" r="3" />
+                  </svg>
+                </span>
+                <span>Voir les paroles</span>
+                <span className={styles.mobileLyricsBtnArrow} aria-hidden="true">↑</span>
+              </button>
             )}
 
             {/* Sélecteur d'occurrences si plus d'une */}
@@ -567,7 +598,9 @@ function CantiqueView({ cantique, onBack }: CantiqueViewProps) {
         </section>
 
         {/* ── Sidebar droite : PAROLES (carte flottante claire) ──
-              Masquée en mode recueil (paroles déjà dans le centre). */}
+              Masquée en mode recueil (paroles déjà dans le centre).
+              Masquée aussi sur mobile (≤ 980px via CSS) — le bouton
+              "Voir les paroles" + la sheet bottom prennent le relais. */}
         {!isRecueil && (
           <aside className={styles.lyricsSidebar} aria-label={`Paroles : ${titleClean}`}>
             <LyricsCard
@@ -578,6 +611,24 @@ function CantiqueView({ cantique, onBack }: CantiqueViewProps) {
           </aside>
         )}
       </div>
+
+      {/* Sheet bottom des paroles — mobile uniquement (le bouton qui
+          l'ouvre est aussi masqué desktop). Réutilise FilterSheet sans
+          footer (pas d'onApply/onReset → footer auto-masqué). */}
+      {!isRecueil && (
+        <FilterSheet
+          open={lyricsSheetOpen}
+          onClose={() => setLyricsSheetOpen(false)}
+          title={`Paroles · ${titleClean}`}
+        >
+          <LyricsCard
+            cantique={cantique}
+            size={lyricSize}
+            onSizeChange={setLyricSize}
+            inline
+          />
+        </FilterSheet>
+      )}
     </div>
   );
 }
@@ -602,9 +653,15 @@ function SessionView({ session, onBack }: SessionViewProps) {
   /* Toggle "Cantiques" (index) vs "Paroles" (du cantique courant).
      Par défaut on montre l'index ; un clic sur un cantique bascule
      automatiquement vers les paroles de ce cantique. Le toggle reste
-     manipulable manuellement. */
+     manipulable manuellement. (Sidebar desktop ≥ 980px) */
   type SessionSidebarView = 'index' | 'lyrics';
   const [sessionView, setSessionView] = useState<SessionSidebarView>('index');
+
+  /* Sheets bottom mobile : sur petit écran, plus de sidebar inline.
+     Deux boutons "Cantiques (N)" et "Paroles" déclenchent chacun leur
+     propre sheet. Une seule peut être ouverte à la fois (un seul state). */
+  type SessionSheetMode = 'closed' | 'index' | 'lyrics';
+  const [sessionSheet, setSessionSheet] = useState<SessionSheetMode>('closed');
 
   const playerKey = `${session.id}-${currentStartSec ?? 'start'}`;
 
@@ -640,8 +697,11 @@ function SessionView({ session, onBack }: SessionViewProps) {
     setCurrentEndSec(endSec);
     setHighlightedCantiqueId(cantiqueId);
     /* Bascule automatique vers la vue paroles : si l'user a cliqué un
-       cantique de l'index, il veut vraisemblablement voir ses paroles. */
+       cantique de l'index, il veut vraisemblablement voir ses paroles.
+       - Desktop : la sidebar bascule via sessionView.
+       - Mobile  : la sheet ouverte (index) bascule vers la sheet paroles. */
     setSessionView('lyrics');
+    setSessionSheet((prev) => (prev === 'index' ? 'lyrics' : prev));
   };
 
   /* Prev/next sessions — triées par date décroissante (plus récente
@@ -697,6 +757,52 @@ function SessionView({ session, onBack }: SessionViewProps) {
                 <span className={styles.dot} aria-hidden="true">·</span>
                 <span>{formatLongDate(session.date)}</span>
               </p>
+            </div>
+
+            {/* Boutons MOBILE — visibles uniquement ≤ 980px via CSS.
+                Ouvrent chacun leur sheet bottom respective. */}
+            <div className={styles.mobileSessionActions}>
+              <button
+                type="button"
+                className={styles.mobileLyricsBtn}
+                onClick={() => setSessionSheet('index')}
+                aria-label="Voir la liste des cantiques de la session"
+              >
+                <span className={styles.mobileLyricsBtnIcon} aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="8" y1="6" x2="21" y2="6" />
+                    <line x1="8" y1="12" x2="21" y2="12" />
+                    <line x1="8" y1="18" x2="21" y2="18" />
+                    <line x1="3" y1="6" x2="3.01" y2="6" />
+                    <line x1="3" y1="12" x2="3.01" y2="12" />
+                    <line x1="3" y1="18" x2="3.01" y2="18" />
+                  </svg>
+                </span>
+                <span>Cantiques</span>
+                <span className={styles.mobileLyricsBtnCount}>
+                  {session.cantiquesContenus?.length ?? 0}
+                </span>
+              </button>
+              <button
+                type="button"
+                className={styles.mobileLyricsBtn}
+                onClick={() => setSessionSheet('lyrics')}
+                aria-label="Voir les paroles du cantique en cours"
+              >
+                <span className={styles.mobileLyricsBtnIcon} aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 18V5l12-2v13" />
+                    <circle cx="6" cy="18" r="3" />
+                    <circle cx="18" cy="16" r="3" />
+                  </svg>
+                </span>
+                <span>Paroles</span>
+                {highlightedCantique && (
+                  <span className={styles.mobileLyricsBtnDot} aria-hidden="true">●</span>
+                )}
+              </button>
             </div>
 
           </div>
@@ -808,6 +914,83 @@ function SessionView({ session, onBack }: SessionViewProps) {
           )}
         </aside>
       </div>
+
+      {/* ── Sheets bottom mobile ─────────────────────────────
+            Sheet "Cantiques" (index) : ouvert via le bouton mobile.
+            Cliquer sur un cantique déclenche jumpTo() qui bascule
+            automatiquement vers la sheet "Paroles" du cantique. */}
+      <FilterSheet
+        open={sessionSheet === 'index'}
+        onClose={() => setSessionSheet('closed')}
+        title="Cantiques de la session"
+        activeCount={session.cantiquesContenus?.length ?? 0}
+      >
+        {session.cantiquesContenus && session.cantiquesContenus.length > 0 ? (
+          <ol className={styles.indexList}>
+            {session.cantiquesContenus.map((cc, idx) => {
+              const active = cc.cantiqueId === highlightedCantiqueId;
+              return (
+                <li key={`${cc.cantiqueId}-${idx}`}>
+                  <button
+                    type="button"
+                    className={[styles.indexBtn, active ? styles.indexBtnActive : ''].join(' ')}
+                    onClick={() => jumpTo(cc.cantiqueId, cc.startSec, cc.endSec)}
+                  >
+                    <span className={styles.indexNum}>{String(idx + 1).padStart(2, '0')}</span>
+                    <span className={styles.indexBody}>
+                      <span className={styles.indexTitle}>{cc.titre}</span>
+                      <span className={styles.indexTime}>
+                        {formatTimecode(cc.startSec)}
+                        {cc.endSec && ` → ${formatTimecode(cc.endSec)}`}
+                      </span>
+                    </span>
+                    <span className={styles.indexPlay} aria-hidden="true">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        ) : (
+          <p className={styles.indexEmpty}>
+            L'index des cantiques sera ajouté prochainement par l'équipe musicale.
+          </p>
+        )}
+      </FilterSheet>
+
+      {/* Sheet "Paroles" — affiche les paroles du cantique en cours
+          (auto-syncé sur le timecode). Hint si rien n'est repéré. */}
+      <FilterSheet
+        open={sessionSheet === 'lyrics'}
+        onClose={() => setSessionSheet('closed')}
+        title={highlightedCantique ? `Paroles · ${highlightedCantique.titre.replace(/\.$/, '')}` : 'Paroles'}
+      >
+        {highlightedCantique ? (
+          <LyricsCard
+            cantique={highlightedCantique}
+            size={lyricSize}
+            onSizeChange={setLyricSize}
+            inline
+          />
+        ) : (
+          <div className={styles.lyricsHint}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 18V5l12-2v13" />
+              <circle cx="6" cy="18" r="3" />
+              <circle cx="18" cy="16" r="3" />
+            </svg>
+            <p>
+              Laisse la vidéo défiler : les paroles s'afficheront automatiquement quand
+              la session entrera dans un cantique répertorié. Ou ouvre l'onglet Cantiques
+              pour en choisir un manuellement.
+            </p>
+          </div>
+        )}
+      </FilterSheet>
     </div>
   );
 }
