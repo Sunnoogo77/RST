@@ -12,7 +12,7 @@ import heroEstrade from '../assets/nehemie/estrade.png';
 import heroVueArriereAvant from '../assets/nehemie/vue-de-l-arriere-vers-l-avant.png';
 import heroVueAvantArriere from '../assets/nehemie/vue-de-l-avant-vers-l-arriere.png';
 
-const HERO_INTERVAL_MS = 6000;
+const HERO_INTERVAL_MS = 10000;
 
 /* ────────────────────────────────────────────────────────────────────
    ICÔNES — quatre piliers du projet Néhémie
