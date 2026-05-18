@@ -1738,7 +1738,14 @@
 }
 
 @media (max-width: 480px) {
-  .relatedGrid { grid-template-columns: 1fr; }
+  /* Grilles 2 colonnes sur téléphone portrait — beaucoup plus de
+     densité, on tient 4+ cartes par écran de scroll au lieu d'1-2.
+     Permet aussi de voir "le cantique suivant" en scrollant juste un
+     peu vers le bas, sans devoir remonter en haut pour switcher. */
+  .relatedGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 10px;
+  }
   .occList { grid-template-columns: 1fr; }
   .lyricsToolbar { flex-direction: column; align-items: stretch; }
   .lyricsTools { justify-content: flex-end; gap: 6px; }
@@ -1751,9 +1758,16 @@
   /* Contrôles topbar ≥ 44px */
   .controlBtn { width: var(--touch-min); height: var(--touch-min); }
 
-  /* Browse : une seule colonne, padding minimal */
+  /* Browse (Hymnaire spéciaux / Service de chant) : 2 cards par ligne
+     pour une densité YouTube-like, compact mais lisible. */
   .browseInner { padding: 18px 12px 48px; gap: 18px; }
-  .browseGrid { grid-template-columns: 1fr; gap: 14px; }
+  .browseGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 10px;
+  }
+  .browseCardTitle { font-size: 13px; line-height: 1.25; }
+  .browseCardMeta { font-size: 11px; }
+  .browseCardSubMeta { font-size: 10.5px; }
   .browseHead { gap: 4px; }
   .browseFilters { gap: 8px; }
   .browseChip {
@@ -1782,4 +1796,16 @@
   .recueilFeaturedGrid { grid-template-columns: repeat(2, 1fr); }
   .recueilSortBtn { min-height: var(--touch-min); padding: 10px 16px; }
   .recueilLetter { min-width: var(--touch-min); height: var(--touch-min); }
+}
+
+/* Très petit téléphone (iPhone SE, ≤ 360px) : on revient à 1 colonne
+   pour les browseGrid et relatedGrid, sinon thumbnails trop petits.
+   Recueil featured reste 2 cols (cards minuscules acceptables). */
+@media (max-width: 360px) {
+  .browseGrid,
+  .relatedGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .browseCardTitle { font-size: 14px; }
 }
