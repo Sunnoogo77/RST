@@ -1253,10 +1253,38 @@
 @media (max-width: 480px) {
   /* Sur téléphone, sidebar minimaliste (juste reset visible) */
   .sidebar { max-height: 160px; }
+  /* Grille "Plus de prédications" : 2 cards par ligne au lieu d'1.
+     Pattern YouTube-like, plus de densité, scroll plus rapide. */
   .moreGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px 10px;
+  }
+  .capsule { gap: 8px; }
+  .capsuleTitle {
+    font-size: 14px;
+    line-height: 1.25;
+  }
+  .capsuleMeta {
+    font-size: 11px;
+    gap: 4px;
+    margin-top: 2px;
+    flex-wrap: wrap;
+  }
+  .capsuleSerie {
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
   }
   /* Le PiP est dimensionné côté JS via getPipSize() qui retourne
      280×158 sur mobile (voir CultesWatch.tsx). Aucune surcharge CSS
      nécessaire ici. */
+}
+
+/* Très petit téléphone (≤ 360px) : retour à 1 colonne pour ne pas
+   écraser les thumbnails. */
+@media (max-width: 360px) {
+  .moreGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .capsuleTitle { font-size: 15px; }
 }
