@@ -44,7 +44,8 @@
   padding-top: var(--safe-top);
   flex-shrink: 0;
   display: grid;
-  grid-template-columns: auto auto 1fr;
+  /* Desktop : back + brand + search (le bouton mobile Filtrer est masqué). */
+  grid-template-columns: auto auto 1fr auto;
   align-items: center;
   gap: 24px;
   padding-right: max(24px, var(--safe-right));
@@ -419,6 +420,61 @@
   border-radius: var(--r-pill);
   min-width: 22px;
   text-align: center;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Variante "fond clair" pour les FilterGroup/FilterRow
+   (utilisée dans le FilterSheet mobile bottom-sheet).
+   Les styles de base sont pensés pour la sidebar bleu nuit,
+   on inverse en cascade descendante pour fond blanc.
+   ══════════════════════════════════════════════════════════ */
+.filterBlocksLight {
+  display: flex;
+  flex-direction: column;
+}
+.filterBlocksLight .filterGroup {
+  border-bottom-color: var(--line-1);
+}
+.filterBlocksLight .filterGroupTitle {
+  color: var(--ink-1);
+  font-size: 13px;
+}
+.filterBlocksLight .filterGroupTitle:hover {
+  color: var(--ink-1);
+}
+.filterBlocksLight .filterGroupIcon {
+  color: var(--ink-3);
+}
+.filterBlocksLight .filterChevron {
+  color: var(--ink-4);
+}
+.filterBlocksLight .filterRow {
+  color: var(--ink-2);
+  padding: 10px 6px;
+  min-height: var(--touch-min);
+  font-size: 14px;
+}
+.filterBlocksLight .filterRow:hover {
+  background: var(--bg-tint);
+}
+.filterBlocksLight .filterCheckbox {
+  width: 20px;
+  height: 20px;
+  border-color: var(--line-soft);
+  background: var(--bg-elevated);
+}
+.filterBlocksLight .filterCheckbox:checked {
+  background: var(--rst-blue);
+  border-color: var(--rst-blue);
+}
+.filterBlocksLight .filterRowCount {
+  color: var(--ink-3);
+  background: rgba(11, 15, 25, 0.06);
+}
+
+/* ── Bouton "Filtrer" mobile dans la topbar ────────────── */
+.topbarFilterBtn {
+  display: none;
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -1113,10 +1169,12 @@
   .watchPage {
     --topbar-h: 52px;
   }
+  /* Mobile : back · search · filterBtn (brand masqué). 3 colonnes. */
   .topbar {
-    padding-right: max(12px, var(--safe-right));
-    padding-left: max(12px, var(--safe-left));
-    gap: 10px;
+    padding-right: max(10px, var(--safe-right));
+    padding-left: max(10px, var(--safe-left));
+    gap: 8px;
+    grid-template-columns: auto 1fr auto;
   }
   .backBtn {
     padding: 10px;
@@ -1131,25 +1189,49 @@
   }
   /* L'input passe à 16px via la règle globale dans global.css. */
 
-  /* Touch targets ≥ 44px sur mobile (norme iOS HIG) */
-  .sidebarToggle,
-  .railIcon {
-    width: var(--touch-min);
-    height: var(--touch-min);
+  /* Bouton "Filtrer" mobile dans la topbar (visible ici, caché sur desktop). */
+  .topbarFilterBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 0 12px;
+    min-width: var(--touch-min);
+    min-height: var(--touch-min);
+    border-radius: var(--r-pill);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.92);
+    cursor: pointer;
+    transition: background var(--t-fast), border-color var(--t-fast);
+    flex-shrink: 0;
+  }
+  .topbarFilterBtn:active {
+    background: rgba(255, 255, 255, 0.18);
+  }
+  .topbarFilterCount {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: var(--r-pill);
+    background: var(--rst-blue);
+    color: #fff;
+    font-family: var(--f-num);
+    font-size: 10.5px;
+    font-weight: 600;
   }
 
-  /* Sidebar passe en bandeau du haut, hauteur réduite */
+  /* Sidebar filtres masquée — remplacée par le FilterSheet bottom modal. */
+  .sidebar { display: none; }
+
+  /* Le body retombe en une seule colonne (centre seul, plus de sidebar). */
   .body {
     grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: 1fr;
   }
-  .sidebar {
-    max-height: 200px;
-    border-right: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
-  }
-  .sidebarHead { padding: 10px 14px; }
-  .sidebarScroll { padding: 4px 10px 12px; }
 
   .center {
     padding:

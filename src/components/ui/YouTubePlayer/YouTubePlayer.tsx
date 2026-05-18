@@ -78,6 +78,10 @@ interface YouTubePlayerProps {
    *  côté YouTube — c'est le player qui appelle pause() une fois
    *  l'instant atteint. */
   endSec?: number;
+  /** Notifie le parent du temps de lecture courant (en secondes), pollé
+   *  à ~4 Hz. Utile pour synchroniser un index/paroles sur le timecode
+   *  (ex. SessionView : sélectionne automatiquement le cantique en cours). */
+  onTimeUpdate?: (currentSec: number) => void;
 }
 
 function formatTime(seconds: number): string {
@@ -103,6 +107,7 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, YouTubePlayerProps>(
       disableKeyboard = false,
       startSec,
       endSec,
+      onTimeUpdate,
     },
     ref,
   ) {
@@ -129,8 +134,10 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, YouTubePlayerProps>(
        changement de prop). */
     const onPlayingChangeRef = useRef(onPlayingChange);
     const onEndedRef = useRef(onEnded);
+    const onTimeUpdateRef = useRef(onTimeUpdate);
     useEffect(() => { onPlayingChangeRef.current = onPlayingChange; }, [onPlayingChange]);
     useEffect(() => { onEndedRef.current = onEnded; }, [onEnded]);
+    useEffect(() => { onTimeUpdateRef.current = onTimeUpdate; }, [onTimeUpdate]);
 
     const setPlayingState = useCallback((next: boolean) => {
       setPlaying(next);
@@ -223,6 +230,7 @@ const YouTubePlayer = forwardRef<YouTubePlayerHandle, YouTubePlayerProps>(
         const t = p.getCurrentTime();
         if (typeof t === 'number') {
           setCurrentTime(t);
+          onTimeUpdateRef.current?.(t);
           /* Pause automatique quand on atteint endSec (en plus du
              paramètre `end` de l'IFrame API qui est parfois imprécis). */
           if (typeof endSec === 'number' && t >= endSec) {

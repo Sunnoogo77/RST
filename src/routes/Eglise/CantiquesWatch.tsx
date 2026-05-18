@@ -1032,10 +1032,37 @@ function SessionView({ session, onBack }: SessionViewProps) {
   const [highlightedCantiqueId, setHighlightedCantiqueId] = useState<string | null>(null);
   const [lyricSize, setLyricSize] = useState<LyricSize>('md');
 
+  /* Toggle "Cantiques" (index) vs "Paroles" (du cantique courant).
+     Par défaut on montre l'index ; un clic sur un cantique bascule
+     automatiquement vers les paroles de ce cantique. Le toggle reste
+     manipulable manuellement. */
+  type SessionSidebarView = 'index' | 'lyrics';
+  const [sessionView, setSessionView] = useState<SessionSidebarView>('index');
+
   const playerKey = `${session.id}-${currentStartSec ?? 'start'}`;
 
-  /* Cantique référencé par l'entrée actuellement cliquée dans l'index :
-     permet d'afficher ses paroles dans la zone blanche, sous la vidéo. */
+  /* Sync auto sur le timecode : à chaque tick du player, on regarde
+     dans cantiquesContenus quel cantique correspond au temps courant.
+     Si différent de l'actuel, on met à jour highlightedCantiqueId pour
+     que la vue "Paroles" affiche automatiquement les bonnes paroles
+     quand la vidéo passe d'un cantique à un autre. */
+  const handleTimeUpdate = useCallback(
+    (currentSec: number) => {
+      const list = session.cantiquesContenus;
+      if (!list || list.length === 0) return;
+      const match = list.find((cc) =>
+        currentSec >= cc.startSec &&
+        (cc.endSec === undefined || currentSec < cc.endSec),
+      );
+      if (match && match.cantiqueId !== highlightedCantiqueId) {
+        setHighlightedCantiqueId(match.cantiqueId);
+      }
+    },
+    [session.cantiquesContenus, highlightedCantiqueId],
+  );
+
+  /* Cantique référencé par le timecode courant (ou clic manuel).
+     Détermine quelles paroles afficher dans la vue "Paroles". */
   const highlightedCantique: Cantique | undefined = useMemo(() => {
     if (!highlightedCantiqueId) return undefined;
     return cantiques.find((c) => c.id === highlightedCantiqueId);
@@ -1045,6 +1072,9 @@ function SessionView({ session, onBack }: SessionViewProps) {
     setCurrentStartSec(startSec);
     setCurrentEndSec(endSec);
     setHighlightedCantiqueId(cantiqueId);
+    /* Bascule automatique vers la vue paroles : si l'user a cliqué un
+       cantique de l'index, il veut vraisemblablement voir ses paroles. */
+    setSessionView('lyrics');
   };
 
   /* Prev/next sessions — triées par date décroissante (plus récente
@@ -1085,6 +1115,7 @@ function SessionView({ session, onBack }: SessionViewProps) {
                 autoplay
                 startSec={currentStartSec}
                 endSec={currentEndSec}
+                onTimeUpdate={handleTimeUpdate}
               />
             </div>
 
@@ -1104,74 +1135,110 @@ function SessionView({ session, onBack }: SessionViewProps) {
           </div>
         </section>
 
-        {/* ── Sidebar droite : INDEX + PAROLES empilés ─────────── */}
+        {/* ── Sidebar droite : toggle Cantiques / Paroles ───────
+              Un seul panneau visible à la fois (pas d'empilement
+              horizontal qui mange l'écran sur mobile). Le toggle bascule
+              entre l'index complet et les paroles du cantique en cours
+              (auto-syncé sur le timecode du player). */}
         <aside className={styles.sessionSidebar} aria-label="Cantiques de la session">
-
-          {/* Bloc 1 : index des cantiques */}
-          <div className={styles.indexBlock} aria-label="Cantiques de la session">
-          <div className={styles.indexHead}>
-            <span className={styles.indexLbl}>Cantiques de la session</span>
-            <span className={styles.indexCount}>
-              {session.cantiquesContenus?.length ?? 0}
-            </span>
+          {/* Segmented control */}
+          <div className={styles.sessionToggle} role="tablist" aria-label="Vue de la sidebar">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={sessionView === 'index'}
+              className={[
+                styles.sessionToggleBtn,
+                sessionView === 'index' ? styles.sessionToggleBtnActive : '',
+              ].join(' ')}
+              onClick={() => setSessionView('index')}
+            >
+              Cantiques
+              <span className={styles.sessionToggleCount}>
+                {session.cantiquesContenus?.length ?? 0}
+              </span>
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={sessionView === 'lyrics'}
+              className={[
+                styles.sessionToggleBtn,
+                sessionView === 'lyrics' ? styles.sessionToggleBtnActive : '',
+              ].join(' ')}
+              onClick={() => setSessionView('lyrics')}
+            >
+              Paroles
+              {highlightedCantique && (
+                <span className={styles.sessionToggleNow} aria-hidden="true">●</span>
+              )}
+            </button>
           </div>
 
-          {session.cantiquesContenus && session.cantiquesContenus.length > 0 ? (
-            <ol className={styles.indexList}>
-              {session.cantiquesContenus.map((cc, idx) => {
-                const active = cc.cantiqueId === highlightedCantiqueId;
-                return (
-                  <li key={`${cc.cantiqueId}-${idx}`}>
-                    <button
-                      type="button"
-                      className={[styles.indexBtn, active ? styles.indexBtnActive : ''].join(' ')}
-                      onClick={() => jumpTo(cc.cantiqueId, cc.startSec, cc.endSec)}
-                    >
-                      <span className={styles.indexNum}>{String(idx + 1).padStart(2, '0')}</span>
-                      <span className={styles.indexBody}>
-                        <span className={styles.indexTitle}>{cc.titre}</span>
-                        <span className={styles.indexTime}>
-                          {formatTimecode(cc.startSec)}
-                          {cc.endSec && ` → ${formatTimecode(cc.endSec)}`}
+          {/* Panneau actif : index OU paroles */}
+          {sessionView === 'index' ? (
+            session.cantiquesContenus && session.cantiquesContenus.length > 0 ? (
+              <ol className={styles.indexList}>
+                {session.cantiquesContenus.map((cc, idx) => {
+                  const active = cc.cantiqueId === highlightedCantiqueId;
+                  return (
+                    <li key={`${cc.cantiqueId}-${idx}`}>
+                      <button
+                        type="button"
+                        className={[styles.indexBtn, active ? styles.indexBtnActive : ''].join(' ')}
+                        onClick={() => jumpTo(cc.cantiqueId, cc.startSec, cc.endSec)}
+                      >
+                        <span className={styles.indexNum}>{String(idx + 1).padStart(2, '0')}</span>
+                        <span className={styles.indexBody}>
+                          <span className={styles.indexTitle}>{cc.titre}</span>
+                          <span className={styles.indexTime}>
+                            {formatTimecode(cc.startSec)}
+                            {cc.endSec && ` → ${formatTimecode(cc.endSec)}`}
+                          </span>
                         </span>
-                      </span>
-                      <span className={styles.indexPlay} aria-hidden="true">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
-                      </span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ol>
-          ) : (
-            <p className={styles.indexEmpty}>
-              L'index des cantiques sera ajouté prochainement par l'équipe musicale.
-            </p>
-          )}
-          </div>
-
-          {/* Bloc 2 : paroles du cantique sélectionné, ou hint si aucun */}
-          <div className={styles.lyricsBlock}>
-            {highlightedCantique ? (
-              <LyricsCard
-                cantique={highlightedCantique}
-                size={lyricSize}
-                onSizeChange={setLyricSize}
-              />
+                        <span className={styles.indexPlay} aria-hidden="true">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ol>
             ) : (
-              <div className={styles.lyricsHint}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 18V5l12-2v13" />
-                  <circle cx="6" cy="18" r="3" />
-                  <circle cx="18" cy="16" r="3" />
-                </svg>
-                <p>Cliquez un cantique dans la liste ci-dessus pour démarrer la vidéo au bon moment et afficher ses paroles ici.</p>
-              </div>
-            )}
-          </div>
+              <p className={styles.indexEmpty}>
+                L'index des cantiques sera ajouté prochainement par l'équipe musicale.
+              </p>
+            )
+          ) : highlightedCantique ? (
+            <LyricsCard
+              cantique={highlightedCantique}
+              size={lyricSize}
+              onSizeChange={setLyricSize}
+            />
+          ) : (
+            <div className={styles.lyricsHint}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 18V5l12-2v13" />
+                <circle cx="6" cy="18" r="3" />
+                <circle cx="18" cy="16" r="3" />
+              </svg>
+              <p>
+                Laisse la vidéo défiler : les paroles s'afficheront automatiquement quand
+                la session entrera dans un cantique répertorié. Ou bascule vers
+                <button
+                  type="button"
+                  className={styles.sessionHintLink}
+                  onClick={() => setSessionView('index')}
+                >
+                  l'onglet Cantiques
+                </button>
+                pour en choisir un.
+              </p>
+            </div>
+          )}
         </aside>
       </div>
     </div>

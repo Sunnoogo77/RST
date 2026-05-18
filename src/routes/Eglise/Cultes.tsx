@@ -565,7 +565,11 @@ export default function Cultes() {
             : `Voir ${filteredSermons.length} résultat${filteredSermons.length > 1 ? 's' : ''}`
         }
       >
-        {filterBlocks}
+        {/* Wrapper qui force la variante "fond clair" sur les FilterGroup
+            (par défaut conçus pour la sidebar bleu nuit). */}
+        <div className={styles.filterBlocksLight}>
+          {filterBlocks}
+        </div>
       </FilterSheet>
     </main>
   );

@@ -737,6 +737,56 @@
 }
 
 /* ══════════════════════════════════════════════════════════
+   Variante "fond clair" pour les FilterGroup/FilterRow
+   Utilisée dans la FilterSheet mobile (sheet bottom blanche).
+   Les styles de base sont pensés pour la sidebar bleu nuit,
+   donc on inverse les couleurs ici en cascade descendante.
+   ══════════════════════════════════════════════════════════ */
+.filterBlocksLight {
+  display: flex;
+  flex-direction: column;
+}
+.filterBlocksLight .filterGroup {
+  border-bottom-color: var(--line-1);
+}
+.filterBlocksLight .filterGroupTitle {
+  color: var(--ink-1);
+  font-size: 13px;
+}
+.filterBlocksLight .filterGroupTitle:hover {
+  color: var(--ink-1);
+}
+.filterBlocksLight .filterGroupIcon {
+  color: var(--ink-3);
+}
+.filterBlocksLight .filterChevron {
+  color: var(--ink-4);
+}
+.filterBlocksLight .filterRow {
+  color: var(--ink-2);
+  padding: 10px 6px;
+  min-height: var(--touch-min);
+  font-size: 14px;
+}
+.filterBlocksLight .filterRow:hover {
+  background: var(--bg-tint);
+}
+.filterBlocksLight .filterCheckbox {
+  width: 20px;
+  height: 20px;
+  border-color: var(--line-soft);
+  background: var(--bg-elevated);
+}
+.filterBlocksLight .filterCheckbox:checked {
+  background: var(--rst-blue);
+  border-color: var(--rst-blue);
+}
+.filterBlocksLight .filterRowCount {
+  color: var(--ink-3);
+  background: rgba(11, 15, 25, 0.06);
+}
+
+/* ══════════════════════════════════════════════════════════
    ZONE CENTRALE
    ══════════════════════════════════════════════════════════ */
 .center {

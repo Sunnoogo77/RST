@@ -588,73 +588,75 @@ function AdorationView({ items, onOpen, onReset, hasFilters }: AdorationViewProp
   if (items.length === 0) {
     return <EmptyState onReset={onReset} hasFilters={hasFilters} message="Aucune session d'adoration ne correspond." />;
   }
+  /* On utilise EXACTEMENT la même grille .specialGrid + le système de
+     .card que SpecialView. Cohérence visuelle : que tu sois dans
+     "Spéciaux" ou "Service de chant", l'affichage des cartes vidéo est
+     identique (16:9, badge, play overlay, body 3 lignes). */
   return (
-    <div className={styles.adoration}>
-      <ol className={styles.adorationList}>
-        {items.map((session) => {
-          const thumb = youtubeThumbnail(session.videoUrl);
-          const cantiquesCount = session.cantiquesContenus?.length ?? 0;
-          return (
-            <li key={session.id} className={styles.adorationItem}>
-              <button
-                type="button"
-                className={styles.adorationCard}
-                onClick={() => onOpen(session.slug)}
-                aria-label={`Ouvrir la session : ${session.titre}`}
-              >
-                <div className={styles.adorationThumb}>
-                  {thumb && <img src={thumb} alt="" loading="lazy" />}
-                  <div className={styles.adorationThumbOverlay} aria-hidden="true" />
-                  {session.dureeMinutes && (
-                    <span className={styles.adorationDuration}>{formatMinutes(session.dureeMinutes)}</span>
-                  )}
-                  <button
-                    type="button"
-                    className={styles.adorationPlay}
-                    tabIndex={-1}
-                    aria-hidden="true"
-                  >
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </button>
-                </div>
-                <div className={styles.adorationBody}>
-                  <p className={styles.adorationDate}>{formatLongDate(session.date)}</p>
-                  <h3 className={styles.adorationTitle}>{session.titre}</h3>
-                  <p className={styles.adorationMeta}>
-                    {session.interpretes.join(' · ')}
-                    {session.evenement && (
-                      <>
-                        <span className={styles.adorationDot} aria-hidden="true">·</span>
-                        <span className={styles.adorationEvent}>{session.evenement}</span>
-                      </>
-                    )}
-                  </p>
-                  {cantiquesCount > 0 && session.cantiquesContenus && (
-                    <div className={styles.adorationCantiques}>
-                      <span className={styles.adorationCantiquesLbl}>
-                        {cantiquesCount} cantique{cantiquesCount > 1 ? 's' : ''} indexé{cantiquesCount > 1 ? 's' : ''} :
-                      </span>
-                      <ul className={styles.adorationCantiquesList}>
-                        {session.cantiquesContenus.slice(0, 3).map((cc) => (
-                          <li key={cc.cantiqueId}>{cc.titre}</li>
-                        ))}
-                        {cantiquesCount > 3 && (
-                          <li className={styles.adorationCantiquesMore}>
-                            + {cantiquesCount - 3} autre{cantiquesCount - 3 > 1 ? 's' : ''}
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </button>
-            </li>
-          );
-        })}
-      </ol>
+    <div className={styles.special}>
+      <div className={styles.specialGrid}>
+        {items.map((session) => (
+          <AdorationCard key={session.id} session={session} onOpen={onOpen} />
+        ))}
+      </div>
     </div>
+  );
+}
+
+function AdorationCard({
+  session,
+  onOpen,
+}: {
+  session: typeof sessionsAdoration[number];
+  onOpen: (slug: string) => void;
+}) {
+  const thumb = youtubeThumbnail(session.videoUrl);
+  const cantiquesCount = session.cantiquesContenus?.length ?? 0;
+  return (
+    <article
+      className={styles.card}
+      role="button"
+      tabIndex={0}
+      onClick={() => onOpen(session.slug)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onOpen(session.slug);
+        }
+      }}
+      aria-label={`Ouvrir la session : ${session.titre}`}
+    >
+      <div className={styles.cardThumb}>
+        {thumb && <img src={thumb} alt="" className={styles.cardThumbImg} loading="lazy" />}
+        <div className={styles.cardThumbOverlay} aria-hidden="true" />
+        {session.dureeMinutes && (
+          <span className={styles.cardDuration}>{formatMinutes(session.dureeMinutes)}</span>
+        )}
+        <button
+          type="button"
+          className={styles.cardPlay}
+          tabIndex={-1}
+          aria-hidden="true"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </button>
+        {cantiquesCount > 0 && (
+          <span className={styles.cardBadge}>
+            {cantiquesCount} cantique{cantiquesCount > 1 ? 's' : ''}
+          </span>
+        )}
+      </div>
+      <div className={styles.cardBody}>
+        <h3 className={styles.cardTitle}>{session.titre}</h3>
+        <p className={styles.cardMeta}>{session.interpretes.join(' · ')}</p>
+        <p className={styles.cardDate}>
+          {formatLongDate(session.date)}
+          {session.evenement && ` · ${session.evenement}`}
+        </p>
+      </div>
+    </article>
   );
 }
 
