@@ -864,6 +864,10 @@
     position: relative;
     inset: auto;
     height: 60vw;
+    /* SUPPRESSION du overflow:hidden sur mobile : la quote-box doit
+       pouvoir déborder vers le bas pour rester visible. Le crop visuel
+       de l'image elle-même est géré par object-fit: cover sur l'img. */
+    overflow: visible;
   }
 
   .heroImg::before {
@@ -951,20 +955,22 @@
   }
 
   /* Bande "Ensemble allons plus loin" sur mobile :
-     - L'image landscape large rendue en background-cover sur viewport
-       portrait étroit produit un cadrage horrible (visage centré coupé).
-     - On déplace background-position vers le haut pour cadrer la zone
-       intéressante (la silhouette + le ciel), on renforce le voile
-       pour mieux assurer la lisibilité du texte par-dessus, et on
-       réduit les marges full-bleed pour éviter le scroll horizontal. */
+     L'image landscape rendue en background-cover sur viewport portrait
+     produit un cadrage horrible (visages coupés, scène illisible). On
+     SUPPRIME tout simplement l'image de fond sur mobile et on garde
+     un fond solide bleu nuit + un léger accent gold qui rappelle
+     l'esprit "chantier sacré" — beaucoup plus propre et lisible. */
   .participationBand {
     margin-top: 24px;
     margin-bottom: 40px;
-    background-position: 40% 28%;
+    background-image: none !important;
+    background-color: #06091c;
   }
   .participationOverlay {
     background:
-      linear-gradient(180deg, rgba(6,9,28,.88) 0%, rgba(6,9,28,.82) 100%);
+      radial-gradient(ellipse 100% 60% at 50% 0%,
+        rgba(213, 154, 34, 0.10) 0%, transparent 60%),
+      linear-gradient(180deg, #06091c 0%, #030617 100%);
   }
   .participationInner {
     padding: 40px var(--pad-x-mob);
