@@ -1,14 +1,14 @@
-/* Espace réservé pour le header fixe */
+/* Espace réservé pour le header fixe (+ safe-area iOS notch) */
 .headerSpacer {
-  height: var(--header-h);
+  height: calc(var(--header-h) + var(--safe-top));
   flex-shrink: 0;
   background: #06091c;
 }
 
-/* Sous-nav contextuel L'Église — 5 onglets */
+/* Sous-nav contextuel L'Église — 5 onglets, sticky juste sous le header */
 .subnav {
   position: sticky;
-  top: var(--header-h);
+  top: calc(var(--header-h) + var(--safe-top));
   z-index: 90;
   transition:
     transform var(--t-base),
@@ -113,7 +113,9 @@
 
 @media (max-width: 820px) {
   .subnavInner {
-    padding: 0 var(--pad-x-mob);
+    /* Safe-area paysage (notch sur le côté en landscape iPhone Pro) */
+    padding: 0 max(var(--pad-x-mob), var(--safe-right))
+             0 max(var(--pad-x-mob), var(--safe-left));
     justify-content: flex-start;
     scroll-snap-type: x proximity;
     scroll-padding-inline: var(--pad-x-mob);
@@ -124,7 +126,7 @@
     padding: var(--space-12) var(--space-16);
     font-size: 12px;
     scroll-snap-align: start;
-    min-height: 44px;
+    min-height: var(--touch-min);
     display: flex;
     align-items: center;
   }

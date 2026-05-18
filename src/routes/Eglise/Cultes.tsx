@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { sermons } from '../../data/sermons';
 import type { Sermon, TypeCulte } from '../../types';
 import { youtubeThumbnail } from '../../utils/youtube';
+import FilterSheet from '../../components/ui/FilterSheet/FilterSheet';
 import styles from './Cultes.module.css';
 
 /* ============================================================
@@ -236,6 +237,20 @@ export default function Cultes() {
     selectedSeries.size > 0 ||
     sortOrder !== 'desc';
 
+  /* Compteur de filtres actifs affiché sur le bouton "Filtrer" mobile
+     (hors recherche : on compte les catégories de filtres explicitement
+     sélectionnées). */
+  const activeFilterCount =
+    selectedYears.size +
+    selectedPredicateurs.size +
+    selectedTypes.size +
+    selectedSeries.size +
+    (sortOrder !== 'desc' ? 1 : 0);
+
+  /* Sheet de filtres pour mobile (≤ 820px). La sidebar desktop reste
+     l'expérience principale, le sheet en est juste le proxy tactile. */
+  const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
+
   const resetAll = useCallback(() => {
     setQuery('');
     setSelectedYears(new Set());
@@ -248,6 +263,77 @@ export default function Cultes() {
   const openSermon = useCallback((sermon: Sermon) => {
     navigate(`/eglise/cultes/watch/${sermon.id}`);
   }, [navigate]);
+
+  /* Markup partagé entre la sidebar desktop et le FilterSheet mobile.
+     Une seule source de vérité pour les groupes de filtres. */
+  const filterBlocks = (
+    <>
+      <FilterGroup title="Année" icon={<IconCalendar />} defaultOpen>
+        {years.map((yr) => (
+          <FilterRow
+            key={yr}
+            label={yr}
+            count={yearsCount.get(yr) ?? 0}
+            checked={selectedYears.has(yr)}
+            onToggle={() => setSelectedYears((prev) => toggleInSet(prev, yr))}
+          />
+        ))}
+      </FilterGroup>
+
+      <FilterGroup title="Prédicateur" icon={<IconUser />}>
+        {predicateurs.map((p) => (
+          <FilterRow
+            key={p}
+            label={p}
+            count={predicateursCount.get(p) ?? 0}
+            checked={selectedPredicateurs.has(p)}
+            onToggle={() => setSelectedPredicateurs((prev) => toggleInSet(prev, p))}
+          />
+        ))}
+      </FilterGroup>
+
+      <FilterGroup title="Type" icon={<IconTag />}>
+        {TYPE_LIST.filter((tp) => typesCount.has(tp)).map((tp) => (
+          <FilterRow
+            key={tp}
+            label={TYPE_LABELS[tp]}
+            count={typesCount.get(tp) ?? 0}
+            checked={selectedTypes.has(tp)}
+            onToggle={() => setSelectedTypes((prev) => toggleInSet(prev, tp))}
+          />
+        ))}
+      </FilterGroup>
+
+      <FilterGroup title="Série" icon={<IconLayers />}>
+        {series.map((s) => (
+          <FilterRow
+            key={s}
+            label={s}
+            count={seriesCount.get(s) ?? 0}
+            checked={selectedSeries.has(s)}
+            onToggle={() => setSelectedSeries((prev) => toggleInSet(prev, s))}
+          />
+        ))}
+      </FilterGroup>
+
+      <FilterGroup title="Tri" icon={<IconSort />} defaultOpen>
+        <FilterRow
+          label="Plus récent au plus ancien"
+          count={null}
+          checked={sortOrder === 'desc'}
+          onToggle={() => setSortOrder('desc')}
+          radio
+        />
+        <FilterRow
+          label="Plus ancien au plus récent"
+          count={null}
+          checked={sortOrder === 'asc'}
+          onToggle={() => setSortOrder('asc')}
+          radio
+        />
+      </FilterGroup>
+    </>
+  );
 
   const [hasScrolled, setHasScrolled] = useState(false);
   useEffect(() => {
@@ -315,31 +401,54 @@ export default function Cultes() {
                 }`
               : `${filteredSermons.length} sur ${sermons.length} prédications`}
           </p>
-          <div className={styles.searchBar} role="search">
-            <span className={styles.searchIcon} aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
-                   stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="7" />
-                <line x1="21" y1="21" x2="16.5" y2="16.5" />
+          <div className={styles.searchRow}>
+            <div className={styles.searchBar} role="search">
+              <span className={styles.searchIcon} aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="7" />
+                  <line x1="21" y1="21" x2="16.5" y2="16.5" />
+                </svg>
+              </span>
+              <input
+                type="search"
+                placeholder="Rechercher un titre, prédicateur, verset…"
+                aria-label="Rechercher une prédication"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              {query && (
+                <button
+                  type="button"
+                  className={styles.searchClear}
+                  onClick={() => setQuery('')}
+                  aria-label="Effacer la recherche"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+
+            {/* Bouton "Filtrer" visible uniquement sur mobile (CSS).
+                Ouvre une sheet bottom iOS-like avec tous les filtres. */}
+            <button
+              type="button"
+              className={styles.mobileFilterBtn}
+              onClick={() => setIsFilterSheetOpen(true)}
+              aria-label="Ouvrir les filtres"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                   aria-hidden="true">
+                <line x1="4" y1="6" x2="20" y2="6" />
+                <line x1="7" y1="12" x2="17" y2="12" />
+                <line x1="10" y1="18" x2="14" y2="18" />
               </svg>
-            </span>
-            <input
-              type="search"
-              placeholder="Rechercher un titre, prédicateur, verset…"
-              aria-label="Rechercher une prédication"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-            {query && (
-              <button
-                type="button"
-                className={styles.searchClear}
-                onClick={() => setQuery('')}
-                aria-label="Effacer la recherche"
-              >
-                ×
-              </button>
-            )}
+              <span>Filtrer</span>
+              {activeFilterCount > 0 && (
+                <span className={styles.mobileFilterCount}>{activeFilterCount}</span>
+              )}
+            </button>
           </div>
         </div>
       </section>
@@ -398,70 +507,7 @@ export default function Cultes() {
             ) : (
               <>
                 <div className={styles.sidebarScroll}>
-                  <FilterGroup title="Année" icon={<IconCalendar />} defaultOpen>
-                    {years.map((yr) => (
-                      <FilterRow
-                        key={yr}
-                        label={yr}
-                        count={yearsCount.get(yr) ?? 0}
-                        checked={selectedYears.has(yr)}
-                        onToggle={() => setSelectedYears((prev) => toggleInSet(prev, yr))}
-                      />
-                    ))}
-                  </FilterGroup>
-
-                  <FilterGroup title="Prédicateur" icon={<IconUser />}>
-                    {predicateurs.map((p) => (
-                      <FilterRow
-                        key={p}
-                        label={p}
-                        count={predicateursCount.get(p) ?? 0}
-                        checked={selectedPredicateurs.has(p)}
-                        onToggle={() => setSelectedPredicateurs((prev) => toggleInSet(prev, p))}
-                      />
-                    ))}
-                  </FilterGroup>
-
-                  <FilterGroup title="Type" icon={<IconTag />}>
-                    {TYPE_LIST.filter((tp) => typesCount.has(tp)).map((tp) => (
-                      <FilterRow
-                        key={tp}
-                        label={TYPE_LABELS[tp]}
-                        count={typesCount.get(tp) ?? 0}
-                        checked={selectedTypes.has(tp)}
-                        onToggle={() => setSelectedTypes((prev) => toggleInSet(prev, tp))}
-                      />
-                    ))}
-                  </FilterGroup>
-
-                  <FilterGroup title="Série" icon={<IconLayers />}>
-                    {series.map((s) => (
-                      <FilterRow
-                        key={s}
-                        label={s}
-                        count={seriesCount.get(s) ?? 0}
-                        checked={selectedSeries.has(s)}
-                        onToggle={() => setSelectedSeries((prev) => toggleInSet(prev, s))}
-                      />
-                    ))}
-                  </FilterGroup>
-
-                  <FilterGroup title="Tri" icon={<IconSort />} defaultOpen>
-                    <FilterRow
-                      label="Plus récent au plus ancien"
-                      count={null}
-                      checked={sortOrder === 'desc'}
-                      onToggle={() => setSortOrder('desc')}
-                      radio
-                    />
-                    <FilterRow
-                      label="Plus ancien au plus récent"
-                      count={null}
-                      checked={sortOrder === 'asc'}
-                      onToggle={() => setSortOrder('asc')}
-                      radio
-                    />
-                  </FilterGroup>
+                  {filterBlocks}
                 </div>
 
                 <div className={styles.sidebarFoot}>
@@ -504,6 +550,23 @@ export default function Cultes() {
           </div>
         </div>
       </section>
+
+      {/* ── Sheet bottom modale : filtres sur mobile ── */}
+      <FilterSheet
+        open={isFilterSheetOpen}
+        onClose={() => setIsFilterSheetOpen(false)}
+        title="Filtres"
+        activeCount={activeFilterCount}
+        onReset={hasActiveFilters ? resetAll : undefined}
+        onApply={() => setIsFilterSheetOpen(false)}
+        applyLabel={
+          filteredSermons.length === sermons.length
+            ? 'Voir tout'
+            : `Voir ${filteredSermons.length} résultat${filteredSermons.length > 1 ? 's' : ''}`
+        }
+      >
+        {filterBlocks}
+      </FilterSheet>
     </main>
   );
 }

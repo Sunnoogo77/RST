@@ -561,7 +561,7 @@
 .bandVerse {
   display: block;
   font-family: var(--f-serif);
-  font-size: 28px;
+  font-size: clamp(20px, 4vw, 28px);
   font-style: italic;
   font-weight: 500;
   color: #edbd55;
@@ -840,6 +840,14 @@
 /* ════════════════════════════════════════════════════════════
    RESPONSIVE 820px
 ══════════════════════════════════════════════════════════════ */
+/* BP intermédiaire 640px : protège du débordement horizontal sur la
+   plage qui tombe entre le full desktop hero et le mobile reflow. */
+@media (max-width: 640px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 820px) {
   /* HERO — INTOUCHÉ */
   .hero {

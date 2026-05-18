@@ -32,7 +32,12 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  height: var(--header-h);
+  /* iPhone notch / Dynamic Island : on étend le fond vers le haut
+     via padding-top + on incrémente la hauteur effective pour que la
+     barre ne soit pas coupée. Les sticky subnavs utilisent la même
+     formule pour leur `top` afin de rester collées juste sous. */
+  padding-top: var(--safe-top);
+  height: calc(var(--header-h) + var(--safe-top));
   transition:
     transform var(--t-base),
     background var(--t-base),

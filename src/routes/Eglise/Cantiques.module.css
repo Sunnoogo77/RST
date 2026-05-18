@@ -942,10 +942,44 @@
   .tabs {
     overflow-x: auto;
     scrollbar-width: none;
+    /* Indicateur subtil de scrollabilité horizontale */
+    -webkit-mask-image: linear-gradient(to right,
+      #000 0, #000 calc(100% - 24px), transparent 100%);
+    mask-image: linear-gradient(to right,
+      #000 0, #000 calc(100% - 24px), transparent 100%);
   }
   .tabs::-webkit-scrollbar { display: none; }
+  /* Tab touch targets ≥ 44px sur mobile */
+  .tab {
+    padding: 11px 18px;
+    min-height: var(--touch-min);
+    flex-shrink: 0;
+  }
+
+  /* Search bar pleine largeur + input 16px (anti-zoom iOS via règle
+     globale). Bouton clear ≥ 44px de zone tap. */
+  .searchBar { padding: 12px 18px; }
+  .searchClear {
+    width: var(--touch-min);
+    height: var(--touch-min);
+  }
 
   .toolbar { padding: 14px 22px; }
+  .toolbarInner {
+    gap: 18px;
+  }
+  /* Chips ≥ 44px sur mobile */
+  .chip {
+    padding: 10px 14px;
+    font-size: 13px;
+    min-height: var(--touch-min);
+    display: inline-flex;
+    align-items: center;
+  }
+  .toolbarReset {
+    min-height: var(--touch-min);
+    padding: 0 18px;
+  }
 
   .viewport { padding: 28px 22px 80px; }
 
@@ -954,6 +988,7 @@
     grid-template-rows: auto auto;
     gap: 8px 12px;
     padding: 14px 18px;
+    min-height: var(--touch-min);
   }
   .recueilNum { grid-row: 1 / span 2; }
   .recueilHints {
@@ -980,4 +1015,7 @@
     padding: 12px 14px;
   }
   .recueilTitleLink { font-size: 17px; }
+  /* Toolbar empilée verticalement pour gagner de la largeur */
+  .toolbarInner { gap: 14px; }
+  .toolbarGroup { width: 100%; }
 }

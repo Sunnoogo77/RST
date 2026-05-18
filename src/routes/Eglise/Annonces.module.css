@@ -544,8 +544,10 @@
   .annCard  { grid-template-columns: 64px 1fr; gap: 14px; padding: 16px 0; }
   .dn       { font-size: 30px; }
 
-  .filterChip {
-    min-height: 36px;
-    padding: 8px 12px;
+  /* Chips de filtres ≥ 44px sur mobile (iOS HIG) */
+  .chip {
+    min-height: var(--touch-min);
+    padding: 10px 14px;
+    font-size: 13px;
   }
 }

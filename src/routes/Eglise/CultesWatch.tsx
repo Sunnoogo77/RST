@@ -48,9 +48,24 @@ const TYPE_LIST: TypeCulte[] = [
   'reunion-priere',
 ];
 
-const PIP_WIDTH  = 380;
-const PIP_HEIGHT = Math.round(PIP_WIDTH * 9 / 16);
-const PIP_MARGIN = 24;
+const PIP_WIDTH_DESKTOP  = 380;
+const PIP_HEIGHT_DESKTOP = Math.round(PIP_WIDTH_DESKTOP * 9 / 16);
+const PIP_WIDTH_MOBILE   = 280;
+const PIP_HEIGHT_MOBILE  = Math.round(PIP_WIDTH_MOBILE * 9 / 16);
+const PIP_MARGIN = 16;
+const PIP_MOBILE_BREAKPOINT = 480;
+
+/* Taille effective du PiP selon la viewport courante. Sur mobile, on
+   réduit pour que la mini-vidéo ne mange pas l'écran ni ne soit
+   positionnée hors-écran par le calcul JS. */
+function getPipSize(): { width: number; height: number } {
+  if (typeof window === 'undefined') {
+    return { width: PIP_WIDTH_DESKTOP, height: PIP_HEIGHT_DESKTOP };
+  }
+  return window.innerWidth <= PIP_MOBILE_BREAKPOINT
+    ? { width: PIP_WIDTH_MOBILE,  height: PIP_HEIGHT_MOBILE  }
+    : { width: PIP_WIDTH_DESKTOP, height: PIP_HEIGHT_DESKTOP };
+}
 
 type SortOrder = 'desc' | 'asc';
 
@@ -310,14 +325,15 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
   const onPipDragStart = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     /* Capture la position courante du PiP (pour cas par défaut, on le
        calcule depuis bottom/right). */
+    const { width, height } = getPipSize();
     let startTop: number;
     let startLeft: number;
     if (pipPos) {
       startTop  = pipPos.top;
       startLeft = pipPos.left;
     } else {
-      startTop  = window.innerHeight - PIP_HEIGHT - PIP_MARGIN;
-      startLeft = window.innerWidth - PIP_WIDTH - PIP_MARGIN;
+      startTop  = window.innerHeight - height - PIP_MARGIN;
+      startLeft = window.innerWidth  - width  - PIP_MARGIN;
     }
     dragOffset.current = {
       dx: e.clientX - startLeft,
@@ -332,8 +348,9 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
       if (!dragOffset.current) return;
       const top  = e.clientY - dragOffset.current.dy;
       const left = e.clientX - dragOffset.current.dx;
-      const maxTop  = window.innerHeight - PIP_HEIGHT;
-      const maxLeft = window.innerWidth - PIP_WIDTH;
+      const { width, height } = getPipSize();
+      const maxTop  = window.innerHeight - height;
+      const maxLeft = window.innerWidth  - width;
       setPipPos({
         top:  Math.max(0, Math.min(maxTop, top)),
         left: Math.max(0, Math.min(maxLeft, left)),
@@ -360,7 +377,8 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
      ATTENTION : on doit explicitement annuler les top/left/inset hérités
      du CSS de base (.playerWrap a position:absolute; inset:0) sinon le
      wrapper s'ancre en haut-gauche au lieu d'utiliser bottom/right. */
-  const pipStyle: React.CSSProperties = isPip
+  const pipSize = isPip ? getPipSize() : null;
+  const pipStyle: React.CSSProperties = isPip && pipSize
     ? (pipPos
         ? {
             position: 'fixed',
@@ -368,8 +386,8 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
             left: pipPos.left,
             right: 'auto',
             bottom: 'auto',
-            width: PIP_WIDTH,
-            height: PIP_HEIGHT,
+            width: pipSize.width,
+            height: pipSize.height,
           }
         : {
             position: 'fixed',
@@ -377,8 +395,8 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
             left: 'auto',
             bottom: PIP_MARGIN,
             right: PIP_MARGIN,
-            width: PIP_WIDTH,
-            height: PIP_HEIGHT,
+            width: pipSize.width,
+            height: pipSize.height,
           })
     : {};
 

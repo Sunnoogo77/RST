@@ -288,3 +288,7 @@
   }
   .posterFrame { max-width: 100%; }
 }
+
+@media (max-width: 480px) {
+  .detail { padding: 22px 16px 48px; }
+}

@@ -34,13 +34,15 @@
    TOPBAR fixe — bleu nuit, fusionnée avec le pied
    ══════════════════════════════════════════════════════════ */
 .topbar {
-  height: var(--topbar-h);
+  height: calc(var(--topbar-h) + var(--safe-top));
+  padding-top: var(--safe-top);
   flex-shrink: 0;
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 24px;
-  padding: 0 24px;
+  padding-right: max(24px, var(--safe-right));
+  padding-left: max(24px, var(--safe-left));
   background: var(--rst-dark-glass);
   color: rgba(255, 255, 255, 0.92);
   z-index: 100;
@@ -1499,6 +1501,13 @@
     overflow-x: auto;
     min-width: 0;
     scrollbar-width: none;
+    /* Indicateur subtil de scroll horizontal : dégradé sombre sur le
+       bord droit qui suggère qu'on peut faire défiler. Masqué via
+       mask-image pour rester sous le hairline du conteneur. */
+    -webkit-mask-image: linear-gradient(to right,
+      #000 0, #000 calc(100% - 24px), transparent 100%);
+    mask-image: linear-gradient(to right,
+      #000 0, #000 calc(100% - 24px), transparent 100%);
   }
   .familyPills::-webkit-scrollbar { display: none; }
   .familyPill {
@@ -1563,22 +1572,45 @@
   .relatedGrid { grid-template-columns: 1fr; }
   .occList { grid-template-columns: 1fr; }
   .lyricsToolbar { flex-direction: column; align-items: stretch; }
-  .lyricsTools { justify-content: flex-end; }
+  .lyricsTools { justify-content: flex-end; gap: 6px; }
+  /* Boutons paroles ≥ 44px sur téléphone (norme iOS HIG) */
+  .lyricsTool {
+    min-height: var(--touch-min);
+    padding: 10px 14px;
+  }
+
+  /* Contrôles topbar ≥ 44px */
+  .controlBtn { width: var(--touch-min); height: var(--touch-min); }
 
   /* Browse : une seule colonne, padding minimal */
   .browseInner { padding: 18px 12px 48px; gap: 18px; }
   .browseGrid { grid-template-columns: 1fr; gap: 14px; }
   .browseHead { gap: 4px; }
   .browseFilters { gap: 8px; }
-  .browseChip { padding: 5px 11px; font-size: 12px; }
+  .browseChip {
+    padding: 8px 13px;
+    font-size: 12.5px;
+    min-height: var(--touch-min);
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Search clear ≥ 44px de zone tap */
+  .browseSearchClear {
+    width: var(--touch-min);
+    height: var(--touch-min);
+  }
 
   /* Recueil : soliste masqué pour gagner de la place */
   .recueilRow {
     grid-template-columns: 40px 1fr auto;
-    padding: 10px 12px;
+    padding: 12px;
     gap: 8px;
+    min-height: var(--touch-min);
   }
   .recueilArrow { display: none; }
   .recueilSoliste { display: none; }
   .recueilFeaturedGrid { grid-template-columns: repeat(2, 1fr); }
+  .recueilSortBtn { min-height: var(--touch-min); padding: 10px 16px; }
+  .recueilLetter { min-width: var(--touch-min); height: var(--touch-min); }
 }

@@ -1,14 +1,14 @@
 /* Sous-nav Genèse — calque sur EgliseLayout (8 onglets : Sommaire + 7 piliers) */
 
 .headerSpacer {
-  height: var(--header-h);
+  height: calc(var(--header-h) + var(--safe-top));
   flex-shrink: 0;
   background: #06091c;
 }
 
 .subnav {
   position: sticky;
-  top: var(--header-h);
+  top: calc(var(--header-h) + var(--safe-top));
   z-index: 90;
   transition:
     transform var(--t-base),
@@ -113,7 +113,9 @@
 
 @media (max-width: 820px) {
   .subnavInner {
-    padding: 0 var(--pad-x-mob);
+    /* Safe-area pour notch en paysage iPhone Pro / Pro Max */
+    padding: 0 max(var(--pad-x-mob), var(--safe-right))
+             0 max(var(--pad-x-mob), var(--safe-left));
     scroll-snap-type: x proximity;
     scroll-padding-inline: var(--pad-x-mob);
     scroll-behavior: smooth;
@@ -125,7 +127,7 @@
 
   .subnavLink {
     scroll-snap-align: start;
-    min-height: 44px;
+    min-height: var(--touch-min);
     display: flex;
     align-items: center;
     padding: var(--space-12) var(--space-16);

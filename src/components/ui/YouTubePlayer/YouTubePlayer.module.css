@@ -126,6 +126,10 @@
   align-items: center;
   cursor: pointer;
   margin-bottom: 4px;
+  /* Désactive le menu contextuel iOS au long-press */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .progressTrack::before {
@@ -220,6 +224,9 @@
   justify-content: center;
   cursor: pointer;
   transition: background 160ms var(--ease), color 160ms var(--ease);
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .iconBtn:hover {
   background: rgba(255, 255, 255, 0.14);
@@ -241,7 +248,8 @@
   align-items: center;
 }
 .volumeGroup:hover .volumeSliderWrap,
-.volumeGroup:focus-within .volumeSliderWrap {
+.volumeGroup:focus-within .volumeSliderWrap,
+.volumeGroup:active .volumeSliderWrap {
   width: 80px;
   margin-left: 2px;
   margin-right: 6px;
@@ -293,16 +301,47 @@
   margin: 0 3px;
 }
 
-/* ── Responsive : controls plus compactes en PiP ─────────── */
+/* ── Responsive : touch targets ≥ 44px sur téléphone ────── */
 @media (max-width: 480px) {
   .bigPlay {
     width: 64px;
     height: 64px;
     margin: -32px 0 0 -32px;
   }
+  /* iOS HIG : touch target ≥ 44px. La barre garde son look mais
+     la zone tap est élargie. */
   .iconBtn {
-    width: 32px;
+    width: var(--touch-min);
+    height: var(--touch-min);
+  }
+  /* Zone tap du progress bar élargie verticalement (la barre visuelle
+     reste fine, seule la hitbox grandit). */
+  .progressTrack {
     height: 32px;
+    margin-bottom: 0;
+  }
+  /* Handle visible en permanence sur tactile (pas de hover). */
+  .progressHandle {
+    opacity: 1;
+    transform: scale(1);
+    width: 14px;
+    height: 14px;
+    margin-left: -7px;
+    margin-top: -7px;
+  }
+  /* Volume toujours visible (pas de hover sur tactile). */
+  .volumeSliderWrap {
+    width: 70px;
+    margin-left: 2px;
+    margin-right: 4px;
+  }
+  .volumeSlider::-webkit-slider-thumb {
+    width: 16px;
+    height: 16px;
+  }
+  .volumeSlider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
   }
   .time { font-size: 11px; }
   .controls { padding: 0 8px 6px; }

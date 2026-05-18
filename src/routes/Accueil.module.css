@@ -946,6 +946,17 @@
 /* ════════════════════════════════════════════════════════════
    RESPONSIVE 820px
 ══════════════════════════════════════════════════════════════ */
+/* ── BP intermédiaire 640px : couvre le trou entre 540 (où le
+   minmax(540px, …) du hero force l'overflow horizontal) et 820 (où
+   le layout passe en 1 col). Sur cette plage on bascule déjà en
+   single column pour éviter tout scroll horizontal sur petit
+   téléphone landscape ou tablette portrait. */
+@media (max-width: 640px) {
+  .heroInner {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 820px) {
   /* HERO — INTOUCHÉ */
   .hero {

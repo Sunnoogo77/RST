@@ -412,3 +412,11 @@
   .temLede { font-size: 19px !important; }
   .temQPull { font-size: 20px; padding-left: 18px; margin: 24px 0; }
 }
+
+@media (max-width: 480px) {
+  .hero { padding: 32px 16px 22px; }
+  .actions { padding: 14px 16px; gap: 10px; flex-wrap: wrap; }
+  .mosaic { padding: 32px 16px 40px; gap: 18px; }
+  .detail { padding: 40px 16px 56px; }
+  .temQPull { font-size: 18px; padding-left: 14px; margin: 20px 0; }
+}

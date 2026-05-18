@@ -16,6 +16,21 @@ html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* iOS : supprime le flash gris au tap (le projet gère ses propres
+     états hover/active, le surlignage natif fait doublon). */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Élimine le délai 300ms iOS sur les éléments interactifs et empêche
+   le double-tap zoom sur les boutons (gestion intentionnelle des taps). */
+button,
+a,
+[role="button"],
+input,
+select,
+textarea,
+summary {
+  touch-action: manipulation;
 }
 
 /* Canvas Liquid Glass : off-white bluish + dégradés radiaux ambiants
@@ -227,6 +242,11 @@ blockquote.bran .source {
   display: none;
 }
 
+/* Utilitaire safe-area pour les pieds de page / sticky bottom. */
+.safe-pad-bottom {
+  padding-bottom: max(var(--space-16), var(--safe-bottom));
+}
+
 /* ── Responsive ───────────────────────────────────────────────── */
 @media (max-width: 820px) {
   :root {
@@ -239,6 +259,16 @@ blockquote.bran .source {
 
   p.lede {
     font-size: 19px;
+  }
+
+  /* iOS anti-zoom : tout input dont la font-size est < 16px déclenche
+     un zoom automatique au focus. On force 16px sur mobile pour tous
+     les champs de saisie textuelle. Les modules individuels n'ont plus
+     besoin de répéter cette règle. */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
   }
 
   /* Sur mobile, le canvas devient plus uniforme :

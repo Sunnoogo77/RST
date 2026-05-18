@@ -41,7 +41,7 @@
 
 .heroSubtitre {
   font-family: var(--f-serif);
-  font-size: 20px;
+  font-size: clamp(16px, 3vw, 20px);
   font-style: italic;
   line-height: 1.55;
   color: rgba(255, 255, 255, .78);
@@ -320,7 +320,10 @@
   border-bottom: 1px solid rgba(30, 71, 161, 0.4);
   padding-bottom: 3px;
   transition: color var(--t-fast), border-color var(--t-fast);
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  /* Touch target ≥ 44px (norme iOS HIG) sans casser la baseline visuelle */
+  min-height: var(--touch-min);
 }
 .sortieLink:hover {
   color: var(--rst-blue-deep);
@@ -373,5 +376,12 @@
   }
   .quote p {
     font-size: 18px;
+  }
+}
+
+/* iPhone SE / téléphones très étroits — drop-cap réduit encore */
+@media (max-width: 360px) {
+  .dropCap::first-letter {
+    font-size: 44px;
   }
 }

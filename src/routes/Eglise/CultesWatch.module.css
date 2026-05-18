@@ -26,6 +26,9 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  /* dvh = dynamic viewport. Sur mobile, se rétracte quand le clavier
+     iOS apparaît pour que les inputs ne soient pas masqués. */
+  height: 100dvh;
   /* Le fond global est sombre — la zone centrale viendra par-dessus
      en clair, avec ses coins arrondis qui créent la transition douce. */
   background: var(--rst-dark-solid);
@@ -37,13 +40,15 @@
    TOPBAR fixe — bleu foncé glass dark, atmosphère unifiée
    ══════════════════════════════════════════════════════════ */
 .topbar {
-  height: var(--topbar-h);
+  height: calc(var(--topbar-h) + var(--safe-top));
+  padding-top: var(--safe-top);
   flex-shrink: 0;
   display: grid;
   grid-template-columns: auto auto 1fr;
   align-items: center;
   gap: 24px;
-  padding: 0 24px;
+  padding-right: max(24px, var(--safe-right));
+  padding-left: max(24px, var(--safe-left));
   background: var(--rst-dark-glass);
   /* PAS de border-bottom : fusion visuelle avec la sidebar en dessous,
      la transition vers le centre clair est faite par les coins arrondis
@@ -1109,15 +1114,29 @@
     --topbar-h: 52px;
   }
   .topbar {
-    padding: 0 12px;
+    padding-right: max(12px, var(--safe-right));
+    padding-left: max(12px, var(--safe-left));
     gap: 10px;
   }
-  .backBtn span { display: none; }
   .backBtn {
-    padding: 8px 10px;
+    padding: 10px;
+    min-height: var(--touch-min);
+    min-width: var(--touch-min);
   }
+  .backBtn span { display: none; }
   .topbarBrand { display: none; }
-  .topbarSearch { max-width: none; }
+  .topbarSearch {
+    max-width: none;
+    padding: 10px 14px;
+  }
+  /* L'input passe à 16px via la règle globale dans global.css. */
+
+  /* Touch targets ≥ 44px sur mobile (norme iOS HIG) */
+  .sidebarToggle,
+  .railIcon {
+    width: var(--touch-min);
+    height: var(--touch-min);
+  }
 
   /* Sidebar passe en bandeau du haut, hauteur réduite */
   .body {
@@ -1133,7 +1152,11 @@
   .sidebarScroll { padding: 4px 10px 12px; }
 
   .center {
-    padding: 16px 16px 40px;
+    padding:
+      16px
+      max(16px, var(--safe-right))
+      max(40px, var(--safe-bottom))
+      max(16px, var(--safe-left));
   }
   .moreGrid {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -1147,4 +1170,7 @@
   .moreGrid {
     grid-template-columns: 1fr;
   }
+  /* Le PiP est dimensionné côté JS via getPipSize() qui retourne
+     280×158 sur mobile (voir CultesWatch.tsx). Aucune surcharge CSS
+     nécessaire ici. */
 }
