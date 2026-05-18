@@ -1,16 +1,17 @@
 /* ============================================================
    CANTIQUES WATCH — page dédiée à la lecture
-   Layout :
-   - Mode CANTIQUE : 1 colonne (zone blanche centrale large) ;
-     vidéo + paroles + occurrences + autres cantiques empilés.
-   - Mode SESSION  : 2 colonnes (centre blanc + sidebar bleutée
-     avec l'index des cantiques contenus).
+   Layout 2 colonnes dans LES DEUX modes :
+   - Mode CANTIQUE : centre blanc (vidéo + occurrences + autres)
+                     + sidebar droite avec carte PAROLES.
+   - Mode SESSION  : centre blanc (vidéo + meta)
+                     + sidebar droite empilant INDEX (haut)
+                     puis PAROLES (bas, du cantique cliqué).
    Cohérence visuelle avec CultesWatch (palette glass dark).
    ============================================================ */
 
 .watchPage {
   --topbar-h: 56px;
-  --sidebar-w: 380px;
+  --sidebar-w: 460px;
   --center-radius: 28px;
   --rst-dark-glass:
     radial-gradient(ellipse 60% 90% at 0% 0%, rgba(30, 71, 161, 0.18) 0%, transparent 70%),
@@ -21,6 +22,9 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  /* dvh = dynamic viewport : se rétracte quand le clavier mobile
+     apparaît, évitant que les inputs soient cachés. Fallback vh. */
+  height: 100dvh;
   background: var(--rst-dark-solid);
   color: var(--ink-1);
   overflow: hidden;
@@ -42,30 +46,47 @@
   z-index: 100;
 }
 
-.backBtn {
+/* ── Pills famille (gauche) ─────────────────────────────── */
+.familyPills {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 14px 8px 12px;
+  gap: 4px;
+  padding: 4px;
   border-radius: var(--r-pill);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.familyPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.72);
   font-family: var(--f-text);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 500;
   letter-spacing: 0.02em;
   cursor: pointer;
-  transition: background var(--t-fast), transform var(--t-fast),
-              border-color var(--t-fast), color var(--t-fast);
+  transition: background var(--t-fast), color var(--t-fast);
 }
-.backBtn:hover {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.24);
+.familyPill:hover {
+  background: rgba(255, 255, 255, 0.10);
   color: #fff;
-  transform: translateX(-2px);
+}
+.familyPillActive {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ink-1);
+}
+.familyPillActive:hover {
+  background: #fff;
+  color: var(--ink-1);
 }
 
+/* ── Brand centre ──────────────────────────────────────── */
 .topbarBrand {
   display: inline-flex;
   align-items: center;
@@ -84,6 +105,371 @@
   color: rgba(255, 255, 255, 0.62);
 }
 
+/* ── Contrôles droite (prev / next / close) ────────────── */
+.topbarControls {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  justify-self: end;
+}
+
+.controlBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast),
+              color var(--t-fast), transform var(--t-fast), opacity var(--t-fast);
+}
+.controlBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+.controlBtn:active:not(:disabled) {
+  transform: scale(0.94);
+}
+.controlBtn:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+}
+
+.controlClose {
+  background: rgba(200, 51, 42, 0.12);
+  border-color: rgba(200, 51, 42, 0.28);
+  color: #ffd0cc;
+}
+.controlClose:hover:not(:disabled) {
+  background: rgba(200, 51, 42, 0.22);
+  border-color: rgba(200, 51, 42, 0.5);
+  color: #fff;
+}
+
+.controlDivider {
+  width: 1px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.14);
+  margin: 0 6px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   BROWSE — mini-bibliothèque scopée à une famille
+   Centre seul (sidebar paroles masquée), corner top-right
+   arrondi pour boucler le rouleau blanc.
+   (Les overrides .bodyBrowse / .videoColumnBrowse sont placés
+   après les règles .body / .videoColumn pour gagner la cascade.)
+   ══════════════════════════════════════════════════════════ */
+
+.browseInner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 40px 32px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.browseHead {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.browseEyebrow {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--rst-red);
+  margin: 0;
+}
+
+.browseTitle {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: clamp(28px, 3.4vw, 42px);
+  line-height: 1.1;
+  color: var(--ink-1);
+  margin: 4px 0 6px;
+  letter-spacing: -0.01em;
+}
+
+.browseHint {
+  font-family: var(--f-text);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-3);
+  margin: 0;
+  max-width: 720px;
+}
+
+.browseSearchBar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid var(--line-1);
+  border-radius: var(--r-pill);
+  box-shadow: var(--shadow-1);
+  transition: border-color var(--t-fast), box-shadow var(--t-fast);
+}
+.browseSearchBar:focus-within {
+  border-color: var(--rst-blue);
+  box-shadow: 0 0 0 3px rgba(30, 71, 161, 0.16);
+}
+
+.browseSearchIcon {
+  color: var(--ink-3);
+  flex-shrink: 0;
+}
+
+.browseSearchInput {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  padding: 14px 0;
+  font-family: var(--f-text);
+  font-size: 14px;
+  color: var(--ink-1);
+  letter-spacing: 0.01em;
+  min-width: 0;
+}
+.browseSearchInput::placeholder {
+  color: var(--ink-4);
+  font-style: italic;
+}
+
+.browseSearchClear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(11, 15, 25, 0.08);
+  color: var(--ink-2);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--t-fast);
+}
+.browseSearchClear:hover {
+  background: rgba(11, 15, 25, 0.16);
+  color: var(--ink-1);
+}
+
+/* ── Bande horizontale de filtres (chips année) ────────── */
+.browseFilters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: -8px 0 0;
+  padding: 4px 0;
+  flex-wrap: wrap;
+}
+
+.browseFiltersLbl {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  flex-shrink: 0;
+}
+
+.browseChips {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.browseChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line-1);
+  background: var(--glass-thick);
+  color: var(--ink-2);
+  font-family: var(--f-num);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast),
+              color var(--t-fast), transform var(--t-fast);
+}
+.browseChip:hover {
+  border-color: var(--rst-blue);
+  color: var(--ink-1);
+}
+.browseChipActive {
+  background: var(--rst-blue);
+  border-color: var(--rst-blue);
+  color: #fff;
+  box-shadow: var(--shadow-blue);
+}
+.browseChipActive:hover {
+  background: var(--rst-blue-deep);
+  border-color: var(--rst-blue-deep);
+  color: #fff;
+}
+
+.browseCount {
+  font-family: var(--f-text);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: -8px 4px 0;
+}
+
+.browseGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 22px 18px;
+}
+
+.browseCard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  transition: transform var(--t-base);
+}
+.browseCard:hover {
+  transform: translateY(-3px);
+}
+.browseCard:hover .browseThumb {
+  box-shadow: var(--shadow-2);
+}
+
+.browseThumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1f33, #050810);
+  box-shadow: var(--shadow-1);
+  transition: box-shadow var(--t-base);
+}
+.browseThumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.browseThumbEmpty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.browseCardBody {
+  padding: 0 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.browseCardTitle {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 15.5px;
+  line-height: 1.3;
+  color: var(--ink-1);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.browseCardMeta {
+  font-family: var(--f-text);
+  font-size: 12px;
+  color: var(--ink-3);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.browseCardSubMeta {
+  font-family: var(--f-num);
+  font-size: 11px;
+  color: var(--ink-4);
+  margin: 0;
+}
+
+.browseEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 60px 24px;
+  text-align: center;
+}
+.browseEmpty p {
+  margin: 0;
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--ink-3);
+  max-width: 420px;
+}
+
+.browseEmptyReset {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line-1);
+  background: var(--glass-thick);
+  color: var(--ink-2);
+  font-family: var(--f-text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+}
+.browseEmptyReset:hover {
+  background: var(--rst-blue);
+  border-color: var(--rst-blue);
+  color: #fff;
+}
+
 /* ══════════════════════════════════════════════════════════
    BODY — grid dynamique
    ══════════════════════════════════════════════════════════ */
@@ -95,9 +481,22 @@
   overflow: hidden;
 }
 
-/* Mode cantique : sidebar absente, le centre prend toute la place. */
-.bodyCantique {
+/* Mode BROWSE : pas de sidebar, le centre prend toute la largeur.
+   Doit venir APRÈS .body pour gagner la cascade (même spécificité). */
+.bodyBrowse {
   grid-template-columns: minmax(0, 1fr);
+}
+.videoColumnBrowse {
+  border-radius: var(--center-radius) var(--center-radius) 0 0;
+}
+
+/* Mode RECUEIL (watch cantique) : pareil, paroles dominantes dans
+   le centre (vidéo compacte au-dessus), sidebar paroles masquée. */
+.bodyRecueilCantique {
+  grid-template-columns: minmax(0, 1fr);
+}
+.videoColumnRecueilCantique {
+  border-radius: var(--center-radius) var(--center-radius) 0 0;
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -112,15 +511,9 @@
     var(--bg-canvas);
   border-radius: var(--center-radius) 0 0 0;
 }
-.bodyCantique .videoColumn {
-  /* En mode 1 col, arrondir aussi le coin top-right. */
-  border-radius: var(--center-radius) var(--center-radius) 0 0;
-}
 
-/* Inner avec max-width pour aérer en mode 1 col (sinon ça s'étale
-   sur 1900px et ça devient illisible). */
 .videoColumnInner {
-  max-width: 1280px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 32px 32px 60px;
   display: flex;
@@ -141,6 +534,12 @@
   background: #050507;
   box-shadow: var(--shadow-3), 0 1px 0 0 rgba(255, 255, 255, 0.4) inset;
   flex-shrink: 0;
+}
+
+/* Mode recueil : le player est secondaire, plus compact (paroles
+   occupent l'écran). On le borne à ~640px. */
+.playerSlotCompact {
+  max-width: 640px;
 }
 
 .noVideo {
@@ -219,11 +618,27 @@
 }
 
 /* ══════════════════════════════════════════════════════════
-   LYRICS CARD — paroles intégrées dans la zone blanche
-   (pattern identique aux passages bibliques de CultesWatch)
+   LYRICS CARD — paroles dans la sidebar droite
+   Carte transparente qui occupe tout son conteneur et défile
+   en interne (toolbar fixe en haut, body scrollable).
    ══════════════════════════════════════════════════════════ */
 .lyricsCard {
-  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+/* Variante "inline" : la carte vit dans le centre blanc (mode
+   recueil cantique), pas dans la sidebar bleutée. On lui redonne
+   un fond glass + bordure, et on libère la hauteur (flux normal). */
+.lyricsCardInline {
+  height: auto;
   background: var(--glass-thick);
   -webkit-backdrop-filter: var(--glass-blur-light);
   backdrop-filter: var(--glass-blur-light);
@@ -232,15 +647,20 @@
   box-shadow: var(--shadow-1), var(--glass-inset-highlight);
   overflow: hidden;
 }
+.lyricsCardInline .lyricsBody {
+  overflow-y: visible;
+  max-height: none;
+}
 
 .lyricsToolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  padding: 14px 22px;
-  border-bottom: 1px solid var(--line-1);
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(11, 15, 25, 0.06);
   flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
 .lyricsLbl {
@@ -305,7 +725,10 @@
 }
 
 .lyricsBody {
-  padding: 28px 32px 32px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 24px 24px 28px;
   font-family: var(--f-serif);
   color: var(--ink-1);
 }
@@ -362,25 +785,25 @@
 }
 .lyricsEmpty p { margin: 0; max-width: 380px; }
 
-/* ── Hint en mode session quand aucun cantique sélectionné ── */
+/* ── Hint en mode session quand aucun cantique sélectionné ──
+   Occupe tout le .lyricsBlock, message centré, ton très calme. */
 .lyricsHint {
-  margin-top: 16px;
+  flex: 1;
+  min-height: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 14px;
-  padding: 18px 22px;
-  background: var(--glass-blue);
-  -webkit-backdrop-filter: var(--glass-blur-light);
-  backdrop-filter: var(--glass-blur-light);
-  border: 1px dashed var(--line-soft);
-  border-radius: var(--r-md);
+  padding: 24px 28px;
+  text-align: center;
   color: var(--ink-3);
   font-family: var(--f-text);
   font-size: 13.5px;
-  line-height: 1.5;
+  line-height: 1.55;
 }
-.lyricsHint svg { flex-shrink: 0; color: var(--rst-blue); }
-.lyricsHint p { margin: 0; }
+.lyricsHint svg { flex-shrink: 0; color: var(--rst-blue); opacity: 0.7; }
+.lyricsHint p { margin: 0; max-width: 320px; }
 
 /* ══════════════════════════════════════════════════════════
    SÉLECTEUR D'OCCURRENCES — vu aussi dans
@@ -553,23 +976,52 @@
 }
 
 /* ══════════════════════════════════════════════════════════
-   INDEX SESSION — sidebar droite (mode session uniquement)
-   Carte flottante très claire (cohérence avec CultesWatch).
+   SIDEBAR DROITE — surface continue (un seul "rouleau" clair)
+   Pas de marge, pas de cartes flottantes : la surface bleutée
+   claire descend du dessous de la topbar jusqu'au coin bas-droit,
+   miroir de la zone blanche centrale (top-right arrondi pour
+   prolonger l'effet d'angle inversé).
+
+   - .lyricsSidebar  → mode CANTIQUE : paroles uniquement
+   - .sessionSidebar → mode SESSION  : index + paroles empilés
+                       sur la MÊME surface (séparés par un trait)
    ══════════════════════════════════════════════════════════ */
-.indexSidebar {
-  margin: 12px 12px 12px 0;
+
+.lyricsSidebar,
+.sessionSidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
   background: rgba(229, 235, 248, 0.92);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
   color: var(--ink-1);
-  border-radius: var(--center-radius);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 0 var(--center-radius) 0 0;
   box-shadow:
-    0 12px 32px rgba(30, 71, 161, 0.10),
-    0 1px 0 0 rgba(255, 255, 255, 0.7) inset;
+    inset 1px 0 0 rgba(255, 255, 255, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  overflow: hidden;
+}
+
+/* ── Sous-blocs en mode SESSION ──────────────────────────
+   Pas de fond propre : ils héritent du fond du parent. Un trait
+   discret sépare l'index (haut) des paroles (bas). */
+
+.indexBlock {
   display: flex;
   flex-direction: column;
   min-height: 0;
+  flex: 0 1 auto;
+  max-height: 50%;
+  border-bottom: 1px solid rgba(11, 15, 25, 0.10);
+  overflow: hidden;
+}
+
+.lyricsBlock {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1 1 auto;
   overflow: hidden;
 }
 
@@ -695,40 +1147,415 @@
 }
 
 /* ══════════════════════════════════════════════════════════
+   RECUEIL LAYOUT — table des matières hymnaire pensée pour
+   scaler à 500+ entrées (sélection vidéo + tri + jumper alpha
+   + grille 2 cols).
+   ══════════════════════════════════════════════════════════ */
+.recueilLayout {
+  max-width: 880px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ── Sélection (cards horizontales, cantiques avec vidéo) ── */
+.recueilSectionLbl {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  margin: 0 0 12px;
+}
+
+.recueilFeaturedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px 12px;
+}
+
+.recueilFeaturedCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  transition: transform var(--t-base);
+}
+.recueilFeaturedCard:hover { transform: translateY(-2px); }
+.recueilFeaturedCard:hover .recueilFeaturedThumb { box-shadow: var(--shadow-2); }
+
+.recueilFeaturedThumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a1f33, #050810);
+  box-shadow: var(--shadow-1);
+  transition: box-shadow var(--t-base);
+}
+.recueilFeaturedThumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.recueilFeaturedNum {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  font-family: var(--f-num);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: rgba(11, 15, 25, 0.78);
+  padding: 3px 8px;
+  border-radius: var(--r-pill);
+}
+
+.recueilFeaturedTitle {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.3;
+  color: var(--ink-1);
+  margin: 0;
+  padding: 0 2px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Toolbar (tri + jumper alpha) ── */
+.recueilToolbar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid var(--line-1);
+  border-radius: var(--r-md);
+}
+
+.recueilSortGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.recueilSortLbl {
+  font-family: var(--f-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.recueilSortBtns {
+  display: inline-flex;
+  background: rgba(11, 15, 25, 0.04);
+  border: 1px solid var(--line-1);
+  border-radius: var(--r-pill);
+  padding: 3px;
+  gap: 2px;
+}
+
+.recueilSortBtn {
+  font-family: var(--f-text);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--ink-2);
+  background: transparent;
+  border: 0;
+  padding: 6px 14px;
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.recueilSortBtn:hover { color: var(--ink-1); }
+.recueilSortBtnActive {
+  background: var(--rst-blue);
+  color: #fff;
+  box-shadow: var(--shadow-blue);
+}
+.recueilSortBtnActive:hover { color: #fff; }
+
+.recueilLetters {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.recueilLetter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  border-radius: var(--r-xs);
+  background: rgba(30, 71, 161, 0.06);
+  color: var(--rst-blue);
+  font-family: var(--f-num);
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background var(--t-fast), color var(--t-fast), transform var(--t-fast);
+}
+.recueilLetter:hover {
+  background: var(--rst-blue);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* ── Liste 2 colonnes (rows compactes) ── */
+.recueilGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 16px;
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  backdrop-filter: var(--glass-blur-light);
+  border: 1px solid var(--line-1);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-1), var(--glass-inset-highlight);
+  overflow: hidden;
+}
+
+.recueilRow {
+  display: grid;
+  grid-template-columns: 44px 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 18px;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--line-1);
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  transition: background var(--t-fast);
+  font: inherit;
+}
+/* Pas de border-top sur la première ligne de chaque colonne. */
+.recueilGrid > li:nth-child(1) .recueilRow,
+.recueilGrid > li:nth-child(2) .recueilRow {
+  border-top: 0;
+}
+
+.recueilRow:hover {
+  background: rgba(30, 71, 161, 0.05);
+}
+.recueilRow:hover .recueilArrow {
+  transform: translateX(3px);
+  color: var(--rst-blue);
+}
+
+.recueilNum {
+  font-family: var(--f-num);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--rst-blue);
+  letter-spacing: 0.04em;
+  text-align: center;
+  padding: 4px 6px;
+  background: rgba(30, 71, 161, 0.08);
+  border-radius: var(--r-xs);
+}
+
+.recueilBody {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.recueilTitle {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.25;
+  color: var(--ink-1);
+  letter-spacing: -0.005em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recueilSoliste {
+  font-family: var(--f-text);
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recueilVideoBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(200, 51, 42, 0.10);
+  color: var(--rst-red);
+}
+
+.recueilArrow {
+  color: var(--ink-4);
+  transition: transform var(--t-fast), color var(--t-fast);
+}
+
+/* ── Mode A→Z : groupes par lettre ── */
+.recueilAlphaGroups {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.recueilAlphaSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scroll-margin-top: calc(var(--topbar-h) + 16px);
+}
+
+.recueilAlphaHead {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 26px;
+  color: var(--rst-blue);
+  margin: 0;
+  padding: 0 4px 4px;
+  border-bottom: 1px solid var(--line-soft);
+  letter-spacing: -0.01em;
+}
+
+/* ══════════════════════════════════════════════════════════
    RESPONSIVE
    ══════════════════════════════════════════════════════════ */
+@media (max-width: 1440px) {
+  .watchPage { --sidebar-w: 420px; }
+}
+
 @media (max-width: 1280px) {
-  .watchPage { --sidebar-w: 340px; }
+  .watchPage { --sidebar-w: 380px; }
   .videoColumnInner { padding: 28px 28px 60px; }
 }
 
 @media (max-width: 980px) {
-  /* Tablette : sidebar (mode session) passe sous la vidéo */
+  /* Tablette : sidebar passe sous la vidéo dans les deux modes,
+     conserve la même surface continue (juste sans le top-right round). */
   .body {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto;
   }
-  .indexSidebar {
-    margin: 0 12px 12px;
-    max-height: 420px;
+  .lyricsSidebar,
+  .sessionSidebar {
+    border-radius: 0;
+  }
+  .lyricsSidebar {
+    max-height: 520px;
+  }
+  .indexBlock {
+    max-height: 320px;
+  }
+  .lyricsBlock {
+    max-height: 480px;
   }
   .videoColumnInner { padding: 24px 22px 40px; }
 }
 
 @media (max-width: 820px) {
   .watchPage { --topbar-h: 52px; }
-  .topbar { padding: 0 12px; gap: 10px; }
-  .backBtn span { display: none; }
-  .backBtn { padding: 8px 10px; }
+  .topbar { padding: 0 10px; gap: 8px; grid-template-columns: 1fr auto; }
   .topbarBrand { display: none; }
+  /* Pills : conteneur scrollable horizontalement si ça déborde */
+  .familyPills {
+    overflow-x: auto;
+    min-width: 0;
+    scrollbar-width: none;
+  }
+  .familyPills::-webkit-scrollbar { display: none; }
+  .familyPill {
+    padding: 5px 12px;
+    font-size: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .controlBtn { width: 32px; height: 32px; }
+  .controlDivider { margin: 0 2px; }
 
-  .videoColumnInner { padding: 16px 16px 40px; gap: 18px; }
-  .lyricsBody { padding: 22px 18px 26px; }
-  .lyricsToolbar { padding: 12px 16px; }
+  /* Watch (cantique/session) */
+  .videoColumnInner { padding: 16px 14px 36px; gap: 16px; }
+  .lyricsBody { padding: 20px 16px 24px; }
+  .lyricsToolbar { padding: 10px 14px; }
 
   .relatedGrid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 14px 10px;
+  }
+
+  /* Browse (mini-bibliothèque) */
+  .browseInner { padding: 22px 14px 56px; gap: 20px; }
+  .browseTitle { font-size: 26px; line-height: 1.15; }
+  .browseHint { font-size: 13px; }
+  /* iOS empêche le zoom automatique au focus si font-size ≥ 16px */
+  .browseSearchInput { font-size: 16px; padding: 12px 0; }
+  .browseSearchBar { padding: 0 14px; }
+  .browseGrid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 18px 12px;
+  }
+  .browseCardTitle { font-size: 14.5px; }
+  .browseCardMeta { font-size: 11.5px; }
+
+  /* Recueil layout : 1 colonne, toolbar empilée */
+  .recueilGrid {
+    grid-template-columns: 1fr;
+  }
+  .recueilGrid > li:nth-child(2) .recueilRow {
+    border-top: 1px solid var(--line-1);
+  }
+  .recueilRow {
+    grid-template-columns: 42px 1fr auto auto;
+    gap: 10px;
+    padding: 11px 14px;
+  }
+  .recueilNum { font-size: 12.5px; padding: 3px 6px; }
+  .recueilTitle { font-size: 15px; }
+  .recueilSoliste { font-size: 11.5px; }
+  .recueilToolbar { padding: 10px 12px; gap: 12px; }
+  .recueilLetters { margin-left: 0; }
+  .recueilLetter { min-width: 26px; height: 26px; font-size: 12px; }
+  .recueilAlphaHead { font-size: 22px; }
+  .recueilFeaturedGrid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px 10px;
   }
 }
 
@@ -737,4 +1564,21 @@
   .occList { grid-template-columns: 1fr; }
   .lyricsToolbar { flex-direction: column; align-items: stretch; }
   .lyricsTools { justify-content: flex-end; }
+
+  /* Browse : une seule colonne, padding minimal */
+  .browseInner { padding: 18px 12px 48px; gap: 18px; }
+  .browseGrid { grid-template-columns: 1fr; gap: 14px; }
+  .browseHead { gap: 4px; }
+  .browseFilters { gap: 8px; }
+  .browseChip { padding: 5px 11px; font-size: 12px; }
+
+  /* Recueil : soliste masqué pour gagner de la place */
+  .recueilRow {
+    grid-template-columns: 40px 1fr auto;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  .recueilArrow { display: none; }
+  .recueilSoliste { display: none; }
+  .recueilFeaturedGrid { grid-template-columns: repeat(2, 1fr); }
 }

@@ -99,9 +99,13 @@ function Shell() {
             Shell. Topbar custom et footer absent : focus total sur la vidéo. */}
         <Route path="/eglise/cultes/watch/:id" element={<CultesWatch />} />
 
-        {/* Page DÉDIÉE de lecture des cantiques, hors EgliseLayout
-            (vidéo + paroles côte à côte ; ou vidéo + index pour les
-            sessions d'adoration). */}
+        {/* Pages DÉDIÉES de lecture/navigation des cantiques, hors
+            EgliseLayout. Trois modes pris en charge par CantiquesWatch :
+            - /famille/:famille → mini-bibliothèque scopée (recueil,
+              spéciaux ou service de chant) avec search + grille.
+            - /:slug             → cantique seul (vidéo + paroles).
+            - /:slug = "session-…" → session (vidéo + index + paroles). */}
+        <Route path="/eglise/cantiques/watch/famille/:famille" element={<CantiquesWatch />} />
         <Route path="/eglise/cantiques/watch/:slug" element={<CantiquesWatch />} />
 
         <Route path="/design-system" element={<DesignSystem />} />
