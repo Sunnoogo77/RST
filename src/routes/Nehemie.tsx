@@ -1,9 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './Nehemie.module.css';
 import { projetNehemie } from '../data/nehemie';
 import { Lightbox, type LightboxImage } from '../components/ui/Lightbox/Lightbox';
 import { asset } from '../utils/asset';
+
+/* Hero carousel — 4 visuels du futur sanctuaire qui défilent en
+   crossfade. Image phare (sanctuary.jpg du public/) + 3 nouvelles
+   images bundlées depuis src/assets/nehemie/. */
+import heroEstrade from '../assets/nehemie/estrade.png';
+import heroVueArriereAvant from '../assets/nehemie/vue-de-l-arriere-vers-l-avant.png';
+import heroVueAvantArriere from '../assets/nehemie/vue-de-l-avant-vers-l-arriere.png';
+
+const HERO_INTERVAL_MS = 6000;
 
 /* ────────────────────────────────────────────────────────────────────
    ICÔNES — quatre piliers du projet Néhémie
@@ -156,6 +165,30 @@ export default function Nehemie() {
     () => BAND_BG_URLS[Math.floor(Math.random() * BAND_BG_URLS.length)],
   );
 
+  /* Hero carousel : 4 visuels qui défilent en crossfade. La première
+     image (sanctuary.jpg) garde son chargement eager pour le LCP, les
+     autres en lazy. Auto-rotation toutes les 6s, mise en pause si
+     l'utilisateur préfère reduced motion. */
+  const heroSlides = [
+    { src: asset('/images/sanctuary.jpg'), alt: 'Roc Séculaire Tabernacle — sanctuaire' },
+    { src: heroEstrade,                    alt: 'Estrade du sanctuaire' },
+    { src: heroVueAvantArriere,            alt: "Vue de l'estrade vers la salle" },
+    { src: heroVueArriereAvant,            alt: "Vue de l'arrière de la salle vers l'estrade" },
+  ];
+  const [heroSlide, setHeroSlide] = useState(0);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' &&
+        window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      return; // pas d'auto-rotation pour les users en reduced motion
+    }
+    const id = window.setInterval(() => {
+      setHeroSlide((i) => (i + 1) % heroSlides.length);
+    }, HERO_INTERVAL_MS);
+    return () => window.clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <main id="main-content">
 
@@ -164,20 +197,57 @@ export default function Nehemie() {
           ══════════════════════════════════════════════════════════ */}
       <section className={styles.hero} aria-label={t('nav.nehemie')}>
 
-        {/* Couche 0 — fond : panel sombre étroit + image large côte à côte */}
+        {/* Couche 0 — fond : panel sombre étroit + carrousel image */}
         <div className={styles.heroDark} aria-hidden="true" />
         <div className={styles.heroImg}>
-          <img
-            src={asset('/images/sanctuary.jpg')}
-            alt="Roc Séculaire Tabernacle"
-            className={styles.heroImgEl}
-            loading="eager"
-          />
+          {/* Carrousel : 4 images empilées en crossfade. La zone est
+              clippée (overflow:hidden) pour que les slides ne débordent
+              pas, mais la quote box et les dots restent libres au-dessus. */}
+          <div
+            className={styles.heroCarousel}
+            role="group"
+            aria-roledescription="carrousel"
+            aria-label="Visuels du sanctuaire"
+          >
+            {heroSlides.map((slide, i) => (
+              <img
+                key={slide.src}
+                src={slide.src}
+                alt={slide.alt}
+                className={[
+                  styles.heroImgEl,
+                  styles.heroCarouselSlide,
+                  i === heroSlide ? styles.heroCarouselSlideActive : '',
+                ].join(' ')}
+                loading={i === 0 ? 'eager' : 'lazy'}
+                aria-hidden={i !== heroSlide}
+              />
+            ))}
+          </div>
+
           <blockquote className={styles.heroQuoteBox}>
             <span className={styles.heroQuoteGlyph} aria-hidden="true">"</span>
             <p>{t('nehemie.heroQuote')}</p>
             <cite>{t('nehemie.heroQuoteRef')}</cite>
           </blockquote>
+
+          {/* Dots pour navigation manuelle */}
+          <div className={styles.heroDots} role="tablist" aria-label="Choisir un visuel">
+            {heroSlides.map((slide, i) => (
+              <button
+                key={slide.src}
+                type="button"
+                role="tab"
+                aria-selected={i === heroSlide}
+                aria-label={`Visuel ${i + 1} sur ${heroSlides.length} : ${slide.alt}`}
+                className={[
+                  styles.heroDot,
+                  i === heroSlide ? styles.heroDotActive : '',
+                ].join(' ')}
+                onClick={() => setHeroSlide(i)}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Couche 1 — texte qui chevauche le panel et l'image */}

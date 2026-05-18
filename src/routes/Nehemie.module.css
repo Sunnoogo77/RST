@@ -101,6 +101,75 @@
   display: block;
 }
 
+/* ──────────────────────────────────────────────────────────────────
+   Carrousel — 4 visuels du sanctuaire en crossfade
+   ────────────────────────────────────────────────────────────────── */
+.heroCarousel {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+.heroCarouselSlide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 38%;
+  opacity: 0;
+  transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+.heroCarouselSlideActive {
+  opacity: 1;
+}
+
+/* Dots de navigation manuelle, posés en bas-centre de l'image,
+   sur une pastille glass dark pour rester lisibles sur n'importe
+   quel visuel sous-jacent. */
+.heroDots {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(11, 15, 25, 0.48);
+  -webkit-backdrop-filter: blur(10px) saturate(160%);
+  backdrop-filter: blur(10px) saturate(160%);
+  border-radius: var(--r-pill);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  z-index: 3;
+}
+.heroDot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.42);
+  border: 0;
+  cursor: pointer;
+  transition: background var(--t-fast), transform var(--t-fast);
+}
+.heroDot:hover {
+  background: rgba(255, 255, 255, 0.72);
+}
+.heroDotActive,
+.heroDotActive:hover {
+  background: #fff;
+  transform: scale(1.25);
+}
+
+/* Reduced motion : on garde le carrousel statique sur la première
+   image, on coupe la transition pour éviter tout effet de fondu. */
+@media (prefers-reduced-motion: reduce) {
+  .heroCarouselSlide {
+    transition: none;
+  }
+}
+
 .heroImg::before {
   content: '';
   position: absolute;
