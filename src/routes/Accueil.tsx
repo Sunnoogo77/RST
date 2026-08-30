@@ -4,36 +4,34 @@ import { useTranslation } from 'react-i18next';
 import { LivePill } from '../components/ui/LivePill/LivePill';
 import { Button } from '../components/ui/Button/Button';
 import { rendezVous } from '../data/rendez-vous';
-import { sermons } from '../data/sermons';
-import { projetNehemie } from '../data/nehemie';
-import { motDuPasteur } from '../data/genese/mot-du-pasteur';
+import { projetNehemie as staticProjet } from '../data/nehemie';
+import { useSermons } from '../hooks/useSermons';
+import { useProjetNehemie } from '../hooks/useProjetNehemie';
+import { useMotDuPasteur } from '../hooks/useMotDuPasteur';
+import { AnnoncesCarousel } from '../components/AnnoncesCarousel/AnnoncesCarousel';
 import { youtubeEmbedUrl, youtubeThumbnail } from '../utils/youtube';
 import { asset } from '../utils/asset';
 import type { RendezVous, JourCulte } from '../types';
 import styles from './Accueil.module.css';
-
-const BIBLE_REF_PATTERN =
-  /(Zacharie 14:7|Malachie 4:5-6|Luc 17:26-30|Actes 3:17-21|Apocalypse 10:7)/g;
-const BIBLE_REF_MATCH =
-  /^(Zacharie 14:7|Malachie 4:5-6|Luc 17:26-30|Actes 3:17-21|Apocalypse 10:7)$/;
-
-function renderPastorParagraph(text: string) {
-  return text.split(BIBLE_REF_PATTERN).map((part, idx) =>
-    BIBLE_REF_MATCH.test(part) ? (
-      <span key={`${part}-${idx}`} className={styles.bibleRef}>
-        {part}
-      </span>
-    ) : (
-      part
-    )
-  );
-}
 
 export default function Accueil() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
 
   const locale = i18n.language === 'en' ? 'en-US' : 'fr-FR';
+
+  // Horaires de cultes — purement statiques (info fixe, ne change pas, pas
+  // de raison de faire un appel API pour cela).
+  const { data: sermons } = useSermons();
+  // Projet Néhémie : skeleton statique (objectif, devise) + dynamique API
+  // pour la collecte uniquement.
+  const { data: apiProjet } = useProjetNehemie();
+  const objectif = staticProjet.objectif;
+  const devise = staticProjet.devise;
+  const collecte = apiProjet?.collecte;
+
+  // Mot du pasteur : null tant que l'admin n'a rien publié → placeholder inline.
+  const { data: motDuPasteur } = useMotDuPasteur();
 
   const schedTime = (rv: RendezVous): string => {
     if (rv.jour === 'vendredi') return t('accueil.scheduleTime.des', { heure: rv.heureDebut });
@@ -53,17 +51,33 @@ export default function Accueil() {
       : t('accueil.scheduleLabels.addrBacchus');
 
   const formatMontant = (n: number): string => n.toLocaleString(locale);
-
-  const dernierSermon = sermons[0];
-  const dernierEmbed = youtubeEmbedUrl(dernierSermon.videoUrl, { autoplay: true });
-  const dernierThumb = youtubeThumbnail(dernierSermon.videoUrl);
   const [msgPlaying, setMsgPlaying] = useState(false);
 
-  const pct = Math.round((projetNehemie.collecte / projetNehemie.objectif) * 100);
-  const dateSermon = new Date(dernierSermon.date).toLocaleDateString(locale, {
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-  });
-  const dateLabel = dateSermon.charAt(0).toUpperCase() + dateSermon.slice(1);
+  // `dernierSermon` peut être absent : la section "Dernier message" affichera
+  // alors un placeholder inline, mais le reste de la page (hero, horaires,
+  // mot du pasteur, projet Néhémie) doit rester visible.
+  const dernierSermon = sermons[0] ?? null;
+
+  const dernierEmbed = dernierSermon
+    ? youtubeEmbedUrl(dernierSermon.videoUrl, { autoplay: true })
+    : '';
+  const dernierThumb = dernierSermon
+    ? youtubeThumbnail(dernierSermon.videoUrl)
+    : '';
+
+  // Pourcentage et collecte ne sont calculés que si l'API a renvoyé une valeur.
+  const pct = collecte !== undefined ? Math.round((collecte / objectif) * 100) : null;
+  const dateSermon = dernierSermon
+    ? new Date(dernierSermon.date).toLocaleDateString(locale, {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    : '';
+  const dateLabel = dateSermon
+    ? dateSermon.charAt(0).toUpperCase() + dateSermon.slice(1)
+    : '';
 
   return (
     <main id="main-content">
@@ -147,6 +161,12 @@ export default function Accueil() {
       <section className={styles.lastMsg} aria-label={t('accueil.lastMsgEyebrow')}>
         <div className={`${styles.lastMsgInner} ${msgPlaying ? styles.lastMsgInnerExpanded : ''}`}>
           <div className={styles.eyebrow}>{t('accueil.lastMsgEyebrow')}</div>
+          {!dernierSermon ? (
+            <p style={{ textAlign: 'center', color: 'var(--ink-3)', padding: '32px 16px', fontStyle: 'italic' }}>
+              Aucune prédication publiée pour le moment. Le dernier message apparaîtra
+              ici dès qu'il sera publié dans l'admin.
+            </p>
+          ) : (
           <div className={`${styles.lastMsgGrid} ${msgPlaying ? styles.lastMsgGridExpanded : ''}`}>
 
             {/* Lecteur vidéo : miniature + play, ou iframe quand on clique */}
@@ -214,9 +234,13 @@ export default function Accueil() {
               ) : (
                 <>
                   <p className={styles.lastMsgSerie}>
-                    {dernierSermon.serie}
-                    {dernierSermon.numeroSerie ? ` #${dernierSermon.numeroSerie}` : ''}
-                    {' · '}
+                    {dernierSermon.serie && (
+                      <>
+                        {dernierSermon.serie}
+                        {dernierSermon.numeroSerie ? ` #${dernierSermon.numeroSerie}` : ''}
+                        {' · '}
+                      </>
+                    )}
                     {dernierSermon.titre.replace(/\.$/, '').toUpperCase()}
                   </p>
 
@@ -236,6 +260,7 @@ export default function Accueil() {
               </div>
             </div>
           </div>
+          )}
         </div>
       </section>
 
@@ -253,29 +278,41 @@ export default function Accueil() {
             />
           </div>
 
-          {/* Mot du pasteur — retranscription intégrale (RST_archives/Le-mot-du-pasteur.txt) */}
+          {/* Mot du pasteur — HTML riche fourni par l'admin (rich text editor). */}
           <div className={styles.histoireCopy}>
             <div className={styles.eyebrow}>{t('accueil.motDuPasteur.eyebrow')}</div>
             <h2 className={styles.histoireTitre}>
               {t('accueil.motDuPasteur.titre')}
             </h2>
-            {motDuPasteur.paragraphes.map((p, idx) => (
-              <p
-                key={idx}
-                className={
-                  idx === 0
-                    ? `${styles.histoireP} ${styles.histoirePFirst}`
-                    : styles.histoireP
-                }
-              >
-                {renderPastorParagraph(p)}
-              </p>
-            ))}
-            <p className={styles.histoireBenediction}>{motDuPasteur.benediction}</p>
-            <p className={styles.histoireSignature}>— {motDuPasteur.signature}</p>
-            <Link to="/genese" className={styles.histoireLink}>
-              {t('accueil.motDuPasteur.cta')}
-            </Link>
+            {motDuPasteur ? (
+              <>
+                <div
+                  className={styles.histoireBody}
+                  dangerouslySetInnerHTML={{ __html: motDuPasteur.texte_html }}
+                />
+                {motDuPasteur.signature && (
+                  <p className={styles.histoireSignature}>— {motDuPasteur.signature}</p>
+                )}
+                <Link to="/genese" className={styles.histoireLink}>
+                  {t('accueil.motDuPasteur.cta')}
+                </Link>
+              </>
+            ) : (
+              // Fallback discret quand l'admin n'a rien publié : pas de placeholder
+              // "indisponible". On bascule vers une accroche éditoriale courte qui
+              // renvoie à l'historique de l'église (page Genèse).
+              <>
+                <p className={styles.histoireP}>
+                  Roc Séculaire Tabernacle est une assemblée chrétienne francophone,
+                  née d'un appel à se rassembler autour de la Parole de Dieu et de
+                  la prière. Découvrez l'histoire de notre communauté, ses origines
+                  et son cheminement.
+                </p>
+                <Link to="/genese" className={styles.histoireLink}>
+                  Lire l'histoire de l'église
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -305,30 +342,45 @@ export default function Accueil() {
             {t('accueil.nehemieBanner.desc')}
           </p>
 
-          {/* Jauge de collecte */}
+          {/* Jauge de collecte — données dynamiques. Affiche un placeholder
+              inline si l'API n'a pas répondu (collecte indisponible). */}
           <div className={styles.progress}>
             <div className={styles.progressNums}>
               <span className={styles.progressRaised}>
-                <b>{formatMontant(projetNehemie.collecte)} {projetNehemie.devise}</b>
-                {' '}{t('accueil.nehemieBanner.raisedSuffix')}
+                {collecte !== undefined ? (
+                  <>
+                    <b>{formatMontant(collecte)} {devise}</b>{' '}
+                    {t('accueil.nehemieBanner.raisedSuffix')}
+                  </>
+                ) : (
+                  <b style={{ fontStyle: 'italic', opacity: 0.65 }}>
+                    Collecte indisponible — serveur hors-ligne
+                  </b>
+                )}
               </span>
               <span className={styles.progressGoal}>
-                {t('accueil.nehemieBanner.goalPrefix')} {formatMontant(projetNehemie.objectif)} {projetNehemie.devise}
+                {t('accueil.nehemieBanner.goalPrefix')} {formatMontant(objectif)} {devise}
               </span>
             </div>
             <div
               className={styles.progressBar}
               role="progressbar"
-              aria-valuenow={pct}
+              aria-valuenow={pct ?? 0}
               aria-valuemin={0}
               aria-valuemax={100}
-              aria-label={`${pct} % ${t('nehemie.objectifAtteint')}`}
+              aria-label={pct !== null ? `${pct} % ${t('nehemie.objectifAtteint')}` : 'Pourcentage indisponible'}
             >
-              <div className={styles.progressBarFill} style={{ width: `${pct}%` }} />
+              <div className={styles.progressBarFill} style={{ width: `${pct ?? 0}%` }} />
             </div>
             <div className={styles.progressPct}>
-              <strong>{pct} %</strong>
-              <span> {t('accueil.nehemieBanner.percentSuffix')}</span>
+              {pct !== null ? (
+                <>
+                  <strong>{pct} %</strong>
+                  <span> {t('accueil.nehemieBanner.percentSuffix')}</span>
+                </>
+              ) : (
+                <span style={{ fontStyle: 'italic', opacity: 0.65 }}>—</span>
+              )}
             </div>
           </div>
 
@@ -342,6 +394,9 @@ export default function Accueil() {
           </div>
         </div>
       </section>
+
+      {/* ── ANNONCES — bande horizontale (à venir + passées récentes) ── */}
+      <AnnoncesCarousel />
 
     </main>
   );

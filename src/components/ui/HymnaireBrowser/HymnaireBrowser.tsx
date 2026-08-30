@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { cantiques } from '../../../data/cantiques';
-import { sessionsAdoration } from '../../../data/sessions-adoration';
+import { useCantiques, useSessionsAdoration } from '../../../hooks/useCantiques';
 import type { CantiqueFamille } from '../../../types';
 import { youtubeThumbnail } from '../../../utils/youtube';
 /* On réutilise les classes CSS Modules de CantiquesWatch — elles sont
@@ -62,6 +61,8 @@ export default function HymnaireBrowser({
   showHeader = true,
 }: HymnaireBrowserProps) {
   const navigate = useNavigate();
+  const { data: cantiques } = useCantiques();
+  const { data: sessionsAdoration } = useSessionsAdoration();
   const [q, setQ] = useState('');
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
 
@@ -72,18 +73,41 @@ export default function HymnaireBrowser({
 
   const items: BrowseItem[] = useMemo(() => {
     if (famille === 'adoration') {
-      return [...sessionsAdoration]
-        .sort((a, b) => b.date.localeCompare(a.date))
-        .map((s) => ({
-          key: s.id,
-          slug: s.slug,
-          title: s.titre,
-          meta: s.interpretes.join(' · '),
-          subMeta: `${formatLongDate(s.date)}${s.evenement ? ` · ${s.evenement}` : ''}`,
-          thumb: youtubeThumbnail(s.videoUrl),
-          year: s.date.slice(0, 4),
-          isSession: true,
-        }));
+      // L'onglet « Service de chant » agrège DEUX sources :
+      //  1) les SessionAdoration (modèle dédié, legacy/riche)
+      //  2) les Cantique(famille=adoration) saisis via le formulaire cantique
+      // — sinon un service de chant créé en admin n'apparaîtrait nulle part.
+      const sessionItems: BrowseItem[] = sessionsAdoration.map((s) => ({
+        key: s.id,
+        slug: s.slug,
+        title: s.titre,
+        meta: s.interpretes.join(' · '),
+        subMeta: `${formatLongDate(s.date)}${s.evenement ? ` · ${s.evenement}` : ''}`,
+        thumb: youtubeThumbnail(s.videoUrl),
+        year: s.date.slice(0, 4),
+        isSession: true,
+      }));
+      const cantiqueItems: BrowseItem[] = cantiques
+        .filter((c) => c.famille === 'adoration')
+        .map((c) => {
+          const occ = c.occurrences?.[0];
+          const dateStr = c.evenement?.date ?? c.recordedAt ?? occ?.dateEvenement;
+          return {
+            key: c.id,
+            slug: c.slug ?? c.id,
+            title: c.titre.replace(/\.$/, ''),
+            meta: occ?.interpretes.join(' · ') ?? c.solisteOuChoeur,
+            subMeta: c.evenement?.nom
+              ? `${c.evenement.nom}${c.recordedAt ? ` · ${c.recordedAt}` : ''}`
+              : (dateStr ? formatLongDate(dateStr) : undefined),
+            thumb: youtubeThumbnail(occ?.videoUrl ?? c.videoUrl),
+            year: dateStr?.slice(0, 4),
+            isSession: false,
+          };
+        });
+      return [...cantiqueItems, ...sessionItems].sort((a, b) =>
+        (b.year ?? '').localeCompare(a.year ?? ''),
+      );
     }
     const list = cantiques.filter((c) => c.famille === famille);
     if (famille === 'recueil') {
@@ -111,18 +135,29 @@ export default function HymnaireBrowser({
     });
     return list.map((c) => {
       const occ = c.occurrences?.[0];
+      // Préfixe le titre par un badge inline « Medley » si applicable —
+      // simple marqueur visuel, le cantique reste dans les Spéciaux.
+      const titleBase = c.titre.replace(/\.$/, '');
+      const title = c.estMedley ? `🎼 ${titleBase}` : titleBase;
+      // Sous-meta : date effective de l'événement si rattachement, sinon
+      // date de l'occurrence ou contexte.
+      const subMeta = c.evenement?.nom
+        ? `${c.evenement.nom}${c.recordedAt ? ` · ${c.recordedAt}` : ''}`
+        : (occ?.dateEvenement ? formatLongDate(occ.dateEvenement) : occ?.contexte);
       return {
         key: c.id,
         slug: c.slug ?? c.id,
-        title: c.titre.replace(/\.$/, ''),
+        title,
         meta: occ?.interpretes.join(' · ') ?? c.solisteOuChoeur,
-        subMeta: occ?.dateEvenement ? formatLongDate(occ.dateEvenement) : occ?.contexte,
+        subMeta,
         thumb: youtubeThumbnail(occ?.videoUrl ?? c.videoUrl),
-        year: occ?.dateEvenement?.slice(0, 4),
+        year: occ?.dateEvenement?.slice(0, 4)
+          ?? c.evenement?.date?.slice(0, 4)
+          ?? c.recordedAt?.slice(0, 4),
         isSession: false,
       };
     });
-  }, [famille]);
+  }, [famille, cantiques, sessionsAdoration]);
 
   const availableYears = useMemo(() => {
     if (famille === 'recueil') return [];

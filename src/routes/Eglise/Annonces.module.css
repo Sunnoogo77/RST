@@ -463,6 +463,13 @@
   color: var(--ink-2);
   margin: 0;
   max-width: 60ch;
+  /* Tronque à 3 lignes sur la carte de liste : une description longue ne doit
+     pas envahir la carte. Le texte complet reste visible sur la fiche détail. */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* ── TAG D'ÉTAT ───────────────────────────────────────────────── */

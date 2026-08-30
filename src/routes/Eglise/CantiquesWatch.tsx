@@ -1,8 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams, Navigate } from 'react-router-dom';
-import { cantiques } from '../../data/cantiques';
-import { sessionsAdoration } from '../../data/sessions-adoration';
-import type { Cantique, CantiqueOccurrence, CantiqueFamille, SessionAdoration } from '../../types';
+import { useCantiques, useSessionsAdoration } from '../../hooks/useCantiques';
+import type { Cantique, CantiqueOccurrence, CantiqueFamille, SessionAdoration, VerseBlock } from '../../types';
 import { youtubeThumbnail } from '../../utils/youtube';
 import YouTubePlayer from '../../components/ui/YouTubePlayer/YouTubePlayer';
 import HymnaireBrowser from '../../components/ui/HymnaireBrowser/HymnaireBrowser';
@@ -73,6 +72,8 @@ function formatTimecode(sec: number): string {
 export default function CantiquesWatch() {
   const { slug, famille } = useParams<{ slug?: string; famille?: string }>();
   const navigate = useNavigate();
+  const { data: cantiques, status: cantiquesStatus } = useCantiques();
+  const { data: sessionsAdoration, status: sessionsStatus } = useSessionsAdoration();
 
   const onClose = useCallback(() => navigate('/eglise/cantiques'), [navigate]);
 
@@ -90,16 +91,29 @@ export default function CantiquesWatch() {
   if (slug.startsWith(SESSION_PREFIX)) {
     const sessionSlug = slug.slice(SESSION_PREFIX.length);
     const session = sessionsAdoration.find((s) => s.slug === sessionSlug);
-    if (!session) return <Navigate to="/eglise/cantiques" replace />;
-    return <SessionView session={session} onBack={onClose} />;
+    if (!session) {
+      if (sessionsStatus === 'loading') return null;
+      return <Navigate to="/eglise/cantiques" replace />;
+    }
+    return (
+      <SessionView
+        session={session}
+        cantiques={cantiques}
+        sessionsAdoration={sessionsAdoration}
+        onBack={onClose}
+      />
+    );
   }
 
   /* CANTIQUE */
   const cantique =
     cantiques.find((c) => c.slug === slug) ??
     cantiques.find((c) => c.id === slug);
-  if (!cantique) return <Navigate to="/eglise/cantiques" replace />;
-  return <CantiqueView cantique={cantique} onBack={onClose} />;
+  if (!cantique) {
+    if (cantiquesStatus === 'loading') return null;
+    return <Navigate to="/eglise/cantiques" replace />;
+  }
+  return <CantiqueView cantique={cantique} cantiques={cantiques} onBack={onClose} />;
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -245,7 +259,9 @@ function FamilleBrowseView({ famille, onClose }: FamilleBrowseViewProps) {
    ══════════════════════════════════════════════════════════ */
 
 interface LyricsCardProps {
-  cantique: Cantique;
+  titre: string;
+  lyrics?: VerseBlock[];
+  pdfUrl?: string;
   size: LyricSize;
   onSizeChange: (s: LyricSize) => void;
   /* Inline (recueil) : la carte vit dans le centre blanc et a besoin
@@ -254,15 +270,15 @@ interface LyricsCardProps {
   inline?: boolean;
 }
 
-function LyricsCard({ cantique, size, onSizeChange, inline }: LyricsCardProps) {
-  const hasPdf = !!cantique.pdfUrl;
+function LyricsCard({ titre, lyrics, pdfUrl, size, onSizeChange, inline }: LyricsCardProps) {
+  const hasPdf = !!pdfUrl;
   return (
     <section
       className={[styles.lyricsCard, inline ? styles.lyricsCardInline : ''].join(' ')}
-      aria-label={`Paroles : ${cantique.titre}`}
+      aria-label={`Paroles : ${titre}`}
     >
       <div className={styles.lyricsToolbar}>
-        <span className={styles.lyricsLbl}>Paroles · {cantique.titre.replace(/\.$/, '')}</span>
+        <span className={styles.lyricsLbl}>Paroles · {titre.replace(/\.$/, '')}</span>
         <div className={styles.lyricsTools}>
           {(['sm', 'md', 'lg'] as LyricSize[]).map((s, i) => (
             <button
@@ -281,7 +297,7 @@ function LyricsCard({ cantique, size, onSizeChange, inline }: LyricsCardProps) {
           <span className={styles.lyricsDivider} aria-hidden="true" />
           {hasPdf ? (
             <a
-              href={cantique.pdfUrl!}
+              href={pdfUrl!}
               className={styles.lyricsTool}
               download
               title="Télécharger les paroles en PDF"
@@ -302,8 +318,8 @@ function LyricsCard({ cantique, size, onSizeChange, inline }: LyricsCardProps) {
       </div>
 
       <div className={[styles.lyricsBody, LYRIC_SIZE_CLASSES[size]].join(' ')}>
-        {cantique.lyrics && cantique.lyrics.length > 0 ? (
-          cantique.lyrics.map((block, i) => (
+        {lyrics && lyrics.length > 0 ? (
+          lyrics.map((block, i) => (
             <div
               key={i}
               className={[
@@ -347,10 +363,11 @@ function LyricsCard({ cantique, size, onSizeChange, inline }: LyricsCardProps) {
 
 interface CantiqueViewProps {
   cantique: Cantique;
+  cantiques: Cantique[];
   onBack: () => void;
 }
 
-function CantiqueView({ cantique, onBack }: CantiqueViewProps) {
+function CantiqueView({ cantique, cantiques, onBack }: CantiqueViewProps) {
   const navigate = useNavigate();
   const occurrences = cantique.occurrences ?? [];
   const [selectedOccId, setSelectedOccId] = useState<string | null>(
@@ -365,6 +382,56 @@ function CantiqueView({ cantique, onBack }: CantiqueViewProps) {
 
   const titleClean = cantique.titre.replace(/\.$/, '');
 
+  /* ── Passages (medley / service de chant) ──────────────────
+     Un cantique medley OU un service de chant enchaîne plusieurs
+     sous-chants, chacun avec ses propres paroles. Le panneau droit
+     devient alors un onglet « Cantiques » (liste + timecodes,
+     clic = saut vidéo) et un onglet « Paroles » (paroles du chant
+     en cours, sélectionnées AUTOMATIQUEMENT selon le timecode). */
+  const passages = cantique.passages ?? [];
+  const hasPassages = passages.length > 0;
+
+  /* Index du passage actif (auto-syncé sur le timecode du player, ou
+     fixé par un clic dans l'onglet « Cantiques »). */
+  const [activePassageIdx, setActivePassageIdx] = useState<number | null>(null);
+  /* Saut vidéo demandé par un clic passage (start en secondes). Change la
+     clé du player pour le remonter au bon endroit. End laissé libre pour
+     que le medley continue de défiler (et que l'auto-sync enchaîne). */
+  const [seekStart, setSeekStart] = useState<number | undefined>(undefined);
+
+  type PassageView = 'index' | 'lyrics';
+  const [passageView, setPassageView] = useState<PassageView>('index');
+  type PassageSheet = 'closed' | 'index' | 'lyrics';
+  const [passageSheet, setPassageSheet] = useState<PassageSheet>('closed');
+
+  /* À chaque tick du player : trouve le passage dont la borne contient le
+     temps courant et le marque actif → l'onglet « Paroles » suit tout seul. */
+  const handlePassageTimeUpdate = useCallback(
+    (currentSec: number) => {
+      if (passages.length === 0) return;
+      const idx = passages.findIndex(
+        (p) =>
+          currentSec >= p.startSec &&
+          (p.endSec === undefined || currentSec < p.endSec),
+      );
+      if (idx !== -1 && idx !== activePassageIdx) setActivePassageIdx(idx);
+    },
+    [passages, activePassageIdx],
+  );
+
+  const activePassage = activePassageIdx != null ? passages[activePassageIdx] : undefined;
+
+  const jumpToPassage = (idx: number) => {
+    const p = passages[idx];
+    if (!p) return;
+    setSeekStart(p.startSec);
+    setActivePassageIdx(idx);
+    /* Un clic passage = l'utilisateur veut voir ses paroles : on bascule
+       l'onglet (desktop) et la sheet ouverte (mobile) vers « Paroles ». */
+    setPassageView('lyrics');
+    setPassageSheet((prev) => (prev === 'index' ? 'lyrics' : prev));
+  };
+
   /* Liste triée des cantiques de la même famille — sert pour
      prev/next ET pour la grille "Autres cantiques" en bas. */
   const familySorted = useMemo(() => {
@@ -375,7 +442,7 @@ function CantiqueView({ cantique, onBack }: CantiqueViewProps) {
       list.sort((a, b) => a.titre.localeCompare(b.titre));
     }
     return list;
-  }, [cantique.famille]);
+  }, [cantique.famille, cantiques]);
 
   const currentIdx = familySorted.findIndex((c) => c.id === cantique.id);
   const prev = currentIdx > 0 ? familySorted[currentIdx - 1] : null;
@@ -428,10 +495,21 @@ function CantiqueView({ cantique, onBack }: CantiqueViewProps) {
               {currentOcc ? (
                 <YouTubePlayer
                   videoUrl={currentOcc.videoUrl}
-                  videoKey={`${cantique.id}-${currentOcc.id}`}
+                  videoKey={`${cantique.id}-${currentOcc.id}-${seekStart ?? 'base'}`}
                   autoplay={!isRecueil}
-                  startSec={currentOcc.startSec}
-                  endSec={currentOcc.endSec}
+                  startSec={seekStart ?? currentOcc.startSec}
+                  endSec={seekStart != null ? undefined : currentOcc.endSec}
+                  onTimeUpdate={hasPassages ? handlePassageTimeUpdate : undefined}
+                />
+              ) : cantique.videoUrl ? (
+                // Fallback : pas d'occurrence enregistrée mais une vidéo "officielle"
+                // a été saisie (champ youtube_url de la traduction FR côté admin).
+                <YouTubePlayer
+                  videoUrl={cantique.videoUrl}
+                  videoKey={`${cantique.id}-main-${seekStart ?? 'base'}`}
+                  autoplay={!isRecueil}
+                  startSec={seekStart}
+                  onTimeUpdate={hasPassages ? handlePassageTimeUpdate : undefined}
                 />
               ) : (
                 <div className={styles.noVideo}>
@@ -457,34 +535,87 @@ function CantiqueView({ cantique, onBack }: CantiqueViewProps) {
                 {cantique.numeroRecueil && ` · n° ${String(cantique.numeroRecueil).padStart(3, '0')}`}
               </p>
               <h1 className={styles.videoTitle}>{titleClean}</h1>
-              {currentOcc && (
-                <p className={styles.videoSubtitle}>
-                  {currentOcc.interpretes.join(' · ')}
-                  {currentOcc.contexte && (
-                    <>
-                      <span className={styles.dot} aria-hidden="true">·</span>
-                      <span>{currentOcc.contexte}</span>
-                    </>
-                  )}
-                </p>
-              )}
+              {/* Interprètes : ceux de l'occurrence active si dispo, sinon le
+                  libellé résolu du cantique (lead · acc. · chœurs). Toujours
+                  visible — y compris pour un cantique sans occurrence. */}
+              {(() => {
+                const interpretesTxt = currentOcc
+                  ? currentOcc.interpretes.join(' · ')
+                  : cantique.solisteOuChoeur;
+                if (!interpretesTxt) return null;
+                return (
+                  <p className={styles.videoSubtitle}>
+                    {interpretesTxt}
+                    {currentOcc?.contexte && (
+                      <>
+                        <span className={styles.dot} aria-hidden="true">·</span>
+                        <span>{currentOcc.contexte}</span>
+                      </>
+                    )}
+                  </p>
+                );
+              })()}
             </div>
 
             {/* Mode recueil : paroles en place du centre, juste après meta. */}
             {isRecueil && (
               <LyricsCard
-                cantique={cantique}
+                titre={cantique.titre}
+                lyrics={cantique.lyrics}
+                pdfUrl={cantique.pdfUrl}
                 size={lyricSize}
                 onSizeChange={setLyricSize}
                 inline
               />
             )}
 
-            {/* Bouton MOBILE "Paroles" — visible uniquement ≤ 980px.
-                Ouvre une sheet bottom qui glisse depuis le bas. Permet
-                de cacher la sidebar lyrics inline (qui prenait toute la
-                largeur sur mobile et bloquait l'accès au contenu en bas). */}
-            {!isRecueil && (
+            {/* Boutons MOBILE — visibles uniquement ≤ 980px (sidebar masquée).
+                Ouvrent une sheet bottom. Pour un medley / service de chant :
+                deux boutons (Cantiques + Paroles) comme le panneau droit.
+                Sinon : un seul bouton « Voir les paroles ». */}
+            {hasPassages ? (
+              <div className={styles.mobileSessionActions}>
+                <button
+                  type="button"
+                  className={styles.mobileLyricsBtn}
+                  onClick={() => setPassageSheet('index')}
+                  aria-label="Voir la liste des chants"
+                >
+                  <span className={styles.mobileLyricsBtnIcon} aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="8" y1="6" x2="21" y2="6" />
+                      <line x1="8" y1="12" x2="21" y2="12" />
+                      <line x1="8" y1="18" x2="21" y2="18" />
+                      <line x1="3" y1="6" x2="3.01" y2="6" />
+                      <line x1="3" y1="12" x2="3.01" y2="12" />
+                      <line x1="3" y1="18" x2="3.01" y2="18" />
+                    </svg>
+                  </span>
+                  <span>Cantiques</span>
+                  <span className={styles.mobileLyricsBtnCount}>{passages.length}</span>
+                </button>
+                <button
+                  type="button"
+                  className={styles.mobileLyricsBtn}
+                  onClick={() => setPassageSheet('lyrics')}
+                  aria-label="Voir les paroles du chant en cours"
+                >
+                  <span className={styles.mobileLyricsBtnIcon} aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 18V5l12-2v13" />
+                      <circle cx="6" cy="18" r="3" />
+                      <circle cx="18" cy="16" r="3" />
+                    </svg>
+                  </span>
+                  <span>Paroles</span>
+                  {activePassage && (
+                    <span className={styles.mobileLyricsBtnDot} aria-hidden="true">●</span>
+                  )}
+                </button>
+              </div>
+            ) : !isRecueil && (
               <button
                 type="button"
                 className={styles.mobileLyricsBtn}
@@ -597,32 +728,205 @@ function CantiqueView({ cantique, onBack }: CantiqueViewProps) {
           </div>
         </section>
 
-        {/* ── Sidebar droite : PAROLES (carte flottante claire) ──
-              Masquée en mode recueil (paroles déjà dans le centre).
-              Masquée aussi sur mobile (≤ 980px via CSS) — le bouton
-              "Voir les paroles" + la sheet bottom prennent le relais. */}
-        {!isRecueil && (
+        {/* ── Sidebar droite ───────────────────────────────────
+              • Medley / service de chant (passages) : panneau à 2 onglets
+                « Cantiques » (liste + timecodes, clic = saut vidéo) et
+                « Paroles » (paroles du chant en cours, auto-syncées).
+              • Autres familles non-recueil : simple carte paroles.
+              • Recueil : rien (paroles déjà au centre).
+              Masquée sur mobile (≤ 980px via CSS) — boutons + sheets relaient. */}
+        {hasPassages ? (
+          <aside className={styles.sessionSidebar} aria-label="Chants de cette vidéo">
+            <div className={styles.sessionToggle} role="tablist" aria-label="Vue de la sidebar">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={passageView === 'index'}
+                className={[
+                  styles.sessionToggleBtn,
+                  passageView === 'index' ? styles.sessionToggleBtnActive : '',
+                ].join(' ')}
+                onClick={() => setPassageView('index')}
+              >
+                Cantiques
+                <span className={styles.sessionToggleCount}>{passages.length}</span>
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={passageView === 'lyrics'}
+                className={[
+                  styles.sessionToggleBtn,
+                  passageView === 'lyrics' ? styles.sessionToggleBtnActive : '',
+                ].join(' ')}
+                onClick={() => setPassageView('lyrics')}
+              >
+                Paroles
+                {activePassage && (
+                  <span className={styles.sessionToggleNow} aria-hidden="true">●</span>
+                )}
+              </button>
+            </div>
+
+            {passageView === 'index' ? (
+              <ol className={styles.indexList}>
+                {passages.map((p, idx) => {
+                  const active = idx === activePassageIdx;
+                  return (
+                    <li key={idx}>
+                      <button
+                        type="button"
+                        className={[styles.indexBtn, active ? styles.indexBtnActive : ''].join(' ')}
+                        onClick={() => jumpToPassage(idx)}
+                      >
+                        <span className={styles.indexNum}>{String(idx + 1).padStart(2, '0')}</span>
+                        <span className={styles.indexBody}>
+                          <span className={styles.indexTitle}>{p.titre || `Chant ${idx + 1}`}</span>
+                          <span className={styles.indexTime}>
+                            {formatTimecode(p.startSec)}
+                            {p.endSec && ` → ${formatTimecode(p.endSec)}`}
+                            {p.interpretesLibelle && ` · ${p.interpretesLibelle}`}
+                          </span>
+                        </span>
+                        <span className={styles.indexPlay} aria-hidden="true">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ol>
+            ) : activePassage ? (
+              <LyricsCard
+                titre={activePassage.titre || titleClean}
+                lyrics={activePassage.lyrics}
+                size={lyricSize}
+                onSizeChange={setLyricSize}
+              />
+            ) : (
+              <div className={styles.lyricsHint}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 18V5l12-2v13" />
+                  <circle cx="6" cy="18" r="3" />
+                  <circle cx="18" cy="16" r="3" />
+                </svg>
+                <p>
+                  Laisse la vidéo défiler : les paroles s'afficheront automatiquement
+                  quand la vidéo entrera dans un chant. Ou bascule vers
+                  <button
+                    type="button"
+                    className={styles.sessionHintLink}
+                    onClick={() => setPassageView('index')}
+                  >
+                    l'onglet Cantiques
+                  </button>
+                  pour en choisir un.
+                </p>
+              </div>
+            )}
+          </aside>
+        ) : !isRecueil ? (
           <aside className={styles.lyricsSidebar} aria-label={`Paroles : ${titleClean}`}>
             <LyricsCard
-              cantique={cantique}
+              titre={cantique.titre}
+              lyrics={cantique.lyrics}
+              pdfUrl={cantique.pdfUrl}
               size={lyricSize}
               onSizeChange={setLyricSize}
             />
           </aside>
-        )}
+        ) : null}
       </div>
 
-      {/* Sheet bottom des paroles — mobile uniquement (le bouton qui
-          l'ouvre est aussi masqué desktop). Réutilise FilterSheet sans
-          footer (pas d'onApply/onReset → footer auto-masqué). */}
-      {!isRecueil && (
+      {/* Sheets bottom mobile — medley / service de chant : « Cantiques »
+          (liste, clic = saut + bascule auto vers paroles) + « Paroles »
+          (du chant en cours, auto-syncées). */}
+      {hasPassages && (
+        <>
+          <FilterSheet
+            open={passageSheet === 'index'}
+            onClose={() => setPassageSheet('closed')}
+            title="Chants de cette vidéo"
+            activeCount={passages.length}
+          >
+            <ol className={styles.indexList}>
+              {passages.map((p, idx) => {
+                const active = idx === activePassageIdx;
+                return (
+                  <li key={idx}>
+                    <button
+                      type="button"
+                      className={[styles.indexBtn, active ? styles.indexBtnActive : ''].join(' ')}
+                      onClick={() => jumpToPassage(idx)}
+                    >
+                      <span className={styles.indexNum}>{String(idx + 1).padStart(2, '0')}</span>
+                      <span className={styles.indexBody}>
+                        <span className={styles.indexTitle}>{p.titre || `Chant ${idx + 1}`}</span>
+                        <span className={styles.indexTime}>
+                          {formatTimecode(p.startSec)}
+                          {p.endSec && ` → ${formatTimecode(p.endSec)}`}
+                          {p.interpretesLibelle && ` · ${p.interpretesLibelle}`}
+                        </span>
+                      </span>
+                      <span className={styles.indexPlay} aria-hidden="true">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+          </FilterSheet>
+
+          <FilterSheet
+            open={passageSheet === 'lyrics'}
+            onClose={() => setPassageSheet('closed')}
+            title={activePassage ? `Paroles · ${(activePassage.titre || titleClean).replace(/\.$/, '')}` : 'Paroles'}
+          >
+            {activePassage ? (
+              <LyricsCard
+                titre={activePassage.titre || titleClean}
+                lyrics={activePassage.lyrics}
+                size={lyricSize}
+                onSizeChange={setLyricSize}
+                inline
+              />
+            ) : (
+              <div className={styles.lyricsHint}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 18V5l12-2v13" />
+                  <circle cx="6" cy="18" r="3" />
+                  <circle cx="18" cy="16" r="3" />
+                </svg>
+                <p>
+                  Laisse la vidéo défiler : les paroles s'afficheront automatiquement
+                  quand la vidéo entrera dans un chant. Ou ouvre l'onglet Cantiques
+                  pour en choisir un manuellement.
+                </p>
+              </div>
+            )}
+          </FilterSheet>
+        </>
+      )}
+
+      {/* Sheet bottom des paroles — mobile uniquement, familles sans passages
+          (le bouton qui l'ouvre est masqué desktop). */}
+      {!isRecueil && !hasPassages && (
         <FilterSheet
           open={lyricsSheetOpen}
           onClose={() => setLyricsSheetOpen(false)}
           title={`Paroles · ${titleClean}`}
         >
           <LyricsCard
-            cantique={cantique}
+            titre={cantique.titre}
+            lyrics={cantique.lyrics}
+            pdfUrl={cantique.pdfUrl}
             size={lyricSize}
             onSizeChange={setLyricSize}
             inline
@@ -640,10 +944,12 @@ function CantiqueView({ cantique, onBack }: CantiqueViewProps) {
 
 interface SessionViewProps {
   session: SessionAdoration;
+  cantiques: Cantique[];
+  sessionsAdoration: SessionAdoration[];
   onBack: () => void;
 }
 
-function SessionView({ session, onBack }: SessionViewProps) {
+function SessionView({ session, cantiques, sessionsAdoration, onBack }: SessionViewProps) {
   const navigate = useNavigate();
   const [currentStartSec, setCurrentStartSec] = useState<number | undefined>(undefined);
   const [currentEndSec, setCurrentEndSec] = useState<number | undefined>(undefined);
@@ -690,7 +996,7 @@ function SessionView({ session, onBack }: SessionViewProps) {
   const highlightedCantique: Cantique | undefined = useMemo(() => {
     if (!highlightedCantiqueId) return undefined;
     return cantiques.find((c) => c.id === highlightedCantiqueId);
-  }, [highlightedCantiqueId]);
+  }, [highlightedCantiqueId, cantiques]);
 
   const jumpTo = (cantiqueId: string, startSec: number, endSec?: number) => {
     setCurrentStartSec(startSec);
@@ -708,7 +1014,7 @@ function SessionView({ session, onBack }: SessionViewProps) {
      en premier) pour cohérence avec la library /eglise/cantiques. */
   const sessionsSorted = useMemo(
     () => [...sessionsAdoration].sort((a, b) => b.date.localeCompare(a.date)),
-    [],
+    [sessionsAdoration],
   );
   const currentIdx = sessionsSorted.findIndex((s) => s.id === session.id);
   const prev = currentIdx > 0 ? sessionsSorted[currentIdx - 1] : null;
@@ -886,7 +1192,9 @@ function SessionView({ session, onBack }: SessionViewProps) {
             )
           ) : highlightedCantique ? (
             <LyricsCard
-              cantique={highlightedCantique}
+              titre={highlightedCantique.titre}
+              lyrics={highlightedCantique.lyrics}
+              pdfUrl={highlightedCantique.pdfUrl}
               size={lyricSize}
               onSizeChange={setLyricSize}
             />
@@ -970,7 +1278,9 @@ function SessionView({ session, onBack }: SessionViewProps) {
       >
         {highlightedCantique ? (
           <LyricsCard
-            cantique={highlightedCantique}
+            titre={highlightedCantique.titre}
+            lyrics={highlightedCantique.lyrics}
+            pdfUrl={highlightedCantique.pdfUrl}
             size={lyricSize}
             onSizeChange={setLyricSize}
             inline

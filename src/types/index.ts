@@ -121,6 +121,32 @@ export interface CantiqueOccurrence {
   sessionId?: string;
 }
 
+/** Événement liturgique regroupant plusieurs cantiques (Veillée, Pâques…). */
+export interface EvenementCantique {
+  id: string;
+  nom: string;                 // localisé selon la langue de l'appel API
+  date?: string;               // ISO date, optionnel
+  close?: boolean;
+}
+
+/** Groupe de personnes interprète (« Chœurs »). Affichage simple côté vitrine. */
+export interface GroupePersonnesLite {
+  id: string;
+  nom: string;
+}
+
+/** Sous-cantique d'un cantique medley : nom + bornes start/end (secondes). */
+export interface CantiquePassage {
+  ordre: number;
+  titre: string;
+  startSec: number;
+  endSec?: number;
+  interpretesLibelle?: string;
+  /** Paroles propres à ce passage, affichées automatiquement quand la
+   *  vidéo atteint sa borne temporelle (onglet « Paroles » du lecteur). */
+  lyrics?: VerseBlock[];
+}
+
 export interface Cantique {
   id: string;
   slug?: string;               // pour URL /eglise/cantiques/watch/{slug}
@@ -131,6 +157,17 @@ export interface Cantique {
   titre: string;
   titleEm?: string;            // partie italique du titre en detail h2
   famille: CantiqueFamille;
+  /** Événement liturgique auquel le cantique appartient (Veillée, Pâques…).
+   *  Absent si le cantique n'est rattaché à aucun événement. */
+  evenement?: EvenementCantique;
+  /** Groupes interprètes (ex. « Chœurs »), distincts des Personne individuelles. */
+  groupesInterpretes?: GroupePersonnesLite[];
+  /** Lead vocal nommé (si renseigné, mis en valeur côté UI). */
+  leadInterprete?: string;
+  /** True si la vidéo enchaîne plusieurs sous-cantiques (medley). */
+  estMedley?: boolean;
+  /** Liste des passages d'un medley, dans l'ordre chronologique. */
+  passages?: CantiquePassage[];
   /** Libellé d'auteur principal pour les cartes (override possible
    *  via detailBy). Conservé pour rétrocompatibilité. */
   solisteOuChoeur: string;
@@ -189,7 +226,8 @@ export type AnnonceType = 'reunion' | 'voyage' | 'sortie' | 'exceptionnelle';
 
 export type AnnonceContentBlock =
   | { kind: 'paragraph'; text: string }
-  | { kind: 'image'; src: string; alt?: string; size?: 'small' | 'medium' | 'wide' };
+  | { kind: 'image'; src: string; alt?: string; size?: 'small' | 'medium' | 'wide' }
+  | { kind: 'video'; url: string; caption?: string };
 
 export interface Annonce {
   id: string;
@@ -233,6 +271,13 @@ export interface TemoignageDetailData {
   versetText: string;    // "Quiconque entend ces paroles..."
 }
 
+/** Photo jointe par le témoin lors de la soumission publique. */
+export interface TemoignagePhoto {
+  id: string;
+  url: string;
+  legende: string;
+}
+
 export interface Temoignage {
   id: string;
   auteur: string;        // anonymisé : "— une sœur · Île-de-France"
@@ -243,7 +288,8 @@ export interface Temoignage {
   eyebrow?: string;      // "Récit · 14 . 03 . 2026" pour story/illu
   titre?: string;        // <h3> pour story/illu
   corps?: string;        // corps de texte pour story/illu
-  image?: string;        // chemin image pour illu
+  image?: string;        // image principale (éditoriale OU 1re photo soumise)
+  photos?: TemoignagePhoto[]; // photos multiples soumises par le témoin (galerie)
   hasDetail?: boolean;   // affiche "Lire le récit complet →"
   detail?: TemoignageDetailData;
   date: string;

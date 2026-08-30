@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Link, useParams, Navigate } from 'react-router-dom';
-import { annonces } from '../../data/annonces';
+import { useAnnonces } from '../../hooks/useAnnonces';
 import { asset } from '../../utils/asset';
+import { youtubeEmbedUrl } from '../../utils/youtube';
 import type { AnnonceType } from '../../types';
 import styles from './AnnonceDetail.module.css';
 
@@ -19,11 +21,24 @@ function formatLongDate(dateStr: string): string {
   return raw.charAt(0).toUpperCase() + raw.slice(1);
 }
 
+/** Extrait la première phrase (jusqu'au . ! ? ou ~140 caractères). */
+function premierePhrase(text: string): string {
+  const m = text.match(/^.*?[.!?»](\s|$)/);
+  const phrase = m ? m[0].trim() : text;
+  if (phrase.length > 160) return phrase.slice(0, 157).trimEnd() + '…';
+  return phrase;
+}
+
 export default function AnnonceDetail() {
   const { id } = useParams<{ id: string }>();
+  const { data: annonces, status } = useAnnonces();
   const annonce = annonces.find((a) => a.id === id);
+  const [origineOpen, setOrigineOpen] = useState(false);
 
   if (!annonce) {
+    // Le fetch est peut-être encore en cours ; on attend qu'il aboutisse avant
+    // de rediriger pour éviter un flash 404 sur un id valide.
+    if (status === 'loading') return null;
     return <Navigate to="/eglise/annonces" replace />;
   }
 
@@ -67,7 +82,28 @@ export default function AnnonceDetail() {
             {annonce.titreEm && <><br /><em>{annonce.titreEm}</em></>}
           </h1>
 
-          <p className={styles.lede}>{annonce.description}</p>
+          {/* Pas de compte-rendu → description complète, centrée (mise en page
+              « arbre »). Compte-rendu présent → annonce d'origine repliée
+              (1re phrase + …), dépliable au clic, pour garder le focus sur
+              « Ce qui s'est passé ». */}
+          {hasReport ? (
+            <div className={styles.origineWrap}>
+              <span className={styles.origineLabel}>L'annonce d'origine</span>
+              <p className={styles.origineText}>
+                {origineOpen ? annonce.description : premierePhrase(annonce.description)}
+              </p>
+              <button
+                type="button"
+                className={styles.origineToggle}
+                onClick={() => setOrigineOpen((v) => !v)}
+                aria-expanded={origineOpen}
+              >
+                {origineOpen ? 'Replier' : 'Lire l’annonce complète'}
+              </button>
+            </div>
+          ) : (
+            <p className={styles.lede}>{annonce.description}</p>
+          )}
 
           <dl className={styles.meta}>
             <div>
@@ -125,6 +161,26 @@ export default function AnnonceDetail() {
             {annonce.contentBlocks!.map((block, i) => {
               if (block.kind === 'paragraph') {
                 return <p key={i} className={styles.reportPara}>{block.text}</p>;
+              }
+              if (block.kind === 'video') {
+                const embed = youtubeEmbedUrl(block.url);
+                if (!embed) return null;
+                return (
+                  <figure key={i} className={`${styles.reportFig} ${styles.imgWide}`}>
+                    <div className={styles.reportVideo}>
+                      <iframe
+                        src={embed}
+                        title={block.caption || 'Vidéo'}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        loading="lazy"
+                      />
+                    </div>
+                    {block.caption && (
+                      <figcaption className={styles.reportVideoCaption}>{block.caption}</figcaption>
+                    )}
+                  </figure>
+                );
               }
               const sizeCls =
                 block.size === 'small'  ? styles.imgSmall  :

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams, Navigate } from 'react-router-dom';
-import { sermons } from '../../data/sermons';
+import { useSermons } from '../../hooks/useSermons';
 import type { Sermon, TypeCulte } from '../../types';
 import { youtubeThumbnail } from '../../utils/youtube';
 import YouTubePlayer from '../../components/ui/YouTubePlayer/YouTubePlayer';
@@ -160,22 +160,25 @@ const IconSort = ({ size = 18 }: IconProps) => (
 export default function CultesWatch() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { data: sermons, status } = useSermons();
 
   const sermon = useMemo(
     () => sermons.find((s) => s.id === id),
-    [id],
+    [id, sermons],
   );
 
-  /* Si l'URL est invalide on retourne à la bibliothèque. */
+  /* Pendant le fetch initial on attend, sinon on redirige. */
   if (!sermon) {
+    if (status === 'loading') return null;
     return <Navigate to="/eglise/cultes" replace />;
   }
 
-  return <CultesWatchInner sermon={sermon} onBack={() => navigate('/eglise/cultes')} />;
+  return <CultesWatchInner sermon={sermon} sermons={sermons} onBack={() => navigate('/eglise/cultes')} />;
 }
 
 interface InnerProps {
   sermon: Sermon;
+  sermons: Sermon[];
   onBack: () => void;
 }
 
@@ -195,7 +198,7 @@ const FILTER_SECTIONS: FilterSectionMeta[] = [
 
 type SidebarMode = 'full' | 'rail';
 
-function CultesWatchInner({ sermon, onBack }: InnerProps) {
+function CultesWatchInner({ sermon, sermons, onBack }: InnerProps) {
   const navigate = useNavigate();
 
   /* État UI */
@@ -235,10 +238,10 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
   }, [sermon.id]);
 
   /* Indices comptés sur le dataset complet — sert aux badges des filtres. */
-  const yearsCount = useMemo(() => countBy(sermons, (s) => s.date.slice(0, 4)), []);
-  const predicateursCount = useMemo(() => countBy(sermons, (s) => s.predicateur), []);
-  const typesCount = useMemo(() => countBy(sermons, (s) => s.typeCulte), []);
-  const seriesCount = useMemo(() => countBy(sermons, (s) => s.serie), []);
+  const yearsCount = useMemo(() => countBy(sermons, (s) => s.date.slice(0, 4)), [sermons]);
+  const predicateursCount = useMemo(() => countBy(sermons, (s) => s.predicateur), [sermons]);
+  const typesCount = useMemo(() => countBy(sermons, (s) => s.typeCulte), [sermons]);
+  const seriesCount = useMemo(() => countBy(sermons, (s) => s.serie), [sermons]);
 
   const years = useMemo(
     () => [...yearsCount.keys()].sort((a, b) => b.localeCompare(a)),
@@ -270,7 +273,7 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
       }
       return true;
     });
-  }, [query, selectedYears, selectedPredicateurs, selectedTypes, selectedSeries]);
+  }, [sermons, query, selectedYears, selectedPredicateurs, selectedTypes, selectedSeries]);
 
   const sortedFiltered = useMemo(() => {
     return [...filteredSermons].sort((a, b) =>
@@ -388,7 +391,7 @@ function CultesWatchInner({ sermon, onBack }: InnerProps) {
     return [...sermons]
       .sort((a, b) => b.date.localeCompare(a.date))
       .filter((s) => s.id !== sermon.id);
-  }, [sermon.id]);
+  }, [sermon.id, sermons]);
 
   /* Autoplay « À regarder ensuite » : passe au premier sermon des
      suggestions à la fin de la lecture. */

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { AnnonceStatut, AnnonceType } from '../../types';
-import { annonces } from '../../data/annonces';
+import { useAnnonces } from '../../hooks/useAnnonces';
 import { asset } from '../../utils/asset';
 import styles from './Annonces.module.css';
 
@@ -44,6 +44,7 @@ function getMonthLabel(dateStr: string): string {
 
 export default function Annonces() {
   const { t } = useTranslation();
+  const { data: annonces } = useAnnonces();
   const [filterStatut, setFilterStatut] = useState<FilterStatut>('toutes');
   const [filterType,   setFilterType]   = useState<FilterType>('toutes');
 

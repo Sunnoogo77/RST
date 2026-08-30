@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { sermons } from '../../data/sermons';
+import { useSermons } from '../../hooks/useSermons';
 import type { Sermon, TypeCulte } from '../../types';
 import { youtubeThumbnail } from '../../utils/youtube';
 import FilterSheet from '../../components/ui/FilterSheet/FilterSheet';
@@ -177,6 +177,7 @@ type SidebarMode = 'full' | 'rail';
 export default function Cultes() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { data: sermons } = useSermons();
 
   const [query, setQuery] = useState('');
   const [sidebarMode, setSidebarMode] = useState<SidebarMode>('full');
@@ -187,10 +188,18 @@ export default function Cultes() {
   const [selectedSeries, setSelectedSeries] = useState<Set<string>>(new Set());
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
-  const yearsCount = useMemo(() => countBy(sermons, (s) => s.date.slice(0, 4)), []);
-  const predicateursCount = useMemo(() => countBy(sermons, (s) => s.predicateur), []);
-  const typesCount = useMemo(() => countBy(sermons, (s) => s.typeCulte), []);
-  const seriesCount = useMemo(() => countBy(sermons, (s) => s.serie), []);
+  const yearsCount = useMemo(() => countBy(sermons, (s) => s.date.slice(0, 4)), [sermons]);
+  const predicateursCount = useMemo(() => countBy(sermons, (s) => s.predicateur), [sermons]);
+  const typesCount = useMemo(() => countBy(sermons, (s) => s.typeCulte), [sermons]);
+  // On ne compte que les sermons qui appartiennent vraiment à une série.
+  // Les sermons indépendants (serie === '') ne créent PAS une option "vide"
+  // dans le filtre — ils restent visibles dans la liste complète mais ne
+  // peuvent pas être ciblés par le filtre série (ce qui est bien le sens
+  // attendu : un sermon hors-série n'est dans aucune série).
+  const seriesCount = useMemo(
+    () => countBy(sermons.filter((s) => s.serie && s.serie.trim().length > 0), (s) => s.serie),
+    [sermons],
+  );
 
   const years = useMemo(
     () => [...yearsCount.keys()].sort((a, b) => b.localeCompare(a)),
@@ -222,7 +231,7 @@ export default function Cultes() {
       }
       return true;
     });
-  }, [query, selectedYears, selectedPredicateurs, selectedTypes, selectedSeries]);
+  }, [sermons, query, selectedYears, selectedPredicateurs, selectedTypes, selectedSeries]);
 
   const groups = useMemo(
     () => groupByMonth(filteredSermons, sortOrder),

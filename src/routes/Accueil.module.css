@@ -734,6 +734,50 @@
   text-justify: inter-word;
 }
 
+/* Conteneur pour le HTML riche du mot du pasteur (rendu via dangerouslySetInnerHTML
+   depuis l'éditeur de l'admin). On reprend ici les styles paragraphe + lettrine. */
+.histoireBody {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.histoireBody > * {
+  font-family: var(--f-serif);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: 0;
+}
+.histoireBody p {
+  text-align: justify;
+  text-justify: inter-word;
+}
+.histoireBody p:first-of-type::first-letter {
+  font-family: var(--f-serif);
+  font-size: 3.5em;
+  font-weight: 500;
+  float: left;
+  line-height: .85;
+  margin: 4px 10px 0 0;
+  color: var(--ink-1);
+}
+.histoireBody ul,
+.histoireBody ol {
+  padding-left: 1.4em;
+}
+.histoireBody li {
+  margin-bottom: 4px;
+}
+.histoireBody strong { font-weight: 600; color: var(--ink-1); }
+.histoireBody em { font-style: italic; }
+.histoireBody u { text-decoration: underline; }
+.histoireBody a {
+  color: var(--rst-blue);
+  text-decoration: underline;
+  text-decoration-color: rgba(30, 71, 161, 0.4);
+}
+.histoireBody a:hover { color: var(--rst-blue-deep); }
+
 .bibleRef {
   font-weight: 700;
   font-style: italic;

@@ -619,6 +619,49 @@
   border-bottom: 1px solid var(--line-1);
 }
 
+/* ── Liste des chants (medley / service de chant) ── */
+.chants { margin-top: 28px; }
+.chantsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.chantItem {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--line-2, rgba(11,15,25,0.05));
+}
+.chantTime {
+  font-family: var(--f-num, 'Bodoni Moda', serif);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  color: var(--rst-blue);
+  flex-shrink: 0;
+  min-width: 48px;
+}
+.chantBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.chantTitre {
+  font-family: var(--f-serif);
+  font-size: 18px;
+  color: var(--ink-1);
+  line-height: 1.2;
+}
+.chantInterpretes {
+  font-family: var(--f-text);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+
 /* ══════════════════════════════════════════════════════════
    LYRICS CARD — paroles dans la sidebar droite
    Carte transparente qui occupe tout son conteneur et défile

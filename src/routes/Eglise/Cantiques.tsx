@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { cantiqueCounts } from '../../data/cantiques';
-import { sessionsAdoration } from '../../data/sessions-adoration';
+import { useCantiques, useSessionsAdoration } from '../../hooks/useCantiques';
 import type { CantiqueFamille } from '../../types';
 import HymnaireBrowser from '../../components/ui/HymnaireBrowser/HymnaireBrowser';
 import styles from './Cantiques.module.css';
@@ -12,7 +11,7 @@ import styles from './Cantiques.module.css';
    Sous le hero, on reproduit le visuel "hymnaire" de la watch
    shell (route /eglise/cantiques/watch/hymnaire/:famille) :
      - Bande sombre en haut avec 3 pills (Recueil / Spéciaux /
-       Service de chant) qui basculent localement la famille
+       Session d'adoration) qui basculent localement la famille
        affichée (pas de navigation).
      - Zone blanche arrondie en dessous (effet "rouleau") avec
        <HymnaireBrowser/> qui fait toute la logique : search,
@@ -22,14 +21,18 @@ import styles from './Cantiques.module.css';
    La navigation est entièrement gérée par HymnaireBrowser.
    ============================================================ */
 
-const FAMILLES: { key: CantiqueFamille; label: string; count: number }[] = [
-  { key: 'recueil',   label: 'Recueil',          count: cantiqueCounts.recueil },
-  { key: 'special',   label: 'Spéciaux',         count: cantiqueCounts.special },
-  { key: 'adoration', label: 'Service de chant', count: sessionsAdoration.length },
-];
-
 export default function Cantiques() {
   const { t } = useTranslation();
+  const { counts } = useCantiques();
+  const { data: sessionsAdoration } = useSessionsAdoration();
+  const FAMILLES = useMemo<{ key: CantiqueFamille; label: string; count: number }[]>(
+    () => [
+      { key: 'recueil',   label: 'Recueil',          count: counts.recueil },
+      { key: 'special',   label: 'Spéciaux',         count: counts.special },
+      { key: 'adoration', label: 'Service de chant', count: sessionsAdoration.length + counts.adoration },
+    ],
+    [counts.recueil, counts.special, counts.adoration, sessionsAdoration.length],
+  );
   const [activeFamille, setActiveFamille] = useState<CantiqueFamille>('recueil');
 
   const [hasScrolled, setHasScrolled] = useState(false);

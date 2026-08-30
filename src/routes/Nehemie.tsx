@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './Nehemie.module.css';
-import { projetNehemie } from '../data/nehemie';
+import { useProjetNehemie } from '../hooks/useProjetNehemie';
+import { projetNehemie as staticProjet } from '../data/nehemie';
 import { Lightbox, type LightboxImage } from '../components/ui/Lightbox/Lightbox';
 import { asset } from '../utils/asset';
 
@@ -148,8 +149,14 @@ export default function Nehemie() {
   const locale = i18n.language === 'en' ? 'en-US' : 'fr-FR';
   const fmt = (n: number) => n.toLocaleString(locale);
 
-  const pct = Math.round((projetNehemie.collecte / projetNehemie.objectif) * 100);
-  const restant = projetNehemie.objectif - projetNehemie.collecte;
+  // Skeleton static (objectif, devise, photos, batisseurs, montants, modesDon).
+  // Dynamique (API uniquement) : `collecte` + `miseAJour`.
+  const { data: apiProjet } = useProjetNehemie();
+  const objectif = staticProjet.objectif;
+  const collecte = apiProjet?.collecte;
+
+  const pct = collecte !== undefined ? Math.round((collecte / objectif) * 100) : null;
+  const restant = collecte !== undefined ? objectif - collecte : null;
   const whyItems = t('nehemie.whyItems', { returnObjects: true }) as string[];
   const buildItems = t('nehemie.buildItems', { returnObjects: true }) as string[];
   const participationItems = t('nehemie.participationItems', { returnObjects: true }) as string[];
@@ -285,29 +292,55 @@ export default function Nehemie() {
               <div className={styles.stats}>
                 <div className={styles.stat}>
                   <p className={styles.statLabel}>{t('nehemie.objectif')}</p>
-                  <p className={styles.statNum}>{fmt(projetNehemie.objectif)}&thinsp;€</p>
+                  <p className={styles.statNum}>{fmt(objectif)}&thinsp;€</p>
                 </div>
                 <div className={`${styles.stat} ${styles.statHighlight}`}>
                   <p className={styles.statLabel}>{t('nehemie.collecte')}</p>
-                  <p className={styles.statNum}>{fmt(projetNehemie.collecte)}&thinsp;€</p>
-                  <p className={styles.statPct}>({pct}&thinsp;%)</p>
+                  {collecte !== undefined ? (
+                    <>
+                      <p className={styles.statNum}>{fmt(collecte)}&thinsp;€</p>
+                      <p className={styles.statPct}>({pct}&thinsp;%)</p>
+                    </>
+                  ) : (
+                    <p
+                      className={styles.statNum}
+                      style={{ fontStyle: 'italic', opacity: 0.6, fontSize: '0.7em' }}
+                    >
+                      Indisponible — serveur hors-ligne
+                    </p>
+                  )}
                 </div>
                 <div className={styles.stat}>
                   <p className={styles.statLabel}>{t('nehemie.restant')}</p>
-                  <p className={styles.statNum}>{fmt(restant)}&thinsp;€</p>
+                  {restant !== null ? (
+                    <p className={styles.statNum}>{fmt(restant)}&thinsp;€</p>
+                  ) : (
+                    <p
+                      className={styles.statNum}
+                      style={{ fontStyle: 'italic', opacity: 0.6, fontSize: '0.7em' }}
+                    >
+                      —
+                    </p>
+                  )}
                 </div>
               </div>
 
               <div
                 className={styles.progressBar}
                 role="progressbar"
-                aria-valuenow={pct}
+                aria-valuenow={pct ?? 0}
                 aria-valuemin={0}
                 aria-valuemax={100}
-                aria-label={`${pct} % ${t('nehemie.objectifAtteint')}`}
+                aria-label={
+                  pct !== null
+                    ? `${pct} % ${t('nehemie.objectifAtteint')}`
+                    : 'Avancement indisponible'
+                }
               >
-                <div className={styles.progressFill} style={{ width: `${pct}%` }}>
-                  <span className={styles.progressLabel}>{pct}&thinsp;%</span>
+                <div className={styles.progressFill} style={{ width: `${pct ?? 0}%` }}>
+                  <span className={styles.progressLabel}>
+                    {pct !== null ? `${pct} %` : '—'}
+                  </span>
                 </div>
               </div>
 
